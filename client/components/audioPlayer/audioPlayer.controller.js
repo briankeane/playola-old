@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pl2NodeYoApp')
+angular.module('playolaApp')
   .controller('AudioPlayerCtrl', function ($scope, $location, Auth, AudioPlayer, $timeout) {
 
     $scope.presets = [];

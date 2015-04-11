@@ -211,7 +211,8 @@ describe('audioFileStorageHandler', function (done) {
   });
 
   it('returns an array of all stored songs as objects', function (done) {
-    this.timeout(5000);
+    this.timeout(10000);
+    
     audioSH.clearBucket('playolasongstest', function () {
 
       var uploadedCount = 0;

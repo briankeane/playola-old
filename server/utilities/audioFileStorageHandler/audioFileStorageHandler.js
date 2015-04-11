@@ -21,6 +21,8 @@ function Handler() {
 
   // clears the entire bucket
   this.clearBucket = function (bucket, callback) {
+console.log('RUNNING!!!!!');
+console.log('bucket: ' + bucket);
     var listGetter = s3HighLevel.listObjects({ s3Params: { Bucket: bucket } });
 
     var objects = [];
@@ -232,11 +234,9 @@ this.storeUnprocessedSong = function (filepath, callback) {
   this.getAllSongs = function (callback) {
 
     var objects = [];
-console.log('getting');
     var listGetter = s3HighLevel.listObjects({ s3Params: { Bucket: config["s3Buckets"].SONGS_BUCKET } });
 
     listGetter.on('data', function (data) {
-console.log('got data');
       objects = objects.concat(data.Contents);
     });
 

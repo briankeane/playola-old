@@ -310,7 +310,7 @@ module.exports = function (grunt) {
     ngtemplates: {
       options: {
         // This should be the name of your apps angular module
-        module: 'wwwApp',
+        module: 'playolaApp',
         htmlmin: {
           collapseBooleanAttributes: true,
           collapseWhitespace: true,

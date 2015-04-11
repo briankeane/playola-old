@@ -3,7 +3,7 @@
 /**
  * Removes server error when user updates input
  */
-angular.module('wwwApp')
+angular.module('playolaApp')
   .directive('mongooseError', function () {
     return {
       restrict: 'A',

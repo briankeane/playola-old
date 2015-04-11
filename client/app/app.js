@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('wwwApp', [
+angular.module('playolaApp', [
   'ngCookies',
   'ngResource',
   'ngSanitize',

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pl2NodeYoApp')
+angular.module('playolaApp')
   .service('AudioPlayer', function ($rootScope, $interval, $timeout, Auth) {
 
     // initialize variables

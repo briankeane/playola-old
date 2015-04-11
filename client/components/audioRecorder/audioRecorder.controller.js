@@ -1,4 +1,4 @@
-angular.module('pl2NodeYoApp')
+angular.module('playolaApp')
   .controller('AudioRecorderCtrl', function ($scope, $location, Auth, $sce, FileUploader, AudioPlayer) {
 
     $scope.refreshProgramFromServer;      // filled with reference when needed

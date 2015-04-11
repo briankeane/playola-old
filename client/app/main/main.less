@@ -28,3 +28,50 @@
     margin-top: 70px;
     border-top: 1px solid #E5E5E5;
 }
+
+// padding for top navbar
+body { padding-top: 40px; }
+@media screen and (max-width: 768px) { body { padding-top: 0px; } }
+
+// navbar styling
+.navbar-fixed-top {
+  background-color: black;
+}
+
+.navbar-nav > li > a, .navbar-default .navbar-nav > li > a, .navbar-default .navbar-nav > li > a, .navbar-header .navbar-brand {
+  color: white;
+  &:hover {
+  color: gray;
+  }
+  &:active {
+  color: gray;
+  }
+  &:focus {
+  color: gray;
+  }
+}
+
+body .mic-image {
+  height: 100%;
+  width: 100%;
+  background-image: url('http://static.playola.fm/red_mic_green_background.jpg');
+  background-size: cover;
+  background-repeat: none;
+}
+
+.playola-logo {
+  padding-top: 20px;
+  color: #ED002A;
+  font-family: verdana;
+  font-style: bold;
+  font-size: 5em;
+}
+
+.vertical-center {
+  min-height: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
