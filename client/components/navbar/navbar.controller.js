@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('wwwApp')
+angular.module('pl2NodeYoApp')
   .controller('NavbarCtrl', function ($scope, $location, Auth) {
     $scope.menu = [{
       'title': 'Home',

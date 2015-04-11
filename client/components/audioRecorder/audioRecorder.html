@@ -1,0 +1,14 @@
+<div ng-controller="AudioRecorderCtrl">
+  <h4>Record</h4>
+  <button id="startRecording" ng-click="startRecordingPressed()" class="glyphicon glyphicon-">record</button>
+  <button id="stopRecording" ng-click="stopRecordingPressed()" ng-disabled="stopDisabled">stop</button>
+  <canvas id="volumeMeter"></canvas>
+
+  <div id="recording-tree">
+    <ol ui-sortable="audioRecordingList" ng-model="recordings" id="recordings">
+      <li ng-repeat="recording in recordings" class="commentary" opacity="0.3">
+        <audio controls type="audio/mpeg" href="{{recording.url}}" src="{{recording.url}}" />
+      </li>
+    </ol>
+  </div>
+</div>

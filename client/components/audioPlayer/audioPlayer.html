@@ -1,0 +1,24 @@
+<div class="audioPlayer navbar-fixed-bottom">
+  <div class="row"
+        ng-controller="AudioPlayerCtrl"
+        ng-show="!isCollapsed && player.isPlaying">
+    <div class="row controls">
+      <img class="album-cover col-sm-2" src="{{player.nowPlaying._audioBlock.albumArtworkUrlSmall}}"/>
+      <h4 class="title col-sm-2">{{player.nowPlaying._audioBlock.title}}</h4>
+      <h4 class="artist col-sm-2">{{player.nowPlaying._audioBlock.artist}}</h4>
+     <!--  <div class="fa fa-compress fa-lg" ng-click="isCollapsed=true;"></div> -->
+     <label>volume: <input min="0" max="1" step="0.01" type="range" ng-model="player.volume" ng-change="player.setVolume(player.volume)" /></label>
+      <div class="btn-group-vertical" role="group">
+        <button class="btn btn-default" type="button" 
+        ng-click="addToMyStation(player.nowPlaying._audioBlock._id)"
+        ng-disabled="checkForRotation(player.nowPlaying._audioBlock)">Add Song to My Station</button>
+        <button class="btn btn-default" type="button" 
+        ng-click="togglePreset(player.stationPlaying);"
+        ng-disabled="presetButtonInfo(player.stationPlaying._id).disabled">{{ presetButtonInfo(player.stationPlaying._id).text }}</button>
+      <select class="form-control" ng-change="test2(preset);" ng-options= " p._id as formatPresetListItem(p) for p in presets" ng-model="selectedPresetId">
+
+      </select>
+      </div>
+    </div>
+  </div>
+</div>

@@ -13,22 +13,6 @@ var ListeningSession = require('../listeningSession/listeningSession.model');
 var tk = require('timekeeper');
 
 
-
-describe('GET /api/v1/stations', function() {
-
-  it('should respond with JSON array', function(done) {
-    request(app)
-      .get('/api/v1/stations')
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function(err, res) {
-        if (err) return done(err);
-        res.body.should.be.instanceof(Array);
-        done();
-      });
-  });
-});
-
 describe('a station', function () {
   var song;
   var user;

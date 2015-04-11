@@ -11,17 +11,7 @@ var SpecHelper = require('../../utilities/helpers/specHelper');
 
 describe('GET /api/v1/songs', function() {
 
-  it('should respond with JSON array', function(done) {
-    request(app)
-      .get('/api/v1/songs')
-      .expect(200)
-      .expect('Content-Type', /json/)
-      .end(function(err, res) {
-        if (err) return done(err);
-        res.body.should.be.instanceof(Array);
-        done();
-      });
-  });
+
 });
 
 describe('a song', function () {
