@@ -1,0 +1,1 @@
+{"nfs":{"/home/vagrant/www":{"create":true,"type":"nfs","guestpath":"/home/vagrant/www","hostpath":"/Users/briankeane/code/playola","disabled":false,"map_uid":501,"map_gid":20,"nfs_udp":true,"nfs_version":3,"uuid":"3983525029"}}}
