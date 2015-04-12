@@ -663,4 +663,50 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
+  grunt.loadTasks('gruntTasks');
+
+  grunt.registerTask('loadDB', function() {
+    return grunt.task.run([
+      'env:all',
+      'env:dev',
+      'loadDatabase'
+    ]);
+  })
+  grunt.registerTask('loadDB:prod', function () {
+    return grunt.task.run([
+    'env:all',
+    'env:prod',
+    'loadDatabase'
+    ]);
+  })
+  grunt.registerTask('loadDBTest', function() {
+    return grunt.task.run([
+      'env:all',
+      'env:test',
+      'loadDatabase'
+    ]);
+  })
+  grunt.registerTask('loadEchonest:dev', function () {
+    return grunt.task.run([
+      'env:all',
+      'env:dev',
+      'loadEchonestFromDB'
+    ]);
+  })
+  grunt.registerTask('loadEchonest:prod', function () {
+    return grunt.task.run([
+    'env:all',
+    'env:prod',
+    'loadEchonestFromDB'  
+    ]);
+  })
+  grunt.registerTask('updateItunes:dev', function () {
+    return grunt.task.run([
+      'env:all',
+      'env:dev',
+      'updateItunesInfo'
+    ]);
+  })
+
 };
