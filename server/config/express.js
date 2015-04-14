@@ -1,7 +1,6 @@
 /**
  * Express configuration
  */
-
 'use strict';
 
 var express = require('express');
