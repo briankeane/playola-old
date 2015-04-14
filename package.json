@@ -35,7 +35,6 @@
     "q": "^1.2.0",
     "request": "^2.53.0",
     "s3": "^4.4.0",
-    "serve-favicon": "~2.0.1",
     "taglib": "^0.8.1",
     "tough-cookie": "^0.12.1",
     "unidecode": "^0.1.3"
