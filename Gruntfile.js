@@ -460,6 +460,9 @@ module.exports = function (grunt) {
       prod: {
         NODE_ENV: 'production'
       },
+      dev: {
+        NODE_ENV: 'development'
+      },
       all: localConfig
     },
 
