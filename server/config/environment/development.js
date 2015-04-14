@@ -7,7 +7,6 @@ module.exports = {
   mongo: {
     uri: 'mongodb://172.31.51.139:27017/playola'
     //uri: 'mongodb://localhost/pl2nodeyo-dev'
-    //
   },
 
   seedDB: false,
