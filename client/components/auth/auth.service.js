@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('playolaApp')
-  .factory('Auth', function Auth($location, $rootScope, $http, User, $cookieStore, $q) {
+  .factory('Auth', function Auth($location, $rootScope, $http, User, RotationItem, Station, Upload, Song, Spin, ListeningSession, $cookieStore, $q) {
     var currentUser = {};
     var currentStation = {};
 
@@ -218,6 +218,7 @@ angular.module('playolaApp')
       getCurrentStation: function() {
         return currentStation;
       },
+
       /**
        * Gets all available info on authenticated user
        *

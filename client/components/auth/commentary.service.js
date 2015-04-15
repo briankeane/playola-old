@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pl2NodeYoApp')
+angular.module('playolaApp')
   .factory('Commentary', function ($resource) {
     return $resource('/api/v1/commentaries/:id/:controller', {
       id: '@_id'

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pl2NodeYoApp')
+angular.module('playolaApp')
   .factory('Spin', function ($resource) {
     return $resource('/api/v1/spins/:id/:controller', {
       id: '@_id'

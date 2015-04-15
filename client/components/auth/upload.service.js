@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pl2NodeYoApp')
+angular.module('playolaApp')
   .factory('Upload', function ($resource) {
     return $resource('/api/v1/uploads/:id/:controller', {
       id: '@_id'

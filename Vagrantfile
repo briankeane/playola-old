@@ -9,9 +9,9 @@ Vagrant.configure(2) do |config|
 
   config.vm.box = "ubuntu/trusty64"
 
-  config.vm.network "forwarded_port", guest: 9000, host: 9090, auto_correct: true
-  config.vm.network "forwarded_port", guest: 5858, host: 5800, auto_correct: true
-  config.vm.network "forwarded_port", guest: 8080, host: 8800, auto_correct: true
+  config.vm.network "forwarded_port", guest: 9000, host: 9000, auto_correct: true
+  config.vm.network "forwarded_port", guest: 5858, host: 5858, auto_correct: true
+  config.vm.network "forwarded_port", guest: 8080, host: 8080, auto_correct: true
   config.vm.network "forwarded_port", guest: 35729, host: 35729
 
   config.vm.network "forwarded_port", guest: 3501, host: 3510, auto_correct: true   # yeoman server port

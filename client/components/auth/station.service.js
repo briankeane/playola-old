@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('pl2NodeYoApp')
+angular.module('playolaApp')
   .factory('Station', function ($resource) {
     return $resource('/api/v1/stations/:id/:controller', {
       id: '@_id'

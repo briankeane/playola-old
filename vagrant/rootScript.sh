@@ -12,7 +12,7 @@ sudo apt-get install -y libmp3lame-dev
 
 sudo add-apt-repository ppa:mc3man/trusty-media
 sudo apt-get update
-sudo install ffmpeg
+sudo apt-get install ffmpeg
 mkdir ~/ffmpeg_sources
 
 # mongo
@@ -22,4 +22,3 @@ echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.
 sudo apt-get update
 
 sudo apt-get install -y mongodb-org
-sudo mkdir -p /data/db
