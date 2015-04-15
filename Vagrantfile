@@ -21,6 +21,7 @@ Vagrant.configure(2) do |config|
   config.vm.network :public_network, bridge: "en0: Wi-Fi (AirPort)"
   config.vm.network "private_network", type: "dhcp"
   config.vm.synced_folder ".", "/home/vagrant/www", create: true, type: "nfs"
+  config.vm.synced_folder "../dist", "/home/vagrant/dist", create: true, type: "nfs"
 
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root","1"]
