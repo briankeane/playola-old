@@ -14,6 +14,7 @@ nvm alias default 0.10.33
 # doesn't take
 npm install -g npm@latest
 npm install -g bower grunt-cli
+npm install -g node-inspector
 npm install -g yo
 npm install
 bower install

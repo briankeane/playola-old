@@ -26,6 +26,13 @@ module.exports = function (grunt) {
   // Define the configuration for all the tasks
   grunt.initConfig({
 
+    uglify: {
+      options: {
+        sourceMap: true,
+        sourceMapIncludeSources: true
+      }
+    },
+
     // Project settings
     pkg: grunt.file.readJSON('package.json'),
     yeoman: {
@@ -312,13 +319,13 @@ module.exports = function (grunt) {
         // This should be the name of your apps angular module
         module: 'playolaApp',
         htmlmin: {
-          collapseBooleanAttributes: true,
-          collapseWhitespace: true,
-          removeAttributeQuotes: true,
-          removeEmptyAttributes: true,
-          removeRedundantAttributes: true,
-          removeScriptTypeAttributes: true,
-          removeStyleLinkTypeAttributes: true
+          // collapseBooleanAttributes: true,
+          // collapseWhitespace: true,
+          // removeAttributeQuotes: true,
+          // removeEmptyAttributes: true,
+          // removeRedundantAttributes: true,
+          // removeScriptTypeAttributes: true,
+          // removeStyleLinkTypeAttributes: true
         },
         usemin: 'app/app.js'
       },

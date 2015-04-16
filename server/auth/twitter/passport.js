@@ -8,6 +8,7 @@ exports.setup = function (User, config) {
     consumerSecret: config.twitter.clientSecret,
     callbackURL: config.twitter.callbackURL
   },
+
   function(token, tokenSecret, profile, done) {
     User.findOne({
       'twitter.id_str': profile.id
@@ -77,6 +78,7 @@ exports.setup = function (User, config) {
         });
       }
     }
+
     }
   ));
 };

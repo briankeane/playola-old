@@ -18,5 +18,17 @@ angular.module('playolaApp')
         templateUrl: 'app/account/settings/settings.html',
         controller: 'SettingsCtrl',
         authenticate: true
+      })
+      .state('getUserInfo', {
+        url: '/getUserInfo',
+        templateUrl: 'app/account/getUserInfo/getUserInfo.html',
+        controller: 'GetUserInfoCtrl',
+        authenticate: true
+      })
+      .state('getInitialInfo', {
+        url: '/getInitialInfo',
+        templateUrl: 'app/account/getInitialInfo/getInitialInfo.html',
+        controller: 'GetInitialInfoCtrl',
+        authenticate: true
       });
   });

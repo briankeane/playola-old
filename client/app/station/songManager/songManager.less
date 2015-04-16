@@ -1,0 +1,119 @@
+body .mic-image-inverse {
+  height: 100%;
+  width: 100%;
+  background-image: url('http://static.playola.fm/green_background.jpg');
+  background-size: cover;
+  background-repeat: repeat-y;
+  display: inline-table;
+}
+
+.brown-background {
+  background-image: url('http://static.playola.fm/brown_background.jpg');
+}
+
+.rotation-bin {
+  height: 200px;
+  border: 2px solid @microphone-red;
+}
+
+#catalog-list {
+  overflow-y: scroll;
+  height: 307px;
+  margin: 0;
+  background: rgba(0,0,0,0.05);
+  margin-bottom: 33px;
+  padding: 0;
+
+  li {
+    list-style-type: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    font-size: .9rem;
+    list-style-type: none;
+    position: relative;
+    width: 100%;
+    float: left;
+    clear: both;
+    margin: 0 0 2px 0;
+    background-color: white;
+    box-sizing: border-box;
+    padding: 9px 15px;
+  }
+  
+  .disabled {
+    opacity:0.5;
+    // for disabling text selection
+  }
+
+  .songlist-title {
+    display: inline-block;
+    width:60%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding: 2px;
+    vertical-align: middle;
+    line-height: 100%;
+  }
+
+  .songlist-artist {
+    display: inline-block;
+    width: 40%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: right;
+    padding: 2px;
+    display: inline-block;
+    width: 40%;
+    padding: 2px;
+    vertical-align: middle;
+  }
+}
+
+#spinsPerWeekList {
+  background: rgba(0,0,0,0);
+  font-size: 0.9rem;
+  height: 360px;
+  overflow-y: scroll;
+  margin: 0;
+  line-height: 100%;
+
+  li {
+    background-color: @darker-item;
+    font-size: .9rem;
+    list-style-type: none;
+    position: relative;
+    width: 100%;
+    float: left;
+    clear: both;
+    margin: 0 0 2px 0;
+    box-sizing: border-box;
+    padding: 9px 15px;
+
+    select {
+      height: 100%;
+      width: 90px;
+      border: 0;
+      padding: 0;
+      margin: 5px 3px 0 0;
+      float: left;
+      background-color: @lighter-item;
+      font-size: 0.7em;
+    }
+    .songlist-artist {
+      float: left;
+      width: 35%;
+    }
+    .songlist-title {
+      float: left;
+      width: 35%;
+    }
+    .close {
+      width: 5%;
+      float: right;
+    }
+  }
+}

@@ -61,6 +61,10 @@ var all = {
     callbackURL:  (process.env.DOMAIN || '') + '/auth/twitter/callback'
   },
 
+  ECHONEST_KEY: process.env.ECHONEST_KEY,
+  ECHONEST_CONSUMER_KEY: process.env.ECHONEST_CONSUMER_KEY,
+  ECHONEST_SHARED_SECRET: process.env.ECHONEST_SHARED_SECRET
+
 };
 
 // Export the config object based on the NODE_ENV

@@ -1,0 +1,52 @@
+<div class="modal-header">
+  <button type="button" ng-click="$dismiss()" class="close">&times;</button>
+  <h4>Cannot Match Song</h4>
+  <p>Please choose the song from the list of matches</p>
+  <p>Your File Info:</p>
+  <p>Filename: <b class="filenameDisplay">{{item.file.name}}</b><br></p>
+  <p>Title: <b class="titleDisplay">{{item.tags.title}}</b><br></p>
+  <p>Artist: <b class="artistDisplay">{{item.tags.artist}}</b></p>
+
+  <form class="form" name="form" ng-submit="submitSongWithEchonestId(form)" novalidate id="chooseId">
+    <div id="chooseSongContainer">
+      <table id="chooseSongTable">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Artist</th>
+            <th>Title</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="match in item.possibleMatches">
+            <td><input ng-required="!selectedSong.index" type="radio" value="{{$index}}" name="songSelect" id="songSelect" ng-model="selectedSong.index"/></td>
+            <td>{{match.artist}}</td> 
+            <td>{{match.title}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row">
+      <div class="small-9 small-offset-3 columns">
+        <p>{{selectedSong.index}}</p>
+        <p>{{tagsChanged}}</p>
+        <input ng-required="!selectedSong.index" type="radio" value="ECHONESTIDNOTFOUND" name="songSelect" id="songSelect" ng-model="selectedSong.index" />
+        <label for="songSelect"><b>None of these are matches</b></label>
+        <div ng-show="selectedSong.index === 'ECHONESTIDNOTFOUND'">
+          <p>Ok... please check to make sure the descriptions below are correct and we'll try this one more time.</p>
+          <label for="title">Title: </label><input type="text" ng-model="tags.title" name="title" class="form-control" ng-change="$parent.tagsChanged = true;" />
+          <label for="artist">Artist: </label><input type="text" ng-model="tags.artist" name="artist" class="form-control" ng-change="$parent.tagsChanged = true;" />
+          <label for="album">Album: </label><input type="text" ng-model="tags.album" name="album" class="form-control" />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <a class="help-block" ng-show="form.songSelect.$error && submitted">Please choose an answer</a>
+      <button class="btn btn-inverse btn-lg btn-login" type="submit">Submit</button>
+      <button type="button" ng-click="cancel();">Cancel</button>
+    </div>
+  </form>
+</div>
+

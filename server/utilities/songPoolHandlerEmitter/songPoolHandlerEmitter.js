@@ -10,6 +10,9 @@ function Handler() {
   var self = this;
   var echo = echojs({ key: process.env.ECHONEST_KEY });
 
+  console.log('config:');
+  console.log(config);
+  
   this.addSong = function (song) {
     return this.addSongs([song]);
   };
@@ -201,7 +204,6 @@ function Handler() {
     var suggestedSongs = [];
 
     var getSuggestionFunctions = [];
-
 
     // get suggestsions from echonest
     function makeEchonestRequest() {

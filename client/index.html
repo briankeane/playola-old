@@ -13,6 +13,7 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(client) app/vendor.css -->
       <!-- bower:css -->
+      <link rel="stylesheet" href="bower_components/angular-ui-tree/dist/angular-ui-tree.min.css" />
       <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,client}) app/app.css -->
@@ -56,6 +57,14 @@
       <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
       <script src="bower_components/lodash/dist/lodash.compat.js"></script>
       <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+      <script src="bower_components/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js"></script>
+      <script src="bower_components/moment/moment.js"></script>
+      <script src="bower_components/angular-moment/angular-moment.js"></script>
+      <script src="bower_components/moment-timezone/builds/moment-timezone-with-data-2010-2020.js"></script>
+      <script src="bower_components/angular-file-upload/angular-file-upload.js"></script>
+      <script src="bower_components/angular-ui-tree/dist/angular-ui-tree.js"></script>
+      <script src="bower_components/jquery-ui/jquery-ui.js"></script>
+      <script src="bower_components/angular-ui-sortable/sortable.js"></script>
       <!-- endbower -->
     <!-- endbuild -->
 
@@ -63,6 +72,8 @@
         <script src="app/app.js"></script>
           <!-- injector:js -->
           <script src="app/account/account.js"></script>
+          <script src="app/account/getInitialInfo/getInitialInfo.controller.js"></script>
+          <script src="app/account/getUserInfo/getUserInfo.controller.js"></script>
           <script src="app/account/login/login.controller.js"></script>
           <script src="app/account/settings/settings.controller.js"></script>
           <script src="app/account/signup/signup.controller.js"></script>
@@ -70,6 +81,10 @@
           <script src="app/admin/admin.js"></script>
           <script src="app/main/main.controller.js"></script>
           <script src="app/main/main.js"></script>
+          <script src="app/station/djBooth/djBooth.controller.js"></script>
+          <script src="app/station/songManager/songManager.controller.js"></script>
+          <script src="app/station/songMarkup/songMarkup.controller.js"></script>
+          <script src="app/station/station.js"></script>
           <script src="components/audioPlayer/audioPlayer.controller.js"></script>
           <script src="components/audioPlayer/audioPlayer.service.js"></script>
           <script src="components/audioRecorder/audioRecorder.controller.js"></script>
@@ -82,9 +97,15 @@
           <script src="components/auth/station.service.js"></script>
           <script src="components/auth/upload.service.js"></script>
           <script src="components/auth/user.service.js"></script>
+          <script src="components/commentaryPreviewPlayer/commentaryPreviewPlayer.service.js"></script>
+          <script src="components/libraries/recorder.js"></script>
+          <script src="components/libraries/recorderWorker.js"></script>
+          <script src="components/libraries/wavesurfer.min.js"></script>
+          <script src="components/libraries/wavesurfer.regions.min.js"></script>
           <script src="components/modal/modal.service.js"></script>
           <script src="components/mongoose-error/mongoose-error.directive.js"></script>
           <script src="components/navbar/navbar.controller.js"></script>
+          <script src="components/uploader/uploader.controller.js"></script>
           <!-- endinjector -->
         <!-- endbuild -->
 </body>

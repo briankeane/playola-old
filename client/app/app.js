@@ -5,7 +5,12 @@ angular.module('playolaApp', [
   'ngResource',
   'ngSanitize',
   'ui.router',
-  'ui.bootstrap'
+  'ui.bootstrap',
+  'dndLists',
+  'angularMoment',
+  'angularFileUpload',
+  'ui.tree',
+  'ui.sortable'
 ])
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
     $urlRouterProvider
@@ -45,8 +50,14 @@ angular.module('playolaApp', [
     // Redirect to login if route requires auth and you're not logged in
     $rootScope.$on('$stateChangeStart', function (event, next) {
       Auth.isLoggedInAsync(function(loggedIn) {
+        // if not logged in, redirect to login
         if (next.authenticate && !loggedIn) {
           $location.path('/login');
+        } else {
+          var user = Auth.getCurrentUser();
+          if (next.authenticate && !(user.zipcode && user.birthYear && user.gender && user._station)) {
+            $location.path('/getInitialInfo');
+          }
         }
       });
     });

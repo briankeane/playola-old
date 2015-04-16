@@ -1,0 +1,79 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12">
+      <h1>Big Brother Playola</h1>
+    </div>
+
+    <form class="form" name="form" ng-submit="updateInitialUserInfo(form)" novalidate>
+      <div class="col-sm-12 col-md-6">
+        <h1>User Info</h1>
+        <div class="form-group" ng-class="{ 'has-success': form.birthYear.$valid && submitted,
+                                            'has-error': form.birthYear.$invalid && submitted }">
+          <label>Birth Year</label>
+
+          <input type="number" name="birthYear" class="form-control" ng-model="user.birthYear" ng-min="1890" ng-max="2014" ng-model-options="{ debounce: 1000 }" ng-minlength="4" required value="{{ user.birthYear || ''}}"/>
+          <p class="help-block" ng-show="(form.birthYear.$error.required || form.birthYear.$error.minlength) && submitted">
+            Please Enter Your Birth Year
+          </p>
+          <p class="help-block" ng-show="((form.birthYear.$error.min || form.birthYear.$error.max) && submitted) && !form.birthYear.$error.minlength">
+            No, really. :)
+          </p>
+        </div>
+
+
+        <div class="form-group" ng-class="{ 'has-success': form.zipcode.$valid && submitted,
+                                            'has-error': form.zipcode.$invalid && submitted }">
+          <label>Zipcode</label>
+
+          <input type="text" name="zipcode" class="form-control" ng-model="user.zipcode"
+                 required
+                 ng-minlength="5"
+                 zipcode-error/>
+          <p class="help-block" ng-show="form.zipcode.$error.minlength && submitted">
+            Doesn't look like a valid zipcode.
+          </p>
+          <p class="help-block" ng-show="form.zipcode.$error.required && submitted">
+            What's your zipcode?
+          </p>
+          <p class="help-block" ng-show="form.zipcode.$error.notFound && submitted">
+            {{ errors.zipcode }}
+          </p>
+        </div>
+
+        <div class="form-group" ng-class="{ 'has-success': form.gender.$valid && submitted,
+                                            'has-error': form.gender.$invalid && submitted }">
+          <label>Gender</label>
+
+          <select type="gender" name="gender" class="form-control" ng-model="user.gender"
+                 required>
+            <option value="">Please Select</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+          </select>
+          <p class="help-block"
+             ng-show="form.gender.$error.required && submitted">
+            Please tell us your gender.
+          </p>
+        </div>
+        <button class="btn btn-inverse btn-lg btn-login text-center" type="submit">
+            Take My Info Evil Corporation
+        </button>
+      </div>
+<!--       <div class="col-sm-12 col-md-6">
+        <div class="form-group">
+          <h2>Tell Us <strong>Up To</strong> 5 artists that You Enjoy</h2>
+          <p>(This will help us get your station started)</p>
+          <input type="text" name="artist1" placeholder="Your favorite artist" class="form-control" ng-model="artist1"/> <br>
+          <input type="text" name="artist2" placeholder="Your second favorite artist" class="form-control" ng-model="artist2"/> <br>
+          <input type="text" name="artist3" placeholder="Your third favorite artist" class="form-control" ng-model="artist3"/> <br>
+          <input type="text" name="artist4" placeholder="Your fourth favorite artist" class="form-control" ng-model="artist4"/> <br>
+          <input type="text" name="artist5" placeholder="Some schlub" class="form-control" ng-model="artist5"/> <br>
+        <div> -->
+        </div>
+
+        <hr>
+      </div>
+    </form>
+  </div>
+  <hr>
+</div>

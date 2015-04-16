@@ -15,10 +15,50 @@
     padding: 0.2em 0;
 }
 
+.headline {
+  text-align: center;
+  font-family: "tungsten light";
+  font-size: 50px;
+}
+
+.sub-headline {
+  text-align: center;
+  font-size: 19px;
+  font-family: "roboto-regular";
+  color: grey;
+}
+
+.small-headline {
+  text-align: center;
+}
+
+@navbar-color: #F1EAE2;
+@heavy-rotation: steelblue;
+@medium-rotation: #147EFF;
+@light-rotation: #11BAFF;
+@main-background: #00647F;
+@header-background: #00C8FF;
+@main-font: white;
+@commentary-color: red;
+@microphone-red: #ED002A;
+
+@big-accent: #ED002A;     // lipstick red
+@primary: #C7897A;    // muted brownish
+@big-accent-toned-down: #ED6B6F; // muted pink -- lighter part of mic color
+@darker-item: #E9D4C3;  
+@darker-item-border: #756a61;
+@lighter-item: #F1EAE2;
+
 // injector
+@import 'account/getInitialInfo/getInitialInfo.less';
+@import 'account/getUserInfo/getUserInfo.less';
 @import 'account/login/login.less';
 @import 'admin/admin.less';
 @import 'main/main.less';
+@import 'station/djBooth/djBooth.less';
+@import 'station/songManager/songManager.less';
+@import 'station/songMarkup/songMarkup.less';
 @import 'audioPlayer/audioPlayer.less';
 @import 'modal/modal.less';
+@import 'uploader/uploader.less';
 // endinjector
