@@ -3,7 +3,7 @@
 describe('Service: commentaryPreviewPlayer', function () {
 
   // load the service's module
-  beforeEach(module('wwwApp'));
+  beforeEach(module('playolaApp'));
 
   // instantiate service
   var commentaryPreviewPlayer;

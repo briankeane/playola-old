@@ -86,6 +86,7 @@ angular.module('playolaApp')
 
     var audio_context;
     var volumeAnimateNode;
+    var volumeAnalyser;
     var recorder;
     var recordButton = $('#startRecording');
     var stopButton = $('#stopRecording');
