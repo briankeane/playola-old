@@ -1,3 +1,6 @@
+console.log(process.env)
+
+
 var config = require('../../config/environment/');
 var s3HighLevel = require('s3').createClient(config.s3Options);
 var AWS = require('aws-sdk');
@@ -21,8 +24,6 @@ function Handler() {
 
   // clears the entire bucket
   this.clearBucket = function (bucket, callback) {
-console.log('RUNNING!!!!!');
-console.log('bucket: ' + bucket);
     var listGetter = s3HighLevel.listObjects({ s3Params: { Bucket: bucket } });
 
     var objects = [];
@@ -283,7 +284,6 @@ this.storeUnprocessedSong = function (filepath, callback) {
 
       // 
       function continueFunction() {
-        console.log('in continue function');
         formattedObjects = _.sortBy(formattedObjects, function(song) {
           return [song.artist, song.title];
         });

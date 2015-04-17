@@ -13,7 +13,7 @@ var request = require('request');
 
 function SongProcessor() {
   var self = this;
-  var echo = echojs({ key: process.env.ECHONEST_KEY });
+  var echo = echojs({ key: config.ECHONEST_KEY });
 
   this.getTags = function (filepath, callback) {
     taglib.read(filepath, function (err, tag, audioProperties) {

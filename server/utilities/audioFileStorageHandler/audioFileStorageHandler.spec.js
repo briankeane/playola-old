@@ -12,6 +12,8 @@ describe('audioFileStorageHandler', function (done) {
 
   before(function (done) {  
     this.timeout(30000);
+    console.log('process.env');
+    console.log(process.env);
     audioSH.clearBucket('playolasongstest', function () {
       audioSH.clearBucket('playolacommentariestest', function () {
         audioSH.clearBucket('playolaunprocessedsongstest', function () {

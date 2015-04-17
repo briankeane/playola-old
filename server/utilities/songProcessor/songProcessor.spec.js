@@ -76,6 +76,7 @@ describe('songProcessor', function (done) {
   });
 
   it('gets the echonest info', function (done) {
+    this.timeout(5000);
     SongProcessor.getEchonestInfo({ title: 'Stepladder', artist: 'Rachel Loy'
                                    }, function (err, song) {
       expect(song.title).to.equal('Stepladder');
@@ -308,6 +309,7 @@ describe('songProcessor', function (done) {
     });
 
     it('responds to copy-protected song', function (done) {
+      this.timeout(5000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/downtown.m4p', function (err, newSong) {
         expect(err.message).to.equal('File is Copy-Protected');
         done();

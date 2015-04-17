@@ -69,6 +69,8 @@ var all = {
 
 // Export the config object based on the NODE_ENV
 // ==============================================
-module.exports = _.merge(
-  all,
+var outsideObjects = _.merge(
+  require('../local.env'),
   require('./' + process.env.NODE_ENV + '.js') || {});
+
+module.exports = _.merge(all, outsideObjects);

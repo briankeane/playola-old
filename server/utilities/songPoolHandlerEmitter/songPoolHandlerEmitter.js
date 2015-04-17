@@ -8,17 +8,15 @@ var Q = require('q');
 
 function Handler() {
   var self = this;
-  var echo = echojs({ key: process.env.ECHONEST_KEY });
-
-  console.log('config:');
   console.log(config);
-  
+  var echo = echojs({ key: config.ECHONEST_KEY });
+
   this.addSong = function (song) {
     return this.addSongs([song]);
   };
 
   this.getAllSongs = function() {
-    var echo = echojs({ key: process.env.ECHONEST_KEY });
+    var echo = echojs({ key: config.ECHONEST_KEY });
     var emitter = new events.EventEmitter();
     var allSongs = [];
 
@@ -54,7 +52,7 @@ function Handler() {
   };
 
   this.clearAllSongs = function () {
-    echo = echojs({ key: process.env.ECHONEST_KEY })
+    echo = echojs({ key: config.ECHONEST_KEY })
     var emitter = new events.EventEmitter();
 
     function deleteChunkOfSongs() {
