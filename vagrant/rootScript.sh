@@ -7,12 +7,12 @@ sudo apt-get install python-software-properties python g++ make
 sudo apt-get update
 
 sudo apt-get install -y libtag1-dev
-sudo apt-get install -y libav-tools
-sudo apt-get install -y libmp3lame-dev
+#sudo apt-get install -y libav-tools
 
-sudo add-apt-repository ppa:mc3man/trusty-media
+sudo add-apt-repository ppa:kirillshkrogalev/ffmpeg-next
 sudo apt-get update
-sudo apt-get install ffmpeg
+sudo apt-get -y install ffmpeg
+sudo apt-get install -y libmp3lame-dev
 mkdir ~/ffmpeg_sources
 
 # mongo
