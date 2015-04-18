@@ -10,10 +10,8 @@ var audioSH = require('./audioFileStorageHandler');
 
 describe('audioFileStorageHandler', function (done) {
 
-  before(function (done) {  
+  beforeEach(function (done) {  
     this.timeout(30000);
-    console.log('process.env');
-    console.log(process.env);
     audioSH.clearBucket('playolasongstest', function () {
       audioSH.clearBucket('playolacommentariestest', function () {
         audioSH.clearBucket('playolaunprocessedsongstest', function () {
@@ -285,6 +283,7 @@ describe('audioFileStorageHandler', function (done) {
   });
 
   it('deletes a song', function (done) {
+    this.timeout(5000);
     var uploader = s3HighLevel.uploadFile({ localFile: process.cwd() + '/server/data/testFiles/test.txt',
                                       s3Params: {
                                         Bucket: 'playolasongstest',

@@ -1,0 +1,68 @@
+<div class="mic-image-inverse">
+
+  <h1 class="headline">Listen</h1>
+  
+  <tabset class="tabs" id="findStationsPanel" justified="true">
+    <tab heading="Your Twitter Friends">
+      <div class="content active" id="twitter-friends">
+        <div class="row">
+          <a ng-repeat="friend in twitterFriends" ng-href="#" ng-click="playStation(friend._station._id);">
+            <article class="top-station station-square col-sm-6 col-md-3">
+              <img class="twitter-pic" src="{{friend.profileImageUrl}}" />
+              <div class="overlay">
+              <h3 class="overlay-twitter-handle">@{{friend.twitterHandle}}</h3>
+
+              <h3 class="overlay-now-playing-label">Now Playing:</h3>
+
+              <p class="now-playing-title">{{friend.program.nowPlaying._audioBlock.title}}</p>
+              <p class="now-playing-artist">{{friend.program.nowPlaying._audioBlock.artist}}</p>
+              </div>
+            </article>
+          </a>
+        </div>
+      </div>
+    </tab>
+    <tab heading="Top Stations">
+      <div class="content" id="top-stations">
+        <div class="row">
+          <a ng-repeat="station in topStations" ng-href="#" ng-click="playStation(station._id);">
+            <article class="top-station station-square col-sm-6 col-md-3">
+              <img class="twitter-pic" src="{{station._user.profileImageUrl}}" />
+              <div class="overlay">
+              <h3 class="overlay-twitter-handle">@{{station._user.twitterHandle}}</h3>
+
+              <h3 class="overlay-now-playing-label">Now Playing:</h3>
+              <p class="now-playing-title">{{station.program.nowPlaying._audioBlock.title}}</p>
+              <p class="now-playing-artist">{{station.program.nowPlaying._audioBlock.artist}}</p>
+              </div>
+            </article>
+          </a>
+        </div>      
+      </div>
+    </tab>
+    <tab heading="Search">
+      <div class="content active" id="all-songs-source-container">
+        <div>   <!--  extra container for tab/sortable-ui interaction  -->
+          <span for="searchbox">Search Text:</span>
+          <input type="text" id="searchbox" placeholder="Enter Title and/or Artist Here" ng-model="inputs.searchText" ng-model-options="{ debounce: 500 }" ng-change="findStationsByKeywords(inputs.searchText)">
+
+
+          <div id="stationSearchList" >
+            <div class="container col-md-8 col-md-offset-2">
+              <ol class="song-manager-page stationSearchList">
+                <li ng-repeat="user in keywordSearchResults">
+                  <div ng-click="playStation(user._station._id)">
+                    <img class="searchListPic" src="{{ user.profileImageUrl }}" />
+                    <span class="station-twitterHandle">@{{ user.twitterHandle }}</span>
+                    <span class="station-nowPlayingArtist">{{ user.program.nowPlaying._audioBlock.artist }}</span>
+                    <span class="station-nowPlayingTitle">{{ user.program.nowPlaying._audioBlock.title }}</span>
+                  </div>
+                </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </tab>
+  </tabset>
+</div>
