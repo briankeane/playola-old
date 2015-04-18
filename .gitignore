@@ -1,3 +1,5 @@
+/server/data/unprocessedAudio/*
+/server/data/proccessedAudio/*
 node_modules
 public
 .tmp

@@ -1,4 +1,10 @@
 #!/bin/sh
 
+# build the new files
 grunt build
-cp -r ./dist ../
+
+# remove the old files
+rm -rf ../dist/*
+
+# copy new contents
+cp -r ./dist ../ 

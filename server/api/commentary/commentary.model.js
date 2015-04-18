@@ -21,7 +21,7 @@ commentarySchema.virtual('audioFileUrl').get(function () {
     return null;
   } else {
     if (process.env.NODE_ENV == 'production') {
-      return 'http://songs.playola.fm/' + this.key;
+      return 'http://commentaries.playola.fm/' + this.key;
     } else if (process.env.NODE_ENV === 'development') {
       return 'https://s3-us-west-2.amazonaws.com/playolacommentariesdevelopment/' + this.key;
     } else { // ELSE TEST

@@ -320,7 +320,7 @@ module.exports = function (grunt) {
         module: 'playolaApp',
         htmlmin: {
           // collapseBooleanAttributes: true,
-          // collapseWhitespace: true,
+          collapseWhitespace: true,
           // removeAttributeQuotes: true,
           // removeEmptyAttributes: true,
           // removeRedundantAttributes: true,

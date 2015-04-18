@@ -24,6 +24,7 @@ Vagrant.configure(2) do |config|
 
   config.vm.synced_folder ".", "/home/vagrant/www", create: true, type: "nfs"
   config.vm.synced_folder "../dist", "/home/vagrant/dist", create: true, type: "nfs"
+  config.vm.synced_folder "../key", "/home/vagrant/code/key", create: true, type: "nfs"
 
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root","1"]

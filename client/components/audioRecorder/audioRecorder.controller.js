@@ -66,10 +66,10 @@ angular.module('playolaApp')
       $scope.recordButtonDisabled = true;
       $scope.stopDisabled = false;
       if (AudioPlayer.muted) {
-        wasMuted = true;
+        $scope.wasMuted = true;
       } else {
         AudioPlayer.mute();
-        wasMuted = false;
+        $scope.wasMuted = false;
       }
       $(document).trigger('recordingStarted');
     };
@@ -79,7 +79,7 @@ angular.module('playolaApp')
       $(document).trigger('recordingStopped');
       $scope.stopDisabled = true;
       $scope.recordButtonDisabled = true;
-      if (!wasMuted) {
+      if (!$scope.wasMuted) {
         AudioPlayer.unmute();
       }
     };

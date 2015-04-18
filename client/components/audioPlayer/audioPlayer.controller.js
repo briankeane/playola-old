@@ -18,8 +18,6 @@ angular.module('playolaApp')
         for (var i=0;i<$scope.presets.length;i++) {
           refreshStation($scope.presets[i]);
         }
-
-        console.log(result);
       })
     }, 1000);
 
@@ -47,7 +45,6 @@ angular.module('playolaApp')
       Auth.createRotationItem({ weight: 17,
                                   bin: 'active',
                                   _song: songId }, function (err, results) {
-        console.log(results);
       });
     };
 
