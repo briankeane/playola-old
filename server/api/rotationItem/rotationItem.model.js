@@ -129,7 +129,7 @@ rotationItemSchema.statics.updateBySongId = function (attrs, callback) {
 
 rotationItemSchema.methods.updateWeight = function (weight, callback) {
   // do nothing if there is no change
-  if (weight == this.weight) {
+  if (weight === this.weight) {
     callback(null, this);
   } else {
     // store the old values in history array
@@ -146,7 +146,7 @@ rotationItemSchema.methods.updateWeight = function (weight, callback) {
 
 rotationItemSchema.methods.updateBin = function (bin, callback) {
   // do nothing if there is no change
-  if (this.bin == bin) {
+  if (this.bin === bin) {
     callback(null, this);
   } else {
     // store the old values in history array
@@ -163,7 +163,7 @@ rotationItemSchema.methods.updateBin = function (bin, callback) {
 
 rotationItemSchema.methods.updateWeightAndBin = function (weight, bin, callback) {
   // do nothing if there is no change
-  if ((this.bin == bin) && (this.weight == weight)) {
+  if ((this.bin === bin) && (this.weight === weight)) {
     callback(null, this);
   } else {
     // store the old values in history array

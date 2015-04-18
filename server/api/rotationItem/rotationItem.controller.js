@@ -40,7 +40,7 @@ exports.update = function(req, res) {
     var fieldNames = ['eom', 'boo', 'eoi'];
     for (var i in fieldNames) {
       var key = fieldNames[i];
-      if((req.body[key] != null) && (typeof(rotationItem._song[key]) === 'undefined')) {
+      if((req.body[key] !== null) && (typeof(rotationItem._song[key]) === 'undefined')) {
         modifiedFlag = true;
         rotationItem._song[key] = req.body[key];
       }

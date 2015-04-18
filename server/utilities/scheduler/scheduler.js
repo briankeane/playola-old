@@ -1,4 +1,4 @@
-  var Station = require('../../api/station/station.model');
+var Station = require('../../api/station/station.model');
 var AudioBlock = require('../../api/audioBlock/audioBlock.model');
 var LogEntry = require('../../api/logEntry/logEntry.model');
 var Commentary = require('../../api/commentary/commentary.model');
@@ -120,7 +120,7 @@ function Scheduler() {
           } // ENDWHILE
 
           // Save the spins
-          spinsToSave = _.map(spins, function(spin) { return new Spin(spin); });
+          var spinsToSave = _.map(spins, function(spin) { return new Spin(spin); });
           Helper.saveAll(spinsToSave, function (err, savedSpins) {
 
             // update and save the station
@@ -154,10 +154,10 @@ function Scheduler() {
 
     // chooses a random song from the sampleArray
     function chooseSong() {
-      song = _.sample(sampleArray);
+      var song = _.sample(sampleArray);
 
       // while the id is in the recentlyPlayedSongs array, pick another
-      while(recentlyPlayedSongs.some(function (e) { return e.id == song.id; })) {
+      while(recentlyPlayedSongs.some(function (e) { return e.id === song.id; })) {
         song = _.sample(sampleArray);
       }
 
@@ -172,12 +172,12 @@ function Scheduler() {
   }
 
   function checkForFollowingCommercial(startTimeMS, endTimeMS) {
-    if ((Math.floor(startTimeMS/1800000.0) != Math.floor(endTimeMS/1800000.0))) {
+    if ((Math.floor(startTimeMS/1800000.0) !== Math.floor(endTimeMS/1800000.0))) {
       return true;
     } else {
       return false;
     }
-  };
+  }
 
   this.addScheduleTimeToSpin = function (station, previousSpin, spinToSchedule) {
     // account for unmarked spins
@@ -284,7 +284,7 @@ function Scheduler() {
     }
 
     Spin.getFullPlaylist(station.id, function (err, gottenPlaylist) {
-      fullPlaylist = gottenPlaylist;
+      var fullPlaylist = gottenPlaylist;
       
       // exit if there's no playlist
       if (!fullPlaylist.length) {
@@ -403,7 +403,7 @@ function Scheduler() {
 
               Q.fcall(function () {
                 if (logEntry.commercialsFollow) {
-                  newLogEntry = new LogEntry({ playlistPosition: logEntry.playlistPosition,
+                  var newLogEntry = new LogEntry({ playlistPosition: logEntry.playlistPosition,
                                                _audioBlock: stationCommercialBlock.id,
                                                _station: station.id,
                                                airtime: logEntry.endTime,
@@ -510,7 +510,7 @@ function Scheduler() {
 
       
       // IF it's already been adjusted for this block
-      if (user.lastCommercial && user.lastCommercial.commercialBlockNumber && (user.lastCommercial.commercialBlockNumber == commercialBlockNumber)) {
+      if (user.lastCommercial && user.lastCommercial.commercialBlockNumber && (user.lastCommercial.commercialBlockNumber === commercialBlockNumber)) {
         callback(null, user.lastCommercial.audioFileUrl);
         return;
       } else {
@@ -551,7 +551,7 @@ function Scheduler() {
       }
 
       // throw an error if the same position is called for
-      if (spin.playlistPosition == attrs.newPlaylistPosition) {
+      if (spin.playlistPosition === attrs.newPlaylistPosition) {
         callback (new Error('Spin is already at the requested playlistPosition'));
         return;
       }
@@ -572,7 +572,7 @@ function Scheduler() {
         var oldIndex;
         var newIndex;
 
-        for (i=0;i<beforePlaylist.length;i++) {
+        for (var i=0;i<beforePlaylist.length;i++) {
           if (beforePlaylist[i].playlistPosition === minPlaylistPosition) {
             minIndex = i;
           } else if (beforePlaylist[i].playlistPosition === maxPlaylistPosition) {

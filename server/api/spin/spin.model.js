@@ -64,7 +64,7 @@ spinSchema.virtual('commercialsFollow').get(function () {
     return null;
   } else {
     // if beginning and end of spin are in different time 'blocks'
-    if (Math.floor(this.airtime.getTime()/1800000.0) != Math.floor(this.endTime.getTime()/1800000.0)) {
+    if (Math.floor(this.airtime.getTime()/1800000.0) !== Math.floor(this.endTime.getTime()/1800000.0)) {
       return true;
     } else {
       return false;

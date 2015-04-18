@@ -99,7 +99,7 @@ function Handler() {
           });
         })
       });
-    };
+    }
     deleteChunkOfSongs();
     return emitter;
   }
@@ -133,8 +133,8 @@ function Handler() {
       });
 
       // remove the duplicates from songsToAdd
-      for (i=duplicateSongs.length-1;i>=0;i--) {
-        for(j=songsToAdd.length-1;j>=0;j--) {
+      for (var i=duplicateSongs.length-1;i>=0;i--) {
+        for(var j=songsToAdd.length-1;j>=0;j--) {
           if (duplicateSongs[i]["song_id"] === songsToAdd.echonestId) {
             songsToAdd.splice(j,1);
           }
@@ -142,7 +142,7 @@ function Handler() {
       }
 
       // add the songs
-      addSongsJson = _.map(songsToAdd, function (song) {
+      var addSongsJson = _.map(songsToAdd, function (song) {
         return '{ "item": {' +
                     '"item_id": "' + song.key + '", ' +
                     '"song_id" : "' + song.echonestId + '", ' +
@@ -180,10 +180,10 @@ function Handler() {
     // build string
     var emitter = new events.EventEmitter();
 
-    data = '[{ "action": "delete", "item": {' + 
+    var data = '[{ "action": "delete", "item": {' + 
                                   '"item_id": "' + itemId + '"' + 
                                   '}' +
-            '}]'
+               '}]'
 
     echo('tasteprofile/update').post({ id: config.ECHONEST_TASTE_PROFILE_ID, data: data }, function (err, json) {
 
@@ -226,7 +226,7 @@ function Handler() {
             var deferred = Q.defer();
             Song.findAllMatchingArtist(artists[i], function (err, artistSongs) {
               if (err) {
-                deferred.reject(new Error(error));
+                deferred.reject(new Error(err));
               } else {
                 deferred.resolve(artistSongs);
               }
@@ -304,7 +304,7 @@ function Handler() {
       return;
     }
     echo('tasteprofile/status').get({ ticket: ticket }, function (err, json) {
-      if (json.response["ticket_status"] != 'complete') {
+      if (json.response["ticket_status"] !== 'complete') {
         setTimeout(function () {
           waitForCompletedTicket(ticket, callback);
         }, 1500);

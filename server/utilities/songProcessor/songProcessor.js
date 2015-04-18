@@ -51,22 +51,23 @@ function SongProcessor() {
   };
 
   this.getItunesInfo = function (attrs, callback) {
-    url = 'https://itunes.apple.com/search?' + qs.stringify( { term: ((attrs.artist || '') + ' ' + (attrs.title || '')) });
+    var url = 'https://itunes.apple.com/search?' + qs.stringify( { term: ((attrs.artist || '') + ' ' + (attrs.title || '')) });
 
     request(url, function (error, response, body) {
-      if (response.statusCode == 403) {
+      if (response.statusCode === 403) {
         console.log(response.statusCode);
         setTimeout(self.getItunesInfo(attrs, callback), 500);
         return;
       }
 
+      var match;
       var responseObj = JSON.parse(body);
       if (responseObj.resultCount === 0) {
         var err = new Error('iTunes match not found');
         callback(err);
         return;
       } else {
-        var match = responseObj.results[0];
+        match = responseObj.results[0];
       }
 
       // add the 600x600 albumArtwork
@@ -130,8 +131,8 @@ function SongProcessor() {
           })
 
 
-          var err = new Error('Song info not found');
-          err.tags = tags;
+          var error = new Error('Song info not found');
+          error.tags = tags;
 
           // convert the song and store it on 
 
@@ -165,7 +166,7 @@ function SongProcessor() {
             // grab itunes artwork
             self.getItunesInfo({ title: match.title, artist: match.artist }, function (err, itunesInfo) {
               if (err) {
-                var itunesInfo = {};
+                itunesInfo = {};
               }
               
               // store the song
@@ -182,16 +183,16 @@ function SongProcessor() {
                 }
 
                 // add to DB
-                song = new Song({ title: match.title,
-                              artist: match.artist,
-                              album: match.album,
-                              duration: tags.duration,
-                              echonestId: match.echonestId,
-                              key: key,
-                              albumArtworkUrl: itunesInfo.albumArtworkUrl,
-                              albumArtworkUrlSmall: itunesInfo.artworkUrl100,
-                              trackViewUrl: itunesInfo.trackViewUrl,
-                              itunesInfo: itunesInfo })
+                varsong = new Song({ title: match.title,
+                                     artist: match.artist,
+                                     album: match.album,
+                                     duration: tags.duration,
+                                     echonestId: match.echonestId,
+                                     key: key,
+                                     albumArtworkUrl: itunesInfo.albumArtworkUrl,
+                                     albumArtworkUrlSmall: itunesInfo.artworkUrl100,
+                                     trackViewUrl: itunesInfo.trackViewUrl,
+                                     itunesInfo: itunesInfo })
                 song.save(function (err, newSong) {
                   if (err) callback(err);
 

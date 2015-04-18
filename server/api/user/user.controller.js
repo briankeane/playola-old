@@ -50,7 +50,7 @@ exports.show = function (req, res, next) {
   });
 };
 
-exports.twitterFriends = function(req,res) {
+exports.twitterFriends = function(req, res, next) {
   User.findById(req.params.id, function (err, user) {
     if (err) return next(err);
     if (!user) return res.send(401);
@@ -227,6 +227,11 @@ exports.search = function (req, res, next) {
     if (!list) return res.send(200, { users: [] });
     return res.json(200, { users: list });
   });
+}
+
+
+function handleError(res, err) {
+  return res.send(500, err);
 }
 
 /**

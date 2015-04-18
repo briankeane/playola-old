@@ -34,7 +34,7 @@ function Helper() {
   };
   
   this.clearDatabase = function (callback) {
-    models = [
+    var models = [
               AudioBlock, 
               RotationItem, 
               Spin, 

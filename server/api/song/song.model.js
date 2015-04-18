@@ -30,7 +30,7 @@ songSchema.virtual('audioFileUrl').get(function () {
   if (!this.key) {
     return null;
   } else {
-    if (process.env.NODE_ENV == 'production') {
+    if (process.env.NODE_ENV === 'production') {
       return 'http://songs.playola.fm/' + this.key;
     } else if (process.env.NODE_ENV === 'development') {
       return 'https://s3-us-west-2.amazonaws.com/playolasongsdevelopment/' + this.key;

@@ -67,7 +67,7 @@ exports.setup = function (User, config) {
           friends = friends.concat(result.users);
           
           // continue making requests if necessary
-          if (result.next_cursor != 0) {
+          if (result.next_cursor !== 0) {
             getSetOfFriends(result.next_cursor);
           }
 

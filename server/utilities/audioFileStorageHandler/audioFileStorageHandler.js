@@ -90,7 +90,7 @@ function Handler() {
       if (!objects.length) {
         nextKeyValue = 0;
       } else {
-        objectKeyNumbers = _.map(objects, function (obj) { return parseInt(obj["Key"].substr(4,10)) });
+        var objectKeyNumbers = _.map(objects, function (obj) { return parseInt(obj["Key"].substr(4,10)) });
 
         // grab the next available key value from the keys strings
         nextKeyValue = Math.max.apply(Math, objectKeyNumbers);
@@ -270,7 +270,7 @@ this.storeUnprocessedSong = function (filepath, callback) {
               key:        objects[index].Key 
             });
             
-            if (formattedObjects.length == objects.length) {
+            if (formattedObjects.length === objects.length) {
               continueFunction();
             } else {
               process.stdout.clearLine();
