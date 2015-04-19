@@ -175,7 +175,7 @@ DEALINGS IN THE SOFTWARE.
     var worker = new Worker(config.workerPath || blobURL);
 
     // revoke created URL -- won't need it anymore
-    URL.revokeObjectURL (blobURL);
+    //URL.revokeObjectURL (blobURL);
     
     worker.postMessage({
       command: 'init',

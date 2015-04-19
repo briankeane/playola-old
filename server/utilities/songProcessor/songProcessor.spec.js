@@ -76,7 +76,7 @@ describe('songProcessor', function (done) {
   });
 
   xit('gets the echonest info', function (done) {
-    this.timeout(5000);
+    this.timeout(60000);
     SongProcessor.getEchonestInfo({ title: 'Stepladder', artist: 'Rachel Loy'
                                    }, function (err, song) {
       expect(song.title).to.equal('Stepladder');
@@ -265,11 +265,10 @@ describe('songProcessor', function (done) {
       });      
     })
 
-    it('adds a song to the system (db, echonest, AWS', function (done) {
+    xit('adds a song to the system (db, echonest, AWS', function (done) {
       this.timeout(40000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/lonestarTest.m4a', function (err, newSong) {
         if (err) console.log(err);
-console.log('callback started');
         Song.findOne({ artist: 'Delbert McClinton',
                     title: 'Lone Star Blues' }, function (err, song) {
           expect(song.title).to.equal('Lone Star Blues');
@@ -298,8 +297,8 @@ console.log('callback started');
       });
     });
 
-    xit('responds to no echonest song info', function (done) {
-      this.timeout(5000);
+    it('responds to no echonest song info', function (done) {
+      this.timeout(30000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/faithTest.mp3', function (err, newSong) {
         expect(err.message).to.equal('Song info not found');
         expect(err.tags.artist).to.equal('Sting');
@@ -372,7 +371,7 @@ console.log('callback started');
 
     
     after(function (done) {
-      this.timeout(5000);
+      this.timeout(10000);
       for (var i=0;i<testFilesArray.length;i++) {
         try {
           fs.unlinkSync(testFilesArray[i]);
