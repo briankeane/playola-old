@@ -4,6 +4,9 @@ var fs = require('fs');
 var Song = require('../../api/song/song.model');
 var Storage = require('../audioFileStorageHandler/audioFileStorageHandler');
 var SongPool = require('../songPoolHandlerEmitter/songPoolHandlerEmitter');
+var AWS = require('aws-sdk');
+AWS.config.region = 'us-west-2';
+var s3 = new AWS.S3();
 
 var testFilesArray = [];
 
@@ -180,6 +183,17 @@ describe('songProcessor', function (done) {
       .on('finish', function () {
         finishedOperation();
       });
+
+      var readpath8 = process.cwd() + '/server/data/testFiles/noTags.mp3';
+      var writepath8 = process.cwd() + '/server/data/unprocessedAudio/noTags.mp3';
+      var read8 = fs.createReadStream(readpath8)
+      var write8 = fs.createWriteStream(writepath8);
+      testFilesArray.push(process.cwd() + '/server/data/processedAudio/noTags.mp3');
+      testFilesArray.push(writepath8);
+      read8.pipe(write8)
+      .on('finish', function () {
+        finishedOperation();
+      });
       
       Storage.clearBucket('playolasongstest', function () {
         finishedOperation();
@@ -193,7 +207,7 @@ describe('songProcessor', function (done) {
       function finishedOperation() {
         finishedCount++;
 
-        if (finishedCount >= 9) {
+        if (finishedCount >= 10) {
           done();
         }
       }
@@ -263,7 +277,29 @@ describe('songProcessor', function (done) {
           });
         });
       });      
-    })
+    });
+    
+    // addSongToSystem tests
+    it('calls bullshit  & stores song for later if id tags are not found', function (done) {
+      this.timeout(10000);
+      SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/noTags.mp3', function (err, newSong) {
+        expect(err.message).to.equal('No Id Info in File');
+
+        // make sure it got stored on server
+        s3.headObject({ Bucket: 'playolaunprocessedsongstest', Key: err.key}, function (newErr, data) {
+          expect(data.ContentLength).to.equal('83217');
+          done();
+        });
+      });
+    });
+
+    xit('responds to copy-protected song', function (done) {
+      this.timeout(10000);
+      SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/downtown.m4p', function (err, newSong) {
+        expect(err.message).to.equal('File is Copy-Protected');
+        done();
+      });
+    });
 
     xit('adds a song to the system (db, echonest, AWS', function (done) {
       this.timeout(40000);
@@ -297,7 +333,7 @@ describe('songProcessor', function (done) {
       });
     });
 
-    it('responds to no echonest song info', function (done) {
+    xit('responds to no echonest song info', function (done) {
       this.timeout(30000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/faithTest.mp3', function (err, newSong) {
         expect(err.message).to.equal('Song info not found');
@@ -308,13 +344,6 @@ describe('songProcessor', function (done) {
       });
     });
 
-    xit('responds to copy-protected song', function (done) {
-      this.timeout(10000);
-      SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/downtown.m4p', function (err, newSong) {
-        expect(err.message).to.equal('File is Copy-Protected');
-        done();
-      });
-    });
 
     xit('allows resubmission with chosen echonestId', function (done) {
       this.timeout(10000);
@@ -371,7 +400,7 @@ describe('songProcessor', function (done) {
 
     
     after(function (done) {
-      this.timeout(10000);
+      this.timeout(20000);
       for (var i=0;i<testFilesArray.length;i++) {
         try {
           fs.unlinkSync(testFilesArray[i]);

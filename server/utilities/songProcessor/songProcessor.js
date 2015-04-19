@@ -128,8 +128,10 @@ function SongProcessor() {
               return;
             }
           });
+          return;
         }
 
+console.log('why here????');
         // get closest echonest tags
         self.getEchonestInfo({ title: tags.title, artist: tags.artist }, function (err, match) {
           if (err || !match) {
