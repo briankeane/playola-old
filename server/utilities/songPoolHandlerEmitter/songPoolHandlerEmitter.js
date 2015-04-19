@@ -8,7 +8,6 @@ var Q = require('q');
 
 function Handler() {
   var self = this;
-  console.log(config);
   var echo = echojs({ key: config.ECHONEST_KEY });
 
   this.addSong = function (song) {
@@ -285,7 +284,6 @@ function Handler() {
                   
                   i++;
                 }
-                console.log('finalList size: ' + finalList.length);
                 // callback with list
                 callback(null, finalList);
               });

@@ -1,6 +1,3 @@
-console.log(process.env)
-
-
 var config = require('../../config/environment/');
 var s3HighLevel = require('s3').createClient(config.s3Options);
 var AWS = require('aws-sdk');

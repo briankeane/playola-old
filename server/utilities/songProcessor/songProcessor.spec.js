@@ -9,7 +9,7 @@ var testFilesArray = [];
 
 describe('songProcessor', function (done) {
   
-  it('gets id3 tags from an mp3 file', function (done) {
+  xit('gets id3 tags from an mp3 file', function (done) {
     this.timeout(5000);
     SongProcessor.getTags(process.cwd() + '/server/data/testFiles/look.mp3', function (err, tags) {
       expect(tags.title).to.equal('Look At That Girl');
@@ -23,7 +23,7 @@ describe('songProcessor', function (done) {
     });
   });
 
-  it('gets id4 tags from an encrypted m4a file', function (done) {
+  xit('gets id4 tags from an encrypted m4a file', function (done) {
     this.timeout(5000);
     SongProcessor.getTags(process.cwd() + '/server/data/testFiles/downtown.m4p', function (err, tags) {
       expect(tags.title).to.equal('Girl Downtown');
@@ -34,7 +34,7 @@ describe('songProcessor', function (done) {
     });
   });
 
-  it('gets id4 tags from a non-encrypted m4a file', function (done) {
+  xit('gets id4 tags from a non-encrypted m4a file', function (done) {
     this.timeout(5000);
     SongProcessor.getTags(process.cwd() + '/server/data/testFiles/lonestar.m4a', function (err, tags) {
       if (err) { console.log(err);}
@@ -45,8 +45,8 @@ describe('songProcessor', function (done) {
     });
   });
 
-  it('gets itunes info', function (done) {
-    this.timeout(5000);
+  xit('gets itunes info', function (done) {
+    this.timeout(10000);
     SongProcessor.getItunesInfo({ artist: 'Miranda Lambert',
                                   title: 'Little Red Wagon'
                                 }, function (err, match) {
@@ -56,7 +56,7 @@ describe('songProcessor', function (done) {
     });
   });
 
-  it('getSongMatchPossibilities', function (done) {
+  xit('getSongMatchPossibilities', function (done) {
     this.timeout(4000);
     SongProcessor.getSongMatchPossibilities({ artist: 'The Beatles',
                                               title: 'Eleanor Rigby' 
@@ -75,7 +75,7 @@ describe('songProcessor', function (done) {
     }); 
   });
 
-  it('gets the echonest info', function (done) {
+  xit('gets the echonest info', function (done) {
     this.timeout(5000);
     SongProcessor.getEchonestInfo({ title: 'Stepladder', artist: 'Rachel Loy'
                                    }, function (err, song) {
@@ -98,7 +98,7 @@ describe('songProcessor', function (done) {
   describe('adds a song to the system', function (done) {
 
     before(function (done) {
-      this.timeout(5000);
+      this.timeout(20000);
       var finishedCount = 0;
     
       // copy the file from test folder to unprocessedAudio folder
@@ -199,7 +199,7 @@ describe('songProcessor', function (done) {
       }
     });
 
-    it ('writes id3 tags', function (done) {
+    xit ('writes id3 tags', function (done) {
       this.timeout(5000);
       var filepath = process.cwd() + '/server/data/unprocessedAudio/faithTest2.mp3'
       SongProcessor.writeTags({ filepath: filepath,
@@ -232,7 +232,7 @@ describe('songProcessor', function (done) {
       })  
     });
 
-    it('writes id4 tags', function (done) {
+    xit('writes id4 tags', function (done) {
       this.timeout(5000);
       var filepath = process.cwd() + '/server/data/unprocessedAudio/lonestarTest3.m4a'
       SongProcessor.writeTags({ filepath: filepath,
@@ -269,6 +269,7 @@ describe('songProcessor', function (done) {
       this.timeout(40000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/lonestarTest.m4a', function (err, newSong) {
         if (err) console.log(err);
+console.log('callback started');
         Song.findOne({ artist: 'Delbert McClinton',
                     title: 'Lone Star Blues' }, function (err, song) {
           expect(song.title).to.equal('Lone Star Blues');
@@ -297,7 +298,7 @@ describe('songProcessor', function (done) {
       });
     });
 
-    it('responds to no echonest song info', function (done) {
+    xit('responds to no echonest song info', function (done) {
       this.timeout(5000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/faithTest.mp3', function (err, newSong) {
         expect(err.message).to.equal('Song info not found');
@@ -308,15 +309,15 @@ describe('songProcessor', function (done) {
       });
     });
 
-    it('responds to copy-protected song', function (done) {
-      this.timeout(5000);
+    xit('responds to copy-protected song', function (done) {
+      this.timeout(10000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/downtown.m4p', function (err, newSong) {
         expect(err.message).to.equal('File is Copy-Protected');
         done();
       });
     });
 
-    it('allows resubmission with chosen echonestId', function (done) {
+    xit('allows resubmission with chosen echonestId', function (done) {
       this.timeout(10000);
       SongPool.clearAllSongs()
       .on('finish', function () {
@@ -355,7 +356,7 @@ describe('songProcessor', function (done) {
       });
     });
 
-    it ('will not add a song already in system', function (done) {
+    xit ('will not add a song already in system', function (done) {
       this.timeout(10000);
       Song.create({ title: 'Lone Star Blues',
                     artist: 'Delbert McClinton',
