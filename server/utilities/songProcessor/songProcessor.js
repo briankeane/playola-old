@@ -124,6 +124,7 @@ function SongProcessor() {
             } else {
               var error = new Error('No Id Info in File');
               error.key = key;
+              error.filepath = filepath;
               callback(error);
               return;
             }
@@ -131,7 +132,6 @@ function SongProcessor() {
           return;
         }
 
-console.log('why here????');
         // get closest echonest tags
         self.getEchonestInfo({ title: tags.title, artist: tags.artist }, function (err, match) {
           if (err || !match) {
@@ -147,6 +147,7 @@ console.log('why here????');
               var error = new Error('Song info not found');
               error.tags = tags;
               error.key = key;
+              error.filepath = filepath;
               callback(error);
               return;
             });
@@ -164,6 +165,7 @@ console.log('why here????');
             if (songs.length) {
               var err = new Error('Song Already Exists');
               err.song = songs[0];
+              err.filepath = filepath;
               callback(err);
               return;
             }

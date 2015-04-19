@@ -22,13 +22,33 @@ exports.show = function(req, res) {
 };
 
 exports.create = function(req, res) {
-  SongProcessor.addSongToSystem((process.cwd() + '/server/data/unprocessedAudio/' + req.files.file.name), function (err, newSong) {
+  var originalFilepath = process.cwd() + '/server/data/unprocessedAudio/' + req.files.file.name)
+  SongProcessor.addSongToSystem(originalFilepath, function (err, newSong) {
     if (err) {
-      if (err.message === 'Song info not found') {
+      if (err.message === 'File is Copy-Protected') {
+        // delete the song
+        fs.unlink(originalFilepath);
+        return res.send(200, { status: 'File is Copy-Protected' });
+
+      } else if (err.message === 'No Id Info in File') {
+        // delete the song
+        fs.unlink(originalFilepath);
+
+        // create an upload for this
+        var upload = Upload.create( { key: err.key, 
+                                      status: 'No Id Info in File' 
+                                    }, function (err, savedUpload) {
+          return res.send(200, savedUpload);
+        });
+
+      } else if (err.message === 'Song info not found') {
+        // delete the file since it's been processed
+        fs.unlink(err.filename);
+        
         // get possible matches for response
         SongProcessor.getSongMatchPossibilities({ artist: err.tags.artist,
                                                   title: err.tags.title,
-                                                  key: err.newKey 
+                                                  key: err.newK5ey 
                                                 }, function (matchErr, matches) {
           Upload.create({ tags: err.tags,
                           possibleMatches: matches,
@@ -39,6 +59,7 @@ exports.create = function(req, res) {
           });
         })
       } else if (err.message === 'Song Already Exists') {
+        fs.unlink(err.filepath);
         return res.json(200, { status: 'Song Already Exists',
                                song: err.song });
       }

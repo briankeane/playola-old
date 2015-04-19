@@ -280,7 +280,15 @@ describe('songProcessor', function (done) {
     });
     
     // addSongToSystem tests
-    it('calls bullshit  & stores song for later if id tags are not found', function (done) {
+    xit('responds to copy-protected song', function (done) {
+      this.timeout(10000);
+      SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/downtown.m4p', function (err, newSong) {
+        expect(err.message).to.equal('File is Copy-Protected');
+        done();
+      });
+    });
+
+    xit('calls bullshit  & stores song for later if id tags are not found', function (done) {
       this.timeout(10000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/noTags.mp3', function (err, newSong) {
         expect(err.message).to.equal('No Id Info in File');
@@ -293,11 +301,33 @@ describe('songProcessor', function (done) {
       });
     });
 
-    xit('responds to copy-protected song', function (done) {
+    it('calls bullshit and stores a song for later if no echonest match found', function (done) {
+      this.timeout(30000);
+      SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/faithTest.mp3', function (err, newSong) {
+        expect(err.message).to.equal('Song info not found');
+        expect(err.tags.artist).to.equal('Sting');
+        expect(err.tags.title).to.equal('Prologue (If I Ever Lose My Faith In You)');
+        expect(err.tags.album).to.equal("Ten Summoner's Tales");
+
+        // make sure it's stored for later
+        s3.headObject({ Bucket: 'playolaunprocessedsongstest', Key: err.key }, function (newErr, data) {
+          expect(data.ContentLength).to.equal('82528');
+          done();
+        });
+      });
+    });
+
+    xit ('will not add a song already in system', function (done) {
       this.timeout(10000);
-      SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/downtown.m4p', function (err, newSong) {
-        expect(err.message).to.equal('File is Copy-Protected');
-        done();
+      Song.create({ title: 'Lone Star Blues',
+                    artist: 'Delbert McClinton',
+                  }, function (err, newSong) {
+        SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/lonestarTest2.m4a', function (err, newSong) {
+          expect(err.message).to.equal('Song Already Exists');
+          expect(err.song.title).to.equal('Lone Star Blues');
+          expect(err.song.artist).to.equal('Delbert McClinton');
+          done();
+        });
       });
     });
 
@@ -332,18 +362,6 @@ describe('songProcessor', function (done) {
         })
       });
     });
-
-    xit('responds to no echonest song info', function (done) {
-      this.timeout(30000);
-      SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/faithTest.mp3', function (err, newSong) {
-        expect(err.message).to.equal('Song info not found');
-        expect(err.tags.artist).to.equal('Sting');
-        expect(err.tags.title).to.equal('Prologue (If I Ever Lose My Faith In You)');
-        expect(err.tags.album).to.equal("Ten Summoner's Tales");
-        done();
-      });
-    });
-
 
     xit('allows resubmission with chosen echonestId', function (done) {
       this.timeout(10000);
@@ -384,19 +402,6 @@ describe('songProcessor', function (done) {
       });
     });
 
-    xit ('will not add a song already in system', function (done) {
-      this.timeout(10000);
-      Song.create({ title: 'Lone Star Blues',
-                    artist: 'Delbert McClinton',
-                  }, function (err, newSong) {
-        SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/lonestarTest2.m4a', function (err, newSong) {
-          expect(err.message).to.equal('Song Already Exists');
-          expect(err.song.title).to.equal('Lone Star Blues');
-          expect(err.song.artist).to.equal('Delbert McClinton');
-          done();
-        });
-      });
-    });
 
     
     after(function (done) {
