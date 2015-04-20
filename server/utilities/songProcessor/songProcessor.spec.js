@@ -338,7 +338,7 @@ describe('songProcessor', function (done) {
       });
     });
 
-    it('adds a song to the system (db, echonest, AWS', function (done) {
+    xit('adds a song to the system (db, echonest, AWS', function (done) {
       this.timeout(40000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/lonestarTest.m4a', function (err, newSong) {
         if (err) console.log(err);

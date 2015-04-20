@@ -4,6 +4,7 @@ var _ = require('lodash');
 var Upload = require('./upload.model');
 var SongProcessor = require('../../utilities/songProcessor/songProcessor');
 var Song = require('../song/song.model');
+var fs = require('fs');
 
 // Get list of things
 exports.index = function(req, res) {
@@ -27,23 +28,24 @@ exports.create = function(req, res) {
     if (err) {
       if (err.message === 'File is Copy-Protected') {
         // delete the song
-        fs.unlink(originalFilepath);
-        return res.send(200, { status: 'File is Copy-Protected' });
+        fs.unlink(originalFilepath, function () {} );
+        return res.json(200, { status: 'File is Copy-Protected' });
 
       } else if (err.message === 'No Id Info in File') {
         // delete the song
-        fs.unlink(originalFilepath);
+        fs.unlink(originalFilepath, function () {});
 
         // create an upload for this
         var upload = Upload.create( { key: err.key, 
                                       status: 'No Id Info in File' 
                                     }, function (err, savedUpload) {
-          return res.send(200, savedUpload);
+          return res.json(200, savedUpload);
         });
 
       } else if (err.message === 'Song info not found') {
         // delete the file since it's been processed
-        fs.unlink(err.filename);
+        console.log(err.filepath);
+        fs.unlink(err.filepath, function () {} );
 
         // get possible matches for response
         SongProcessor.getSongMatchPossibilities({ artist: err.tags.artist,
@@ -55,16 +57,16 @@ exports.create = function(req, res) {
                           filename: req.files.file.name,
                           status: 'info needed'
                         }, function (err, savedUpload) {
-            return res.send(200, savedUpload);
+            return res.json(200, savedUpload);
           });
         });
       } else if (err.message === 'Song Already Exists') {
-        fs.unlink(err.filepath);
+        fs.unlink(err.filepath, function () {} );
         return res.json(200, { status: 'Song Already Exists',
                                song: err.song });
       }
     } else {
-      return res.send(200, { status: 'added',
+      return res.json(200, { status: 'added',
                               song: newSong });
     }
   })

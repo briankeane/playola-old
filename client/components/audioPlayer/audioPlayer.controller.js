@@ -3,42 +3,53 @@
 angular.module('playolaApp')
   .controller('AudioPlayerCtrl', function ($scope, $location, Auth, AudioPlayer, $timeout) {
 
-    $scope.presets = [];
-    $scope.selectedPresetId = '';
-    $scope.timeouts = [];
+    $scope.initialized = false;
+
+    if (Auth.getCurrentStation()) {
+      init();
+    }
+
+    function init() {
+      $scope.initialized = true;
+      $scope.presets = [];
+      $scope.selectedPresetId = '';
+      $scope.timeouts = [];
 
 
-    
-    // wait for loading and grab presets
-    $timeout(function () {
-      Auth.getPresets(function (err, result) {
-        $scope.presets = result.presets;
+      
+      // wait for loading and grab presets
+      $timeout(function () {
+        Auth.getPresets(function (err, result) {
+          $scope.presets = result.presets;
 
-        // grab the program
-        for (var i=0;i<$scope.presets.length;i++) {
-          refreshStation($scope.presets[i]);
-        }
-      })
-    }, 1000);
+          // grab the program
+          for (var i=0;i<$scope.presets.length;i++) {
+            refreshStation($scope.presets[i]);
+          }
+        })
+      }, 1000);
 
-    // grab currenStation
-    $scope.currentStation = Auth.getCurrentStation();
+      // grab currenStation
+      $scope.currentStation = Auth.getCurrentStation();
 
-    // grab Rotation Items
-    $scope.rotationItems = [];
-    $scope.rotationItemAudioBlockIds = [];
-    $timeout(getRotationItems, 2000);
+      // grab Rotation Items
+      $scope.rotationItems = [];
+      $scope.rotationItemAudioBlockIds = [];
+      $timeout(getRotationItems, 2000);
 
-    // grab the current user
-    $scope.currentUser = Auth.getCurrentUser();
-    
-    $scope.isCollapsed = false;
-    $scope.player = AudioPlayer;
-    $scope.volume;
+      // grab the current user
+      $scope.currentUser = Auth.getCurrentUser();
+      
+      $scope.isCollapsed = false;
+      $scope.player = AudioPlayer;
+      $scope.volume;
+    }
 
     $scope.$on('stationChanged', function (newStation) {
-
-    })
+      if (!$scope.initialized) {
+        init();
+      }
+    });
 
     $scope.addToMyStation = function(songId) {
       alert('hi' + songId);
@@ -82,34 +93,39 @@ angular.module('playolaApp')
     
     // check to see if the station is already in the presets
     $scope.isInPresets = function (id) {
-      // if it's the user's own station, return true
-      if (id === $scope.currentStation._id) {
-        return true;
-      }
-      
-      // check the array
-      for (var i=0;i<$scope.presets.length;i++) {
-        // if it's this station or it's included in
-        if ($scope.presets[i]._id === id) {
+      if ($scope.currentStation) {
+        // if it's the user's own station, return true
+        if (id === $scope.currentStation._id) {
           return true;
         }
+        
+        // check the array
+        for (var i=0;i<$scope.presets.length;i++) {
+          // if it's this station or it's included in
+          if ($scope.presets[i]._id === id) {
+            return true;
+          }
+        }
+        return false;
       }
-      return false;
     }
 
     // text/disabled/inPresets
     $scope.presetButtonInfo = function (stationId) {
-      if ($scope.currentStation._id === stationId) {
-        return { text: 'Add Station to Presets',
-                 disabled: true };
-      } else if ($scope.isInPresets(stationId)) {
-        return { text: 'Remove From Presets',
-                 inPresets: true,
+      if ($scope.currentStation) {
+
+        if ($scope.currentStation._id === stationId) {
+          return { text: 'Add Station to Presets',
+                   disabled: true };
+        } else if ($scope.isInPresets(stationId)) {
+          return { text: 'Remove From Presets',
+                   inPresets: true,
+                   disabled: false };
+        } else {
+          return { text: 'Add Station to Presets',
+                 inPresets: false,
                  disabled: false };
-      } else {
-        return { text: 'Add Station to Presets',
-               inPresets: false,
-               disabled: false };
+        }
       }
     }
 
@@ -161,7 +177,7 @@ angular.module('playolaApp')
 
 
     function getRotationItems() {
-      if ($scope.currentStation._id) {
+      if ($scope.currentStation && $scope.currentStation._id) {
 
         Auth.getRotationItems($scope.currentStation._id, function (err, rotationItems) {
           $scope.rotationItems = rotationItems;

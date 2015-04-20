@@ -188,7 +188,7 @@ function SongProcessor() {
                   callback(new Error('Audio File Storage Error'));
                   return;
                 }
-                
+
                 // add to DB
                 var song = new Song({ title: match.title,
                                      artist: match.artist,
@@ -205,7 +205,7 @@ function SongProcessor() {
                   if (err) callback(err);
 
                   // delete the file 
-                  if (fs.exists(filepath)) fs.unlink(filepath);
+                  if (fs.exists(filepath)) fs.unlink(filepath, function () {});
 
                   // add song to Echonest
                   SongPool.addSong(newSong)
@@ -228,7 +228,7 @@ function SongProcessor() {
   };
 
   this.addSongViaEchonestId = function (info, callback) {
-    // convert the song
+    // check to see if new song is in databse
     Converter.convertFile(info.filepath, function (err, filepath) {
       if (err) {
         callback(err);
@@ -268,7 +268,7 @@ function SongProcessor() {
             if (err) callback(err);
 
             // delete file 
-            if (fs.exists(filepath)) fs.unlink(filepath);
+            if (fs.exists(filepath)) fs.unlink(filepath, function () {});
 
             // add song to Echonest
             SongPool.addSong(newSong)

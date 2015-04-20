@@ -444,7 +444,7 @@ module.exports = function (grunt) {
       options: {
         reporter: 'spec'
       },
-      src: ['server/**/audioFileStorageHandler.spec.js']
+      src: ['server/**/songProcessor.spec.js']
     },
 
     protractor: {
@@ -699,22 +699,22 @@ module.exports = function (grunt) {
   })
   grunt.registerTask('loadEchonest:dev', function () {
     return grunt.task.run([
-      'env:all',
       'env:dev',
+      'env:all',
       'loadEchonestFromDB'
     ]);
   })
   grunt.registerTask('loadEchonest:prod', function () {
     return grunt.task.run([
-    'env:all',
     'env:prod',
+    'env:all',
     'loadEchonestFromDB'  
     ]);
   })
   grunt.registerTask('updateItunes:dev', function () {
     return grunt.task.run([
-      'env:all',
       'env:dev',
+      'env:all',
       'updateItunesInfo'
     ]);
   })

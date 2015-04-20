@@ -33,7 +33,9 @@ var rotationItemSchema = new Schema({
 var markerGetGenerator = function(field) {
   var fieldName = '_' + field;
   return function() {
-    if (typeof(this[fieldName]) !== 'undefined') {
+    if (this[fieldName] === null) {
+      return null;
+    } else if (typeof(this[fieldName]) !== 'undefined') {
       return this[fieldName];
     } else {
       return this._song[field];
