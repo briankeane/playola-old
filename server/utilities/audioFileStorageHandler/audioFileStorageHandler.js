@@ -76,7 +76,7 @@ function Handler() {
     
     // add objects to the array as they come in
     listGetter.on('data', function (newData) {
-      objects.concat(newData.Contents);
+      objects = objects.concat(newData.Contents);
     });
 
     // after all objects have been gotten
@@ -112,7 +112,7 @@ function Handler() {
 
       var uploader = s3HighLevel.uploadFile({ localFile: attrs.filepath,
                                               s3Params: { 
-                                                Bucket: config["s3Buckets"].UNPROCESSED_SONGS_BUCKET,
+                                                Bucket: config["s3Buckets"].SONGS_BUCKET,
                                                 Key: key,
                                                 ContentType: 'audio/mpeg',
                                                 Metadata: metadata

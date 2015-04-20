@@ -444,7 +444,7 @@ module.exports = function (grunt) {
       options: {
         reporter: 'spec'
       },
-      src: ['server/**/songProcessor.spec.js']
+      src: ['server/**/audioFileStorageHandler.spec.js']
     },
 
     protractor: {

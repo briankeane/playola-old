@@ -102,11 +102,11 @@ describe('songProcessor', function (done) {
 
   describe('adds a song to the system', function (done) {
 
-    beforeEach(function (done) {
-      SpecHelper.clearDatabase(function () {
-        done();
-      });
-    });
+    // beforeEach(function (done) {
+    //   SpecHelper.clearDatabase(function () {
+    //     done();
+    //   });
+    // });
 
     before(function (done) {
       this.timeout(20000);
@@ -346,7 +346,7 @@ describe('songProcessor', function (done) {
                     title: 'Lone Star Blues' }, function (err, song) {
           expect(song.title).to.equal('Lone Star Blues');
           expect(song.artist).to.equal('Delbert McClinton');
-          expect(song.duration).to.equal(4000);
+          expect(song.duration).to.equal(5000);
           expect(song.echonestId).to.equal('SOASHCW12B35058614');
           expect(song.key).to.equal('-pl-01-DelbertMcClinton-LoneStarBlues.mp3')
           expect(song.albumArtworkUrl).to.equal('http://is5.mzstatic.com/image/pf/us/r30/Music/v4/2b/fc/a3/2bfca30d-727c-e235-75d9-dbc7ead5b0d8/607396604234.600x600-75.jpg')
@@ -422,12 +422,12 @@ describe('songProcessor', function (done) {
       }
 
       SpecHelper.clearDatabase(function () {
-        Storage.clearBucket('playolasongstest', function () {
+        //Storage.clearBucket('playolasongstest', function () {
           SongPool.clearAllSongs()
           .on('finish', function() {
             done();
           });
-        });
+        //});
       });
 
     });
