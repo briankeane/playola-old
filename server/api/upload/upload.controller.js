@@ -57,7 +57,7 @@ exports.create = function(req, res) {
                         }, function (err, savedUpload) {
             return res.send(200, savedUpload);
           });
-        })
+        });
       } else if (err.message === 'Song Already Exists') {
         fs.unlink(err.filepath);
         return res.json(200, { status: 'Song Already Exists',

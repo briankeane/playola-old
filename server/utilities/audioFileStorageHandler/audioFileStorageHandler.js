@@ -25,11 +25,10 @@ function Handler() {
 
     var objects = [];
     listGetter.on('data', function (newData) {
-      objects.concat(newData.Contents);
+      objects = objects.concat(newData.Contents);
     });
 
     listGetter.on('end', function () {
-      
       // IF the bucket is not already empty
       var objectKeys = [];
       if (objects.length > 0) {

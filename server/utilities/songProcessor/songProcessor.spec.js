@@ -1,12 +1,14 @@
-var SongProcessor = require('./songProcessor');
+var app = require('../../app');
 var expect = require('chai').expect;
 var fs = require('fs');
 var Song = require('../../api/song/song.model');
 var Storage = require('../audioFileStorageHandler/audioFileStorageHandler');
 var SongPool = require('../songPoolHandlerEmitter/songPoolHandlerEmitter');
+var SongProcessor = require('./songProcessor');
 var AWS = require('aws-sdk');
 AWS.config.region = 'us-west-2';
 var s3 = new AWS.S3();
+var SpecHelper = require('../helpers/specHelper');
 
 var testFilesArray = [];
 
@@ -99,6 +101,12 @@ describe('songProcessor', function (done) {
   });
 
   describe('adds a song to the system', function (done) {
+
+    beforeEach(function (done) {
+      SpecHelper.clearDatabase(function () {
+        done();
+      });
+    });
 
     before(function (done) {
       this.timeout(20000);
@@ -317,13 +325,10 @@ describe('songProcessor', function (done) {
       });
     });
 
-    it ('will not add a song already in system', function (done) {
-      this.timeout(100000);
-  console.log('creating song...');
-      var song = new Song({ title: 'Lone Star Blues',
-                    artist: 'Delbert McClinton'});
-      song.save(function (err, newSong) {
-console.log('adding')
+    xit ('will not add a song already in system', function (done) {
+      this.timeout(5000);
+      var song = Song.create({ title: 'Lone Star Blues',
+                    artist: 'Delbert McClinton'}, function (err, newSong) {
         SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/lonestarTest2.m4a', function (err, newSong) {
           expect(err.message).to.equal('Song Already Exists');
           expect(err.song.title).to.equal('Lone Star Blues');
@@ -333,7 +338,7 @@ console.log('adding')
       });
     });
 
-    xit('adds a song to the system (db, echonest, AWS', function (done) {
+    it('adds a song to the system (db, echonest, AWS', function (done) {
       this.timeout(40000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/lonestarTest.m4a', function (err, newSong) {
         if (err) console.log(err);
@@ -405,7 +410,7 @@ console.log('adding')
     });
 
 
-    
+
     after(function (done) {
       this.timeout(20000);
       for (var i=0;i<testFilesArray.length;i++) {
@@ -416,12 +421,15 @@ console.log('adding')
         }
       }
 
-      Storage.clearBucket('playolasongstest', function () {
-        SongPool.clearAllSongs()
-        .on('finish', function() {
-          done();
+      SpecHelper.clearDatabase(function () {
+        Storage.clearBucket('playolasongstest', function () {
+          SongPool.clearAllSongs()
+          .on('finish', function() {
+            done();
+          });
         });
       });
+
     });
   });
 });

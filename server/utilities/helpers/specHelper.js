@@ -9,6 +9,7 @@ var Spin = require('../../api/spin/spin.model');
 var Station = require('../../api/station/station.model');
 var User = require('../../api/user/user.model');
 var Preset = require('../../api/preset/preset.model');
+var Upload = require('../../api/upload/upload.model');
 var _ = require('lodash');
 
 function Helper() {
@@ -41,7 +42,8 @@ function Helper() {
               Station, 
               User,
               LogEntry,
-              Preset
+              Preset,
+              Upload
               ]
 
     var functions = [];

@@ -114,7 +114,6 @@ function SongProcessor() {
           return;
         } 
 
-console.log('tags gotten');
         // if there's not enough info, store the file for future use
         if (!tags.title || !tags.artist) {
           Storage.storeUnprocessedSong(filepath, function (err, key) {
@@ -138,7 +137,7 @@ console.log('tags gotten');
             callback(err);
             return;
           }
-console.log('echonestInfoGotten')
+
           // if a suitable match was not found...
           if ((match.titleMatchRating < 0.75) || (match.artistMatchRating < 0.75)) {
             
@@ -152,7 +151,6 @@ console.log('echonestInfoGotten')
               return;
             });
           }
-console.log('about to search db');
           Song.findAllByTitleAndArtist( { title: match.title,
                                         artist: match.artist 
                                         }, function (err, songs) {
@@ -163,7 +161,6 @@ console.log('about to search db');
 
             // if the song already exists, callback with song exists error
             if (songs.length) {
-console.log('EXISTS')
               var err = new Error('Song Already Exists');
               err.song = songs[0];
               err.filepath = filepath;
