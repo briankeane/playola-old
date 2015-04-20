@@ -22,7 +22,7 @@ exports.show = function(req, res) {
 };
 
 exports.create = function(req, res) {
-  var originalFilepath = process.cwd() + '/server/data/unprocessedAudio/' + req.files.file.name)
+  var originalFilepath = process.cwd() + '/server/data/unprocessedAudio/' + req.files.file.name;
   SongProcessor.addSongToSystem(originalFilepath, function (err, newSong) {
     if (err) {
       if (err.message === 'File is Copy-Protected') {
@@ -44,11 +44,11 @@ exports.create = function(req, res) {
       } else if (err.message === 'Song info not found') {
         // delete the file since it's been processed
         fs.unlink(err.filename);
-        
+
         // get possible matches for response
         SongProcessor.getSongMatchPossibilities({ artist: err.tags.artist,
                                                   title: err.tags.title,
-                                                  key: err.newK5ey 
+                                                  key: err.key 
                                                 }, function (matchErr, matches) {
           Upload.create({ tags: err.tags,
                           possibleMatches: matches,

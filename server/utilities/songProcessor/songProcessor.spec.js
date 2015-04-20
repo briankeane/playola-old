@@ -301,7 +301,7 @@ describe('songProcessor', function (done) {
       });
     });
 
-    it('calls bullshit and stores a song for later if no echonest match found', function (done) {
+    xit('calls bullshit and stores a song for later if no echonest match found', function (done) {
       this.timeout(30000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/faithTest.mp3', function (err, newSong) {
         expect(err.message).to.equal('Song info not found');
@@ -317,11 +317,13 @@ describe('songProcessor', function (done) {
       });
     });
 
-    xit ('will not add a song already in system', function (done) {
-      this.timeout(10000);
-      Song.create({ title: 'Lone Star Blues',
-                    artist: 'Delbert McClinton',
-                  }, function (err, newSong) {
+    it ('will not add a song already in system', function (done) {
+      this.timeout(100000);
+  console.log('creating song...');
+      var song = new Song({ title: 'Lone Star Blues',
+                    artist: 'Delbert McClinton'});
+      song.save(function (err, newSong) {
+console.log('adding')
         SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/lonestarTest2.m4a', function (err, newSong) {
           expect(err.message).to.equal('Song Already Exists');
           expect(err.song.title).to.equal('Lone Star Blues');
