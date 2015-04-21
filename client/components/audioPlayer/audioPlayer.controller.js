@@ -1,21 +1,27 @@
 'use strict';
 
 angular.module('playolaApp')
-  .controller('AudioPlayerCtrl', function ($scope, $location, Auth, AudioPlayer, $timeout) {
+  .controller('AudioPlayerCtrl', function ($rootScope, $scope, $location, Auth, AudioPlayer, $timeout) {
 
+    // initialize variables
+    $scope.userLoaded = false;
     $scope.initialized = false;
+    $scope.presets;
+    $scope.initialized = true;
+    $scope.presets = [];
+    $scope.selectedPresetId = '';
+    $scope.timeouts = [];
+    $scope.rotationItems = [];
+    $scope.rotationItemAudioBlockIds = [];
+    $scope.player = AudioPlayer;
+    $scope.volume;
+    $scope.isCollapsed = true;
 
-    if (Auth.getCurrentStation()) {
-      init();
-    }
 
-    function init() {
-      $scope.initialized = true;
-      $scope.presets = [];
-      $scope.selectedPresetId = '';
-      $scope.timeouts = [];
-
-
+    // event-driven functions
+    $rootScope.$on('loggedIn', function () {
+      // grab currenStation
+      $scope.currentStation = Auth.getCurrentStation();
       
       // wait for loading and grab presets
       $timeout(function () {
@@ -28,29 +34,21 @@ angular.module('playolaApp')
           }
         })
       }, 1000);
-
-      // grab currenStation
-      $scope.currentStation = Auth.getCurrentStation();
-
-      // grab Rotation Items
-      $scope.rotationItems = [];
-      $scope.rotationItemAudioBlockIds = [];
+      
       $timeout(getRotationItems, 2000);
-
+      
       // grab the current user
       $scope.currentUser = Auth.getCurrentUser();
-      
-      $scope.isCollapsed = false;
-      $scope.player = AudioPlayer;
-      $scope.volume;
-    }
-
-    $scope.$on('stationChanged', function (newStation) {
-      if (!$scope.initialized) {
-        init();
-      }
     });
 
+    $rootScope.$on('loggedOut', function () {
+      $scope.isCollapsed = true;
+    });
+
+    $rootScope.$on('stationChanged', function () {
+      $scope.isCollapsed = false;
+    });
+    
     $scope.addToMyStation = function(songId) {
       alert('hi' + songId);
       Auth.createRotationItem({ weight: 17,

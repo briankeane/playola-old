@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('playolaApp')
-  .controller('NavbarCtrl', function ($scope, $location, Auth) {
+  .controller('NavbarCtrl', function ($scope, $rootScope, $location, $window, Auth) {
     $scope.menu = [{
       'title': 'Home',
       'link': '/'
@@ -14,7 +14,12 @@ angular.module('playolaApp')
 
     $scope.logout = function() {
       Auth.logout();
-      $location.path('/login');
+      $rootScope.$broadcast('loggedOut');
+      $location.path('/');
+    };
+
+    $scope.loginOauth = function(provider) {
+      $window.location.href = '/auth/' + provider;
     };
 
     $scope.isActive = function(route) {

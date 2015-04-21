@@ -47,6 +47,12 @@ angular.module('playolaApp')
     self.gainNode.connect(self.muteGain);
     self.muteGain.connect(this.context.destination);
 
+    $rootScope.$on('loggedOut', function () {
+      self.clearPlayer();
+      cancelTimeouts();
+      self.isPlaying = false;
+    });
+
     // *************************************************
     // *         loadStation(stationId)                *
     // *************************************************
@@ -61,7 +67,7 @@ angular.module('playolaApp')
         return;
       }
 
-
+      $rootScope.$broadcast('stationChanged');
       self.clearPlayer();
 
       self.isLoading = true;
@@ -140,11 +146,7 @@ angular.module('playolaApp')
         self.nowPlaying.source.stop();
       }
 
-      // stop any advances
-      for(var i=0;i<self.timeouts.length;i++) {
-        $timeout.cancel(self.timeouts[i]);
-      }
-      self.timeouts = [];
+      cancelTimeouts();
       
       // clear the queues
       self.nowPlaying = null;
@@ -225,6 +227,14 @@ angular.module('playolaApp')
           updateListeningSession();
         }, 60*1000)
       });
+    }
+
+    function cancelTimeouts() {
+      // stop any advances
+      for(var i=0;i<self.timeouts.length;i++) {
+        $timeout.cancel(self.timeouts[i]);
+      }
+      self.timeouts = [];
     }
 
     function updateListeningSession() {

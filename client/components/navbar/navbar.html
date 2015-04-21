@@ -19,7 +19,7 @@
 
       <ul class="nav navbar-nav navbar-right">
         <li ng-hide="isLoggedIn()" ng-class="{active: isActive('/signup')}"><a href="/signup">Sign In</a></li>
-        <li ng-hide="isLoggedIn()" ng-class="{active: isActive('/login')}"><a href="/login">Login</a></li>
+        <li ng-hide="isLoggedIn()" ng-class="{active: isActive('/login')}"><a ng-click="loginOauth('twitter')">Login</a></li>
         <li ng-show="isLoggedIn()"><a href="/station">Listen</a></li>
         <li ng-show="isLoggedIn()" class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Broadcast <span class="caret"></span></a>

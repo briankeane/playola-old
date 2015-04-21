@@ -52,7 +52,7 @@ angular.module('playolaApp', [
       Auth.isLoggedInAsync(function(loggedIn) {
         // if not logged in, redirect to login
         if (next.authenticate && !loggedIn) {
-          $location.path('/login');
+          $location.path('/');
         } else {
           var user = Auth.getCurrentUser();
           if (next.authenticate && !(user.zipcode && user.birthYear && user.gender && user._station)) {

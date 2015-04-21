@@ -31,6 +31,7 @@ angular.module('playolaApp')
           $cookieStore.put('token', data.token);
           currentUser = User.get();
           deferred.resolve(data);
+          $rootScope.$broadcast('loggedIn');
           return cb();
         }).
         error(function(err) {
@@ -50,6 +51,7 @@ angular.module('playolaApp')
       logout: function() {
         $cookieStore.remove('token');
         currentUser = {};
+        $rootScope.$broadcast('loggedOut');
       },
 
       /**
