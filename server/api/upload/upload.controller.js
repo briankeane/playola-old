@@ -84,8 +84,14 @@ exports.resubmitWithEchonestId = function(req, res) {
                                          filename: upload.filename
                                          }, function (err, newSong) {
       if (err) {
+        if (err.message === 'Song Already Exists') {
+          upload.remove();
+          return res.json(200, { status: 'Song Already Exists',
+                               song: err.song });
+        }
         res.json(500, err);
       } else {
+        upload.remove();
         res.json(newSong);
       }
 
