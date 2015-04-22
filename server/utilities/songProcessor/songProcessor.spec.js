@@ -373,7 +373,7 @@ describe('songProcessor', function (done) {
     });
 
     it('allows resubmission with chosen echonestId', function (done) {
-      this.timeout(10000);
+      this.timeout(20000);
       var uploader = s3HighLevel.uploadFile({ localFile: process.cwd() + '/server/data/testFiles/test.txt',
                                     s3Params: {
                                       Bucket: 'playolaunprocessedsongstest',
@@ -388,9 +388,9 @@ describe('songProcessor', function (done) {
                                                 title: 'If I Ever Lose My Faith In You',
                                                 album: "Ten Summoner's Tales",
                                                 duration: 500,
-                                                key: process.cwd() + 'test.txt'
+                                                filename: 'test.txt'
                                               }, function (err, newSong) {
-            
+
             if (err) console.log(err);
 
             expect(newSong.title).to.equal('If I Ever Lose My Faith In You');

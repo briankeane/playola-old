@@ -80,7 +80,8 @@ exports.resubmitWithEchonestId = function(req, res) {
                                          artist: req.query.artist,
                                          album: req.query.album,
                                          duration: upload.tags.duration,
-                                         key: process.cwd() + '/server/data/unprocessedAudio/' + upload.filename
+                                         echonestId: req.query.echonestId,
+                                         filename: upload.filename
                                          }, function (err, newSong) {
       if (err) {
         res.json(500, err);

@@ -175,18 +175,18 @@ function Handler() {
       key = self.cleanFilename(key);
 
       s3.copyObject({ Bucket: config['s3Buckets'].SONGS_BUCKET,
-                    Key: key,
-                    CopySource: config['s3Buckets'].UNPROCESSED_SONGS_BUCKET + '/' + attrs.key,
-                    ContentType: 'audio/mp3',
-                    MetadataDirective: 'REPLACE',
-                    Metadata: {
-                      pl_album: (attrs.album || ''),
-                      pl_artist: (attrs.artist || ''),
-                      pl_title: (attrs.title || ''),
-                      pl_duration: (attrs.duration.toString() || ''),
-                      pl_echonest_id: (attrs.echonestId || '')
-                    } 
-                  }, function (err, data) {
+                      Key: key,
+                      CopySource: config['s3Buckets'].UNPROCESSED_SONGS_BUCKET + '/' + attrs.key,
+                      ContentType: 'audio/mp3',
+                      MetadataDirective: 'REPLACE',
+                      Metadata: {
+                        pl_album: (attrs.album || ''),
+                        pl_artist: (attrs.artist || ''),
+                        pl_title: (attrs.title || ''),
+                        pl_duration: (attrs.duration.toString() || ''),
+                        pl_echonest_id: (attrs.echonestId || '')
+                      } 
+                    }, function (err, data) {
         if (err) {
           callback(err);
         } else {
