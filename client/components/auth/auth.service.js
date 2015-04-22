@@ -2,8 +2,8 @@
 
 angular.module('playolaApp')
   .factory('Auth', function Auth($location, $rootScope, $http, User, RotationItem, Station, Upload, Song, Spin, ListeningSession, $cookieStore, $q) {
-    var currentUser = {};
-    var currentStation = {};
+    var currentUser;
+    var currentStation;
 
     if($cookieStore.get('token')) {
       currentUser = User.get();

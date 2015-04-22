@@ -1,16 +1,14 @@
 'use strict';
 
 angular.module('playolaApp')
-  .controller('djBoothCtrl', function ($rootScope, CommentaryPreviewPlayer, AudioPlayer, $scope, FileUploader, Auth, $location, $window, $timeout, moment, $interval, $modal, $sce) {
-    $scope.user = {};
-    $scope.station = {};
+  .controller('djBoothCtrl', function ($rootScope, CommentaryPreviewPlayer, AudioPlayer, $scope, FileUploader, Auth, $location, $window, $timeout, moment, $interval, $modal, $sce, SharedData) {
+    $scope.user = SharedData.user;
     $scope.errors = {};
     $scope.playlist = [];
     $scope.catalogSearchResults = [];
     $scope.mostRecentCommentary = {};
     
     $scope.player = AudioPlayer;
-    $scope.currentStation = Auth.getCurrentStation()
     $scope.currentUser = Auth.getCurrentUser();
 
     var nextAdvance;
@@ -24,10 +22,14 @@ angular.module('playolaApp')
     $scope.uploader = new FileUploader({ url: 'api/v1/commentaries/upload',
                                           autoUpload: true });
     
-    // wait a sec for currentStation and load the station
-    $timeout(function () {
-      AudioPlayer.loadStation($scope.currentStation._id);
-    }, 1000);
+    // start station
+    if (!SharedData.myStation) {
+      $rootScope.$on('myStationLoaded', function () {
+        AudioPlayer.loadStation(SharedData.myStation._id);
+      });
+    } else {
+      AudioPlayer.loadStation(SharedData.myStation._id);
+    }
 
 
 
@@ -37,7 +39,7 @@ angular.module('playolaApp')
     $scope.uploader.onBeforeUploadItem = function (item) {
       item._file = $scope.mostRecentCommentary.blob;
       item.formData.push({ duration: Math.round($scope.mostRecentCommentary.model.duration),
-                            _station: $scope.currentStation._id,
+                            _station: SharedData.myStation._id,
                             playlistPosition: $scope.mostRecentCommentary.playlistPosition });
     };
 
@@ -71,7 +73,7 @@ angular.module('playolaApp')
           return (err);
         } else {
 
-          moment.tz.setDefault($scope.currentStation.timezone);
+          moment.tz.setDefault(SharedData.myStation.timezone);
 
           $scope.playlist = program.playlist;
           
@@ -197,7 +199,7 @@ angular.module('playolaApp')
         // increment timeTracker
         timeTracker.add($scope.playlist[i].duration, 'ms');
         if ($scope.playlist[i].commercialsFollow) {
-          timeTracker.add($scope.currentStation.secsOfCommercialPerHour/2, 'seconds');
+          timeTracker.add(SharedData.myStation.secsOfCommercialPerHour/2, 'seconds');
         }
 
         playlistPositionTracker++;
@@ -306,7 +308,7 @@ angular.module('playolaApp')
           // notify server and refresh list
           Auth.insertSpin({ playlistPosition: newSpin.playlistPosition,
                             _audioBlock: newSpin._audioBlock._id,
-                            _station: $scope.currentStation._id 
+                            _station: SharedData.myStation._id 
                           }, function (err, newProgram) {
             if (err) { return false; }
             $scope.playlist = newProgram.playlist;
@@ -349,8 +351,8 @@ angular.module('playolaApp')
     }
 
     // if there's not a  currentStation yet, wait for it
-    if (!$scope.currentStation._id) {
-      $timeout($scope.setPlaylist, 1000);
+    if (!SharedData.myStation) {
+      $rootScope.$on('myStationLoaded', $scope.setPlaylist);
     } else {
       $scope.setPlaylist();
     }

@@ -12,8 +12,8 @@ angular.module('playolaApp')
                   };
 
     $timeout(function () {
-      Auth.getTwitterFriends(function (err, friends) {
-        $scope.twitterFriends = friends;
+      Auth.getTwitterFriends(function (err, result) {
+        $scope.twitterFriends = result.friends;
 
         // grab the program for each station
         for(var i=0;i<$scope.twitterFriends.length;i++) {
