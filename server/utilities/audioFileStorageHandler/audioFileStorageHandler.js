@@ -124,7 +124,7 @@ function Handler() {
     });    
   };
 
-this.storeUnprocessedSong = function (filepath, callback) {
+  this.storeUnprocessedSong = function (filepath, callback) {
     var key = self.cleanFilename(filepath.split('/').pop());
 
     var uploader = s3HighLevel.uploadFile({ localFile: filepath,
@@ -138,6 +138,68 @@ this.storeUnprocessedSong = function (filepath, callback) {
       callback(null, key);
     });
   };
+
+  this.finalizeUpload = function (attrs, callback) {
+    // build key
+    var listGetter = s3HighLevel.listObjects({ s3Params: { Bucket: config["s3Buckets"].SONGS_BUCKET } });
+    
+    var objects = [];
+    
+    // add objects to the array as they come in
+    listGetter.on('data', function (newData) {
+      objects = objects.concat(newData.Contents);
+    });
+
+    // after all objects have been gotten
+    listGetter.on('end', function () {
+      var nextKeyValue;
+      
+      if (!objects.length) {
+        nextKeyValue = 0;
+      } else {
+        var objectKeyNumbers = _.map(objects, function (obj) { return parseInt(obj["Key"].substr(4,10)) });
+
+        // grab the next available key value from the keys strings
+        nextKeyValue = Math.max.apply(Math, objectKeyNumbers);
+      }
+
+      nextKeyValue++;
+
+      var key = '-pl-' + 
+                ('0' * (7 - nextKeyValue.toString())) + 
+                nextKeyValue + '-' +
+                attrs.artist + '-' + 
+                attrs.title  +
+                '.mp3';
+
+      key = self.cleanFilename(key);
+
+      s3.copyObject({ Bucket: config['s3Buckets'].SONGS_BUCKET,
+                    Key: key,
+                    CopySource: config['s3Buckets'].UNPROCESSED_SONGS_BUCKET + '/' + attrs.key,
+                    ContentType: 'audio/mp3',
+                    MetadataDirective: 'REPLACE',
+                    Metadata: {
+                      pl_album: (attrs.album || ''),
+                      pl_artist: (attrs.artist || ''),
+                      pl_title: (attrs.title || ''),
+                      pl_duration: (attrs.duration.toString() || ''),
+                      pl_echonest_id: (attrs.echonestId || '')
+                    } 
+                  }, function (err, data) {
+        if (err) {
+          callback(err);
+        } else {
+          s3.deleteObject({ Bucket: config['s3Buckets'].UNPROCESSED_SONGS_BUCKET,
+                            Key: attrs.key 
+                          }, function (err, data) {
+
+            callback(null, key);
+          });
+        }
+      });
+    });
+  }
 
   this.storeCommentary = function (attrs, callback) {
     // build key

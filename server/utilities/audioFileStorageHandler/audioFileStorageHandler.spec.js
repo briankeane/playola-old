@@ -147,6 +147,36 @@ describe('audioFileStorageHandler', function (done) {
       });
     });
   });
+
+  it('switches a song from unprocessed to processed', function (done) {
+    this.timeout(10000);
+    var uploader = s3HighLevel.uploadFile({ localFile: process.cwd() + '/server/data/testFiles/test.txt',
+                      s3Params: {
+                        Bucket: 'playolaunprocessedsongstest',
+                        Key: 'test.txt'
+                      }
+    });
+    uploader.on('end', function () {
+      audioSH.finalizeUpload({ title: 'testTitle',
+                                filename: 'test.txt',
+                                artist: 'testArtist',
+                                album: 'testAlbum',
+                                duration: 50,
+                                echonestId: 'TESTECHONESTID',
+                                key: 'test.txt'
+                              }, function (err, key) {
+        s3.headObject({ Bucket: 'playolasongstest', Key: key }, function (err, data) {
+          expect(data.ContentLength).to.equal('14');
+          expect(data.Metadata.pl_title).to.equal('testTitle');
+          expect(data.Metadata.pl_artist).to.equal('testArtist');
+          expect(data.Metadata.pl_album).to.equal('testAlbum');
+          expect(data.Metadata.pl_duration).to.equal('50');
+          expect(data.Metadata.pl_echonest_id).to.equal('TESTECHONESTID');
+          done();
+        });
+      });
+    });
+  });
   
   describe('fileFunctions', function (done) {
     after(function (done) {
