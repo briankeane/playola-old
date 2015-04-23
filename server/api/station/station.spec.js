@@ -67,7 +67,9 @@ describe('a station', function () {
 
   it('gets a clock', function (done) {
     var clock = station.getClock();
-    expect(clock.items.length).to.equal(24);
+    expect(clock.items.length).to.equal(22);
+    expect(clock.syncs.length).to.equal(1);
+    expect(clock.end).to.equal(60*60);
     done();
   });
 

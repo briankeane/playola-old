@@ -34,7 +34,6 @@ StationSchema.methods.getClock = function (airtime) {
                    { type: 'bin',  bin: 'medium' },
                    { type: 'bin',  bin: 'medium' },
                    { type: 'bin',  bin: 'light'  },
-                   { type: 'sync', secs: 30*60   },
                    { type: 'bin',  bin: 'medium' },
                    { type: 'bin',  bin: 'heavy'  },
                    { type: 'bin',  bin: 'heavy'  },
@@ -45,9 +44,10 @@ StationSchema.methods.getClock = function (airtime) {
                    { type: 'bin',  bin: 'heavy'  },
                    { type: 'bin',  bin: 'medium' },
                    { type: 'bin',  bin: 'medium' },
-                   { type: 'bin',  bin: 'light'  },
-                   { type: 'end',  secs: 60*60   }
-                  ]
+                   { type: 'bin',  bin: 'light'  }
+                  ],
+            syncs: [ { secs: 30*60, index: 11 } ],
+            end: 60*60
           }
 };
 
