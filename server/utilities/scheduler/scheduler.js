@@ -40,7 +40,8 @@ function Scheduler() {
     var schedule = [];
     var station = attrs.station;
     var startTime = attrs.startTime || (new Date() - 1000*60*60*24.5)   // default is 1 day + 30 min
-      
+    
+    // gather the needed info
     self.updateAirtimes({ station: station }, function (err, updatedStation) {
       // update local station
       self.station = updatedStation;
@@ -112,11 +113,109 @@ function Scheduler() {
   // ******************************************************************************
   this.chooseSong = function (attrs, callback) {  
     // get the full schedule
-    self.getFullSchedule({ station: attrs.station }, function (err, fullSchedule) {
-      // create rest object
+    
+  }
+
+  this.newGeneratePlaylist = function (attrs, callback) {
+    var station = attrs.station;
+    var previousSpin;
+    var spins = [];
+    var rotationItems;
+
+    // adjust playlistEndTime if it's out of max range
+    if (attrs.playlistEndTime && (moment().add(1,'days').isBefore(moment(attrs.playlistEndTime)))) {
+      attrs.playlistEndTime = moment().add(1,'days').toDate();
+    }
+
+    // create the endTime
+    var playlistEndTime = attrs.playlistEndTime || new Date(new Date().getTime() + 2*60*60*1000);
+
+    // grab the rotationItems
+    RotationItem.findAllForStation(station.id, function (err, rotationItems) {
+
+      // grab everything that has been scheduled
+      self.getFullSchedule({ station: station }, function (err, fullSchedule) {
+
+        // bring the restHistory current
+        self.updateRestHistory(station, function (err, updatedStation) {
+          var workingRestHistory = updatedStation.restHistory;
+
+          // update the restHistory through the end of the schedule
+          for (var i=0;i<fullSchedule.length; i++) {
+            if (fullSchedule[i].playlistPosition > workingRestHistory.finalPlaylistPosition) {
+              workingRestHistory.finalPlaylistPosition = playlistPosition;
+              workingRestHistory.artists[fullSchedule[i]._audioBlock.artist] = fullSchedule[i].airtime;
+              workingRestHistory.audioBlocks[fullSchedule[i]._audioBlock.id] = fullSchedule[i].airtime;
+            }
+          }
+
+          // if this is a brand new station, schedule the first song. Also set previousSpin
+          if (!fullSchedule.length) {
+            spins.push({ playlistPosition: 1,
+                         _audioBlock: station.rotationItems[0]._audioBlock, 
+                          airtime: new Date(),
+                          station: station
+                        });
+            previousSpin = spins[0];
+          } else {
+            previousSpin = fullSchedule[fullSchedule.length-1];
+          }
+
+          // store the firstNewPlaylistPosition in order to 
+
+          // WHILE before playlistEndTime
+          while(previousSpin.airtime < playlistEndTime) {
+            if (!clock) {
+              clock = self.getClock({ station: station,
+                                      airtime: previousSpin.airtime + prevousSpin.duration });
+            }
+            // grab the next song
+            var nextSong = chooseSong({ station: station,
+                                      workingRestHistory: workingRestHistory
+                                      
+                                      } )
+
+          }
+
+
+
+
+        })
+      })
 
     })
+
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
   this.generatePlaylist = function (attrs, callback) {
@@ -187,7 +286,7 @@ function Scheduler() {
             spins.push({ playlistPosition: 1,
                                   _audioBlock: chooseSong(),
                                   airtime: new Date(),
-                                  _station: station,
+                                  _station: station
                                   });
             previousSpin = spins[0];
           }

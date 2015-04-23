@@ -444,7 +444,7 @@ module.exports = function (grunt) {
       options: {
         reporter: 'spec'
       },
-      src: ['server/**/scheduler.spec.js']
+      src: ['server/**/station.spec.js']
     },
 
     protractor: {

@@ -16,8 +16,40 @@ var StationSchema = new Schema({
   timezone:                               { type: String                      },
   commentaryCounter:                      { type: Number, default: 0          },
   dailyListenTimeCalculationDate:         { type: Date, default: Date.now()   },
-  restHistory:                            {}
+  restHistory:                            {},
+  clocks:                                 {}
 });
+
+StationSchema.methods.getClock = function (airtime) {
+  // for now, everyone will be on the same damn clock
+  return { items: [ 
+                   { type: 'bin',  bin: 'medium' },
+                   { type: 'bin',  bin: 'heavy'  },
+                   { type: 'bin',  bin: 'heavy'  },
+                   { type: 'bin',  bin: 'light'  },
+                   { type: 'bin',  bin: 'medium' },
+                   { type: 'bin',  bin: 'heavy'  },
+                   { type: 'bin',  bin: 'light'  },
+                   { type: 'bin',  bin: 'heavy'  },
+                   { type: 'bin',  bin: 'medium' },
+                   { type: 'bin',  bin: 'medium' },
+                   { type: 'bin',  bin: 'light'  },
+                   { type: 'sync', secs: 30*60   },
+                   { type: 'bin',  bin: 'medium' },
+                   { type: 'bin',  bin: 'heavy'  },
+                   { type: 'bin',  bin: 'heavy'  },
+                   { type: 'bin',  bin: 'light'  },
+                   { type: 'bin',  bin: 'medium' },
+                   { type: 'bin',  bin: 'heavy'  },
+                   { type: 'bin',  bin: 'light'  },
+                   { type: 'bin',  bin: 'heavy'  },
+                   { type: 'bin',  bin: 'medium' },
+                   { type: 'bin',  bin: 'medium' },
+                   { type: 'bin',  bin: 'light'  },
+                   { type: 'end',  secs: 60*60   }
+                  ]
+          }
+};
 
 // lists Stations by dailyListenTimeMS.  Calculates dailyListenTimeMS if it has not been updated yet today
 StationSchema.statics.listByRank = function (attrs, callback) {

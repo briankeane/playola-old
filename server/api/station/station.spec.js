@@ -65,6 +65,12 @@ describe('a station', function () {
     })
   });
 
+  it('gets a clock', function (done) {
+    var clock = station.getClock();
+    expect(clock.items.length).to.equal(24);
+    done();
+  });
+
   xit ('returns a genre hash', function (done) {
 
   });
