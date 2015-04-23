@@ -15,7 +15,8 @@ var StationSchema = new Schema({
   dailyListenTimeMS:                      { type: Number, default: 0          },
   timezone:                               { type: String                      },
   commentaryCounter:                      { type: Number, default: 0          },
-  dailyListenTimeCalculationDate:           { type: Date, default: Date.now() }
+  dailyListenTimeCalculationDate:         { type: Date, default: Date.now()   },
+  restHistory:                            {}
 });
 
 // lists Stations by dailyListenTimeMS.  Calculates dailyListenTimeMS if it has not been updated yet today

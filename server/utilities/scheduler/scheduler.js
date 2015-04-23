@@ -30,7 +30,12 @@ function Scheduler() {
       callback(null, sampleArray);
     });
   }
-
+  // ******************************************************************************
+  // ****************************** getFullSchedule *******************************
+  // ******************************************************************************
+  // * DESCRIPTION: Combines the full schedule from LogEntries and Spins...       *
+  // * ARGUMENTS: attrs.station, attrs.startTime (optional)                       *
+  // ******************************************************************************
   this.getFullSchedule = function (attrs, callback) {
     var schedule = [];
     var station = attrs.station;
@@ -54,9 +59,62 @@ function Scheduler() {
 
           // now that we have the schedule... send it through all
           callback(null, schedule);
+        });
+      });
+    });
+  }
 
-        })
-      })
+  // ******************************************************************************
+  // ************************ updateStationRestHistory ****************************
+  // ******************************************************************************
+  // * DESCRIPTION: Brings the station's restHistory object up to current time    *
+  // * ARGUMENTS: station
+  // ******************************************************************************
+  this.updateRestHistory = function (station, callback) {
+    var restHistory = station.restHistory;
+
+    // if there is no data yet, start from the beginning
+    if (!restHistory || !restHistory.finalPlaylistPosition) {
+      restHistory = { finalPlaylistPosition: 0,
+                     artists: {},
+                     audioBlocks: {}
+                   }
+    }
+
+    // get the needed schedule
+    LogEntry.getLog({ _station: station.id,
+                      startingPlaylistPosition: restHistory.finalPlaylistPosition 
+                    }, function (err, log) {
+      // update the object
+      log.forEach(function (logEntry) {
+        restHistory.artists[logEntry._audioBlock.artist] = logEntry.airtime;
+        restHistory.audioBlocks[logEntry._audioBlock.id] = logEntry.airtime;
+        restHistory.finalPlaylistPosition = logEntry.playlistPosition;  
+      });
+
+      // save the new Object
+      Station.findByIdAndUpdate(station.id, 
+                              { restHistory: restHistory 
+                              }, function (err, savedStation) {
+        callback(null, savedStation);
+      });
+    });
+  }
+
+  // ******************************************************************************
+  // ******************************** chooseSong **********************************
+  // ******************************************************************************
+  // * DESCRIPTION: Chooses a song that does not break any assigned rules         *
+  // * ARGUMENTS: attrs.station                                                   *
+  // *            attrs.airtime -- (approximate)                                  *
+  // *            attrs.fullSchedule -- an array of all relevant scheduled songs  *
+  // *            attrs.rotationItems -- an array of the choices                  *
+  // ******************************************************************************
+  this.chooseSong = function (attrs, callback) {  
+    // get the full schedule
+    self.getFullSchedule({ station: attrs.station }, function (err, fullSchedule) {
+      // create rest object
+
     })
   }
 
