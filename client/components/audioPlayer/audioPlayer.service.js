@@ -21,6 +21,7 @@ angular.module('playolaApp')
     self.isPlaying = false;
     self.compressor;
     self.stationPlaying;
+    self.requests = [];
 
     // set up audio context and audio nodes
     if (!self.context) {

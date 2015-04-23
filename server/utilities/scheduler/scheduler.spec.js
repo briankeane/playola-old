@@ -1,4 +1,5 @@
 
+var app = require('../../app.js');
 var Station = require('../../api/station/station.model');
 var AudioBlock = require('../../api/audioBlock/audioBlock.model');
 var LogEntry = require('../../api/logEntry/logEntry.model');
@@ -21,6 +22,7 @@ describe('playlist functions', function (done) {
   var rotationItems;
 
   beforeEach(function (done) {
+    this.timeout(5000);
     SpecHelper.clearDatabase(function() {
       user = new User({ twitter: 'BrianKeaneTunes',
                         twitterUID: '756',
@@ -307,8 +309,8 @@ describe('playlist functions', function (done) {
           expect(currentPlaylist[0].airtime.getTime()).to.equal(new Date(2014,3,15, 14,07).getTime());
           expect(currentPlaylist[0].playlistPosition).to.equal(25);
           expect(logEntries[0].airtime.getTime()).to.equal(new Date(2014,3,15,14,04).getTime());
-          expect(logEntries.length).to.equal(27);
-          expect(logEntries[1]._audioBlock._type).to.equal('CommercialBlock');
+          expect(logEntries.length).to.equal(24);
+          expect(logEntries[0].commercialsFollow).to.equal(false);
           done();
         });
       }); 
@@ -351,6 +353,21 @@ describe('playlist functions', function (done) {
     });
   });
 
+  it ('gets the full schedule -- played and not played', function (done) {
+    tk.freeze(new Date(2014,3,15, 14,32));
+    Scheduler.bringCurrent(station, function (err) {
+      tk.freeze(new Date(2014,3,15, 15,11));
+      Scheduler.bringCurrent(station, function (err) {
+        Scheduler.getFullSchedule({ station: station }, function (err, fullSchedule) {
+          expect(fullSchedule.length).to.equal(81);
+          expect(fullSchedule[0].playlistPosition).to.equal(1);
+          
+          done();
+        });
+      });
+    });
+  });
+
   it('brings the station current if a commercialBlock should be nowPlaying', function (done) {
     tk.freeze(new Date(2014,3,15, 13,32));
     Scheduler.bringCurrent(station, function (err) {
@@ -359,8 +376,8 @@ describe('playlist functions', function (done) {
           expect(currentPlaylist[0].playlistPosition).to.equal(15);
           expect(currentPlaylist[0].airtime.getTime()).to.equal(new Date(2014,3,15, 13,34).getTime());
           expect(logEntries[0].playlistPosition).to.equal(14);
-          expect(logEntries[0].airtime.getTime()).to.equal(new Date(2014,3,15, 13,30, 59).getTime());
-          expect(logEntries[0]._audioBlock._type).to.equal('CommercialBlock');
+          expect(logEntries[0].airtime.getTime()).to.equal(new Date(2014,3,15, 13,28).getTime());
+          expect(logEntries[0].commercialsFollow).to.equal(true);
           done();
         });
       });

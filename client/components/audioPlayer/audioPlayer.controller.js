@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('playolaApp')
-  .controller('AudioPlayerCtrl', function ($rootScope, $scope, $location, Auth, AudioPlayer, $timeout) {
+  .controller('AudioPlayerCtrl', function ($rootScope, $scope, $location, Auth, SharedData, AudioPlayer, $timeout) {
 
     // initialize variables
     $scope.userLoaded = false;
@@ -54,6 +54,8 @@ angular.module('playolaApp')
       Auth.createRotationItem({ weight: 17,
                                   bin: 'active',
                                   _song: songId }, function (err, results) {
+        SharedData.myRotationItems = results.rotationItems;
+        console.log(results);
       });
     };
 
@@ -175,17 +177,14 @@ angular.module('playolaApp')
 
 
     function getRotationItems() {
-      if ($scope.currentStation && $scope.currentStation._id) {
-
-        Auth.getRotationItems($scope.currentStation._id, function (err, rotationItems) {
-          $scope.rotationItems = rotationItems;
-          $scope.rotationItemAudioBlockIds = [];
-          for(var i=0;i<rotationItems.active.length;i++) {
-            $scope.rotationItemAudioBlockIds.push(rotationItems.active[i]._song._id);
-          }
-        });
+      if (SharedData.rotationItems) {
+        $scope.rotationItems = SharedData.rotationItems;
+        $scope.rotationItemAudioBlockIds = [];
+        for(var i=0;i<rotationItems.active.length;i++) {
+          $scope.rotationItemAudioBlockIds.push(rotationItems.active[i]._song._id);
+        }
       } else {
-        $timeout(getRotationItems, 5000);
+        $rootScope.$on('rotationItemsLoaded', getRotationItems);
       }
     }
 

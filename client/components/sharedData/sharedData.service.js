@@ -38,10 +38,18 @@ angular.module('playolaApp')
     })
     promises.push(userPromise);
 
-    
+    $rootScope.$on('myStationLoaded', function () {
+      var rotationItemsPromise = Auth.getRotationItems()
+      .then(function (rotationItems) {
+        self.rotationItems = rotationItems;
+        $rootScope.$broadcast('rotationItemsLoaded');
+      });
+    })
 
     $q.all(promises)
     .then(function () {
       console.log('all loaded');
     })
+
+
   });

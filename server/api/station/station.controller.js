@@ -209,6 +209,7 @@ exports.getProgram = function (req,res,next) {
                                             }, function (err, link) {
             programObject.nowPlaying._audioBlock.audioFileUrl = link;
             programObject.nowPlaying._audioBlock.duration = programObject._station.secsOfCommercialPerHour/2*1000;
+            programObject.nowPlaying.duration = programObject._station.secsOfCommercialPerHour/2*1000;
             return res.json(200, programObject);
           });
 
@@ -219,6 +220,7 @@ exports.getProgram = function (req,res,next) {
                                             }, function (err, link) {
             programObject.playlist[0]._audioBlock.audioFileUrl = link;
             programObject.playlist[0]._audioBlock.duration = programObject._station.secsOfCommercialPerHour/2*1000;
+            programObject.playlist[0].duration = programObject._station.secsOfCommercialPerHour/2*1000;
             return res.json(200, programObject);
           });
         }

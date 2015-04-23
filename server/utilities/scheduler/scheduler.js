@@ -31,6 +31,36 @@ function Scheduler() {
     });
   }
 
+  this.getFullSchedule = function (attrs, callback) {
+    var schedule = [];
+    var station = attrs.station;
+    var startTime = attrs.startTime || (new Date() - 1000*60*60*24.5)   // default is 1 day + 30 min
+      
+    self.updateAirtimes({ station: station }, function (err, updatedStation) {
+      // update local station
+      self.station = updatedStation;
+
+      // get all relevant past plays
+      LogEntry.getLog({ _station: self.station._id,
+                        startTime: startTime
+                      }, function (err, logEntries) {
+        // put in chronological order
+        schedule = schedule.concat(logEntries);
+
+        // now get the rest of the spins and 
+        Spin.getFullPlaylist(self.station.id, function (err, spins) {
+          // add the rest of the spins to the end of it
+          schedule = schedule.concat(spins);
+
+          // now that we have the schedule... send it through all
+          callback(null, schedule);
+
+        })
+      })
+    })
+  }
+
+
   this.generatePlaylist = function (attrs, callback) {
     var previousSpin;
     var recentlyPlayedSongs = [];
@@ -372,6 +402,7 @@ function Scheduler() {
     var playlist;
     var newLogEntries = [];
 
+    // get last played logEntry
     LogEntry.getRecent({ _station: station.id, count: 1 }, function (err, logEntries) {
       
       // if there is no log or if the station is already current
@@ -391,55 +422,25 @@ function Scheduler() {
         self.generatePlaylist({ station: station, endTime: Date.now() }, function (err, updatedStation) {
           station = updatedStation;
 
+          // get the playlist
           Spin.getPartialPlaylist({ _station: station.id, 
                                     endTime: new Date()
                                      }, function (err, partialPlaylist) {
 
             playlist = partialPlaylist;
 
-            var stationCommercialBlock = new CommercialBlock({ duration: (station.secsOfCommercialPerHour/2)*1000 });
-            stationCommercialBlock.save(function (err, savedStationCommercialBlock) {
-              stationCommercialBlock = savedStationCommercialBlock;
+            // set up array for storing new entries to be saved
+            var playedLogEntries = [];
+            
+            playlist.forEach(function (spin) {
+              playedLogEntries.push(LogEntry.newFromSpin(spin));
+            });
 
-              Q.fcall(function () {
-                if (logEntry.commercialsFollow) {
-                  var newLogEntry = new LogEntry({ playlistPosition: logEntry.playlistPosition,
-                                               _audioBlock: stationCommercialBlock.id,
-                                               _station: station.id,
-                                               airtime: logEntry.endTime,
-                                               commercialsFollow: false 
-                                             }, function (err, newLogEntry) {
-                    logEntry = newLogEntry;
-                    return newLogEntry;
-                  });
-                }
-                return logEntry;
-                
-              }).then(function (newLogEntry) {
-                logEntry = newLogEntry;
-                var playedLogEntries = [];
-                
-                playlist.forEach(function (spin) {
-                  playedLogEntries.push(LogEntry.newFromSpin(spin));
-                  
-                  // if there's a commercial next and the commercial is not in the future
-                  if (spin.commercialsFollow && (spin.endTime < new Date())) {
-                    playedLogEntries.push( new LogEntry({ playlistPosition: spin.playlistPosition,
-                                                          _audioBlock: stationCommercialBlock,
-                                                          _station: station.id,
-                                                          airtime: new Date(spin.endTime.getTime() - 1000),
-                                                          commercialsFollow: false }));
-                  }
-                });
-
-                Helper.saveAll(playedLogEntries, function (err, savedLogEntries) {
-                  Helper.removeAll(playlist, function (err, removedPlaylist) {
-                    callback(null);
-                    return null;
-                  });
-                });
-              }).done();
-
+            Helper.saveAll(playedLogEntries, function (err, savedLogEntries) {
+              Helper.removeAll(playlist, function (err, removedPlaylist) {
+                callback(null);
+                return null;
+              });
             });
           });
         });
