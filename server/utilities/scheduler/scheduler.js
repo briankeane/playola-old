@@ -11,6 +11,7 @@ var moment = require('moment-timezone');
 var _ = require('lodash');
 var Helper = require('../helpers/helper');
 var Q = require('q');
+var rules = require('../../utilities/rules/rules');
 
 
 
@@ -121,6 +122,7 @@ function Scheduler() {
     var previousSpin;
     var spins = [];
     var rotationItems;
+    var newStationFlag;
 
     // adjust playlistEndTime if it's out of max range
     if (attrs.playlistEndTime && (moment().add(1,'days').isBefore(moment(attrs.playlistEndTime)))) {
@@ -149,73 +151,131 @@ function Scheduler() {
             }
           }
 
+          
+          var firstNewPlaylistPosition;  // so we know which spins to save later on
+
           // if this is a brand new station, schedule the first song. Also set previousSpin
           if (!fullSchedule.length) {
+            newStationFlag = true;
             spins.push({ playlistPosition: 1,
                          _audioBlock: station.rotationItems[0]._audioBlock, 
                           airtime: new Date(),
                           station: station
                         });
             previousSpin = spins[0];
+            firstNewPlaylistIndex = 0;
+
           } else {
             previousSpin = fullSchedule[fullSchedule.length-1];
+            firstNewPlaylistIndex = fullSchedule.length;
           }
 
-          // store the firstNewPlaylistPosition in order to 
+          // declare variables for clock
+          var clock;
+          var clockStartTime;
+          var nextSyncTime;
+          var nextSyncClockIndex;
+          var nextSyncIndex;
+          var clockEndTime;
+          var clockIndex = 0;
 
           // WHILE before playlistEndTime
           while(previousSpin.airtime < playlistEndTime) {
+
+            // get approx airtime for calculations
+            var nextAirtime = new Date(previousSpin.airtime + previousSpin.duration);
+
+            // if there's no clock, set one up
             if (!clock) {
-              clock = self.getClock({ station: station,
-                                      airtime: previousSpin.airtime + prevousSpin.duration });
-            }
+              clock = station.getClock(nextAirtime);
+              clockStartTime = new Date().setMinutes(0,0,0);      // set to the previous top of the hour
+              
+              // set clockIndex (move 1 index for every 3 minutes);
+              clockIndex = Math.floor(((new Date().getTime() - clockStartTime.getTime())/1000)/(60*3));
+              
+              // set clockEndTime
+              clockEndTime = new Date(clockStartTime().getTime() + clock.end);
+
+              // set nextSyncTime 
+              if (clock.syncs.length) {
+                for (var i=0;i<clock.syncs;i++) {
+                  if (syncs[i].index > clockIndex) {
+                    nextSyncTime = new Date(clockStartTime + syncs[i].secs*1000);
+                    nextSyncIndex = i;
+                    nextSyncClockIndex = syncs[i].index;
+                  }
+                }
+              } else {
+                nextSyncTime = null;
+              }
+
+            }  // ENDIF clock-setup
+
             // grab the next song
-            var nextSong = chooseSong({ station: station,
-                                      workingRestHistory: workingRestHistory
-                                      
-                                      } )
+            var newSong = chooseSong({ station: station,
+                                       workingRestHistory: workingRestHistory,
+                                       bin: clock.items[clockIndex],
+                                       rotationItems: rotationItems,
+                                       fullSchedule: fullSchedule
+                                    });
+            var newSpin = { playlistPosition: previousSpin.playlistPosition + 1,
+                            _audioBlock: newSong,
+                            _station: station };
 
-          }
+            // adjust airtimes
+            self.addScheduleTimeToSpin(station, previousSpin, newSpin);
 
+            // update workingRestHistory
+            workingRestHistory.artists[newSong.artist] = newSpin.airtime;
+            workingRestHistory.audioBlocks[newSong.id] = newSpin.airtime;
 
+            fullSchedule.push(newSpin);
+            clockIndex += 1;
 
+            // if it's the end of the clock
+            if ((clockIndex >= clock.items.length) || ((newSpin.airtime + newSpin.duration) > clock.endTime)) {
+              clockIndex = null;
+              clock = null;
+              clockStartTime = null;
+              clockEndTime = null;
+            
+            // ELSE IF sync needs to be advanced
+            } else if (((newSpin.airtime + newSpin.duration) >  nextSyncTime) &&
+                    (clockIndex < nextSyncClockIndex)) {
 
-        })
-      })
+                clockIndex = nextSyncClockIndex;
+                nextSyncIndex += 1;
 
-    })
+                if (nextSyncIndex >= clock.syncs.length) {
+                  nextSyncTime = null;
+                } else {
+                  nextSyncTime = new Date(clockStartTime + syncs[nextSyncIndex].secs*1000);
+                  nextSyncClockIndex = syncs[nextSyncIndex].index;
+                }
+              }
+            } // ENDWHILE
 
-  }
+          // grab the spins that need to be saved
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+          var spinsToSave = _.map(fullSchedule.slice(firstNewPlaylistIndex), function(spin) { return new Spin(spin); });
+          Helper.saveAll(spinsToSave, function (savedSpins) {
+            // update and save the station
+            station.lastAccuratePlaylistPosition = previousSpin.playlistPosition;
+            station.save(function (err, savedStation) {
+              if (newStationFlag) {
+                var logEntry = LogEntry.newFromSpin(savedSpins[0]);
+                savedSpins[0].remove(function (err, removedSpin) {
+                  callback (null, savedStation);
+                });
+              } else {
+                callback(null, station);
+              }
+            });
+          });
+        });
+      });
+    });
+  };
 
 
   this.generatePlaylist = function (attrs, callback) {
