@@ -11,7 +11,7 @@ var moment = require('moment-timezone');
 var _ = require('lodash');
 var Helper = require('../helpers/helper');
 var Q = require('q');
-var rules = require('../../utilities/rules/rules');
+var rules = require('../rules/rules');
 
 
 

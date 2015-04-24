@@ -6,8 +6,8 @@ function rules() {
   this.dayOffset = function (attrs) {
     var songChoices = attrs.songs;
 
-    var windowStart = new Date(attrs.airtime.getTime() - 1000*60*60*24 - ((attrs.windowSize/2.0)*1000*60));
-    var windowEnd = new Date(attrs.airtime.getTime() - 1000*60*60*24 + ((attrs.windowSize/2.0)*1000*60));
+    var windowStart = new Date(attrs.airtime.getTime() - 1000*60*60*24 - ((attrs.windowSizeMinutes/2.0)*1000*60));
+    var windowEnd = new Date(attrs.airtime.getTime() - 1000*60*60*24 + ((attrs.windowSizeMinutes/2.0)*1000*60));
 
     // grab unusable song ids
     var spinsFromYesterday = _.filter(attrs.schedule, function (spin) {

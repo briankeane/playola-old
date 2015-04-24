@@ -8,6 +8,13 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 var Q = require('q');
 
+var defaultRules = { 
+                     artistMinimumRest: { minutesOfRest: 70 },
+                     songMinimumRest: { percent: 0.60 },
+                     dayOffset: { windowSizeMinutes: 60 }
+                   }
+
+
 var StationSchema = new Schema({
   _user:                                  { type: Schema.ObjectId, ref: 'User'},
   secsOfCommercialPerHour:                { type: Number, default: 360        },
@@ -16,8 +23,8 @@ var StationSchema = new Schema({
   timezone:                               { type: String                      },
   commentaryCounter:                      { type: Number, default: 0          },
   dailyListenTimeCalculationDate:         { type: Date, default: Date.now()   },
-  restHistory:                            {},
-  clocks:                                 {}
+  clocks:                                 {},
+  rules:                                  { type: {}, default: defaultRules   }
 });
 
 StationSchema.methods.getClock = function (airtime) {

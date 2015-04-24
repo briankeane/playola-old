@@ -131,7 +131,7 @@ describe('radio rules', function (done) {
                                 _station: station.id,
                                 bin: 'light' });
     var list = Rules.dayOffset({ airtime: new Date(2014,3,15, 12,46),
-                              windowSize: 60,
+                              windowSizeMinutes: 60,
                                  station: station, 
                                  songs: _.map(lightRotationItems, function (ri) { return ri._song }),
                                  schedule: fullSchedule
