@@ -171,17 +171,37 @@ describe('radio rules', function (done) {
                                       });
     expect(list.length).to.equal(50);
     expect(list[0].id).to.equal(lightRotationItems[2]._song.id);
-    // list = Rules.artistMinimumRest({ station: station,
-    //                                     airtime: new Date(2014,3,15,12,46),
-    //                                     schedule: fullSchedule,
-    //                                     minutesOfRest: 30,
-    //                                     songs: _.map(lightRotationItems, function (ri) { return ri._song; } ) });
-    // expect(list.length).to.equal(51);
-    // expect(list[0].id).to.equal(songToRemove1.id);
     done();
   });
 
-  xit ('song minimum rest', function (done) {
-
+  it ('song minimum rest', function (done) {
+    fullSchedule.push({ playlistPosition:100,
+                           _audioBlock: songToRemove1,
+                           _station: station,
+                           airtime: new Date(2014,3,15, 11,48),
+                           durationOffset: 0,
+                           commercialsFollow: false,
+                           manualEndTime: new Date(2014,3,15,11,52) });
+    fullSchedule.push( { playlistPosition:100,
+                           _audioBlock: songToRemove2,
+                           _station: station,
+                           airtime: new Date(2014,3,14, 12,18),
+                           durationOffset: 0,
+                           commercialsFollow: false,
+                           manualEndTime: new Date(2014,3,14, 12,22) });
+    lightRotationItems.unshift({ _song: songToRemove1,
+                                _station: station.id,
+                                bin: 'light' });
+    lightRotationItems.unshift({ _song: songToRemove2,
+                                _station: station.id,
+                                bin: 'light' });
+    var list = Rules.songMinimumRest({ airtime: new Date(2014,3,15,12,46),
+                                       schedule: fullSchedule,
+                                      minutesOfRest: 180,
+                                      songs: _.map(lightRotationItems, function (ri) { return ri._song } ) 
+                                      });
+    expect(list.length).to.equal(51);
+    expect(list[0].id).to.equal(songToRemove2.id);
+    done();
   });
 });

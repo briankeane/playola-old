@@ -40,7 +40,25 @@ function rules() {
     }
     var usableSongs = _.filter(songChoices, function (song) { return (!usedArtists[song.artist]); });
     return usableSongs;
-  }
+  };
+
+  this.songMinimumRest = function (attrs) {
+    var songChoices = attrs.songs;
+    var windowStart = new Date(attrs.airtime.getTime() - attrs.minutesOfRest*60*1000);
+
+    var recentSpins = _.filter(attrs.schedule, function (spin) {
+      return ((spin.airtime > windowStart) && (spin.airtime < attrs.airtime));
+    });
+
+    var usedSongs = {};
+    for (var i=0;i<recentSpins.length;i++) {
+      usedSongs[recentSpins[i]._audioBlock.id] = true;
+    }
+
+    var usableSongs = _.filter(songChoices, function (song) { return (!usedSongs[song.id]); });
+
+    return usableSongs;
+  };
 }
 
 module.exports = new rules();
