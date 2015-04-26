@@ -10,7 +10,7 @@
     "compression": "~1.0.1",
     "connect-mongo": "^0.4.1",
     "cookie-parser": "~1.0.1",
-    "echojs":"^0.1.4",
+    "echojs": "^0.1.4",
     "ejs": "~0.8.4",
     "errorhandler": "~1.0.0",
     "express": "~4.0.0",
@@ -29,7 +29,6 @@
     "mongoose-timestamp": "^0.4.0",
     "morgan": "~1.0.0",
     "multer": "^0.1.8",
-    "morgan": "~1.0.0",
     "natural": "^0.2.0",
     "passport": "~0.2.1",
     "passport-local": "~0.1.6",
@@ -65,6 +64,7 @@
     "grunt-express-server": "~0.4.17",
     "grunt-google-cdn": "~0.4.0",
     "grunt-karma": "~0.8.2",
+    "grunt-mocha-debug": "0.0.10",
     "grunt-mocha-test": "~0.10.2",
     "grunt-newer": "~0.7.0",
     "grunt-ng-annotate": "^0.2.3",
@@ -95,8 +95,8 @@
     "requirejs": "~2.1.11",
     "should": "~3.3.1",
     "supertest": "~0.11.0",
-    "timekeeper": "0.0.5",
-    "time-grunt": "~0.3.1"
+    "time-grunt": "~0.3.1",
+    "timekeeper": "0.0.5"
   },
   "engines": {
     "node": ">=0.10.33"

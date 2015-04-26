@@ -4,7 +4,7 @@ function rules() {
   var self = this;
 
   this.dayOffset = function (attrs) {
-    var songChoices = attrs.songs;
+    var songChoices = attrs.songlist;
 
     var windowStart = new Date(attrs.airtime.getTime() - 1000*60*60*24 - ((attrs.windowSizeMinutes/2.0)*1000*60));
     var windowEnd = new Date(attrs.airtime.getTime() - 1000*60*60*24 + ((attrs.windowSizeMinutes/2.0)*1000*60));
@@ -26,7 +26,7 @@ function rules() {
   }
 
   this.artistMinimumRest = function (attrs) {
-    var songChoices = attrs.songs;
+    var songChoices = attrs.songlist;
     var windowStart = new Date(attrs.airtime.getTime() - attrs.minutesOfRest*60*1000);
 
     var recentSpins = _.filter(attrs.schedule, function (spin) {
@@ -43,7 +43,7 @@ function rules() {
   };
 
   this.songMinimumRest = function (attrs) {
-    var songChoices = attrs.songs;
+    var songChoices = attrs.songlist;
     var windowStart = new Date(attrs.airtime.getTime() - attrs.minutesOfRest*60*1000);
 
     var recentSpins = _.filter(attrs.schedule, function (spin) {

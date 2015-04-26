@@ -133,7 +133,7 @@ describe('radio rules', function (done) {
     var list = Rules.dayOffset({ airtime: new Date(2014,3,15, 12,46),
                               windowSizeMinutes: 60,
                                  station: station, 
-                                 songs: _.map(lightRotationItems, function (ri) { return ri._song }),
+                                 songlist: _.map(lightRotationItems, function (ri) { return ri._song }),
                                  schedule: fullSchedule
                                 });
     // make sure both were removed
@@ -167,7 +167,7 @@ describe('radio rules', function (done) {
                                         airtime: new Date(2014,3,15,12,46),
                                         schedule: fullSchedule,
                                         minutesOfRest: 60,
-                                        songs: _.map(lightRotationItems, function (ri) { return ri._song } ) 
+                                        songlist: _.map(lightRotationItems, function (ri) { return ri._song } ) 
                                       });
     expect(list.length).to.equal(50);
     expect(list[0].id).to.equal(lightRotationItems[2]._song.id);
@@ -198,7 +198,7 @@ describe('radio rules', function (done) {
     var list = Rules.songMinimumRest({ airtime: new Date(2014,3,15,12,46),
                                        schedule: fullSchedule,
                                       minutesOfRest: 180,
-                                      songs: _.map(lightRotationItems, function (ri) { return ri._song } ) 
+                                      songlist: _.map(lightRotationItems, function (ri) { return ri._song } ) 
                                       });
     expect(list.length).to.equal(51);
     expect(list[0].id).to.equal(songToRemove2.id);

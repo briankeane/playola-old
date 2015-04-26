@@ -37,26 +37,26 @@ describe('playlist functions', function (done) {
         user._station = station.id;
         user.save(function (err, savedUser) {
           
-          SpecHelper.loadSongs(86, function (err, songsArray) {
+          SpecHelper.loadSongs(100, function (err, songsArray) {
             songs = songsArray;
             
             rotationItems = [];
-            for(var i=0;i<30;i++) {
+            for(var i=0;i<50;i++) {
               rotationItems.push(new RotationItem({ _song: songs[i].id,
                                                     _station: station.id,
-                                                    bin: 'active',
+                                                    bin: 'light',
                                                     weight: 45 }));
             }
-            for(var i=30;i<45;i++) {
+            for(var i=50;i<80;i++) {
               rotationItems.push(new RotationItem({ _song: songs[i].id,
                                                     _station: station.id,
-                                                    bin: 'active',
+                                                    bin: 'medium',
                                                     weight: 25 }));
             }
-            for(var i=45;i<60;i++) {
+            for(var i=80;i<100;i++) {
               rotationItems.push(new RotationItem({ _song: songs[i].id,
                                                     _station: station.id,
-                                                    bin: 'active',
+                                                    bin: 'heavy',
                                                     weight: 10 }));
             }
 
@@ -74,31 +74,32 @@ describe('playlist functions', function (done) {
     });
   });
 
-  it('updates the restHistory object from scratch', function (done) {
-    Scheduler.updateRestHistory(station, function(err, station) {
-      LogEntry.getMostRecent(station.id, function (err, logEntry) {
-        expect(station.restHistory.artists[logEntry._audioBlock.artist].getTime()).to.equal(logEntry.airtime.getTime());
-        expect(station.restHistory.audioBlocks[logEntry._audioBlock.id].getTime()).to.equal(logEntry.airtime.getTime());
-        expect(station.restHistory.finalPlaylistPosition).to.equal(1);
-        LogEntry.create({ _station: station.id,
-                          airtime: new Date(2014,3,20, 12,30),
-                          _audioBlock: songs[0].id,
-                          playlistPosition: 1000
-                        }, function (err, savedLogEntry) {
-          Scheduler.updateRestHistory(station, function (err, savedStation) {
-            expect(savedStation.restHistory.finalPlaylistPosition).to.equal(1000);
-            expect(savedStation.restHistory.audioBlocks[songs[0].id].getTime()).to.equal(new Date(2014,3,20, 12,30).getTime());
-            expect(savedStation.restHistory.artists[songs[0].artist].getTime()).to.equal(new Date(2014,3,20, 12,30).getTime());
-            done();
-          });
-        });
-      })
-    });
-  });
-
+  // it('updates the restHistory object from scratch', function (done) {
+  //   Scheduler.updateRestHistory(station, function(err, station) {
+  //     LogEntry.getMostRecent(station.id, function (err, logEntry) {
+  //       expect(station.restHistory.artists[logEntry._audioBlock.artist].getTime()).to.equal(logEntry.airtime.getTime());
+  //       expect(station.restHistory.audioBlocks[logEntry._audioBlock.id].getTime()).to.equal(logEntry.airtime.getTime());
+  //       expect(station.restHistory.finalPlaylistPosition).to.equal(1);
+  //       LogEntry.create({ _station: station.id,
+  //                         airtime: new Date(2014,3,20, 12,30),
+  //                         _audioBlock: songs[0].id,
+  //                         playlistPosition: 1000
+  //                       }, function (err, savedLogEntry) {
+  //         Scheduler.updateRestHistory(station, function (err, savedStation) {
+  //           expect(savedStation.restHistory.finalPlaylistPosition).to.equal(1000);
+  //           expect(savedStation.restHistory.audioBlocks[songs[0].id].getTime()).to.equal(new Date(2014,3,20, 12,30).getTime());
+  //           expect(savedStation.restHistory.artists[songs[0].artist].getTime()).to.equal(new Date(2014,3,20, 12,30).getTime());
+  //           done();
+  //         });
+  //       });
+  //     })
+  //   });
+  // });
+  
   it('generatePlaylist creates a first playlist', function (done) {
     Spin.getFullPlaylist(station.id, function (err, spins) {
       LogEntry.getFullStationLog(station.id, function (err, logEntries) {
+
         // make sure all logEntry values stored
         expect(logEntries.length).to.equal(1);
         expect(logEntries[0].playlistPosition).to.equal(1);
