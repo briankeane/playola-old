@@ -73,7 +73,7 @@ angular.module('playolaApp')
     $scope.newSongDropped = function (event, index, song, type) {
       // create an actual rotationItem
       var newRotationItem = { weight: 17,
-                              bin: 'active',
+                              bin: 'medium',
                               _song: song }
       var insertedIndex = -1;
 
