@@ -39,10 +39,10 @@ angular.module('playolaApp')
           controller: 'removeRotationItem'
         }
       },
-      updateRotationWeight: {
+      updateRotationBin: {
         method: 'PUT',
         params: {
-          controller: 'updateRotationWeight'
+          controller: 'updateRotationBin'
         }
       },
       createRotationItem: {

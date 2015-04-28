@@ -10,7 +10,7 @@ var Q = require('q');
 
 var defaultRules = { 
                      artistMinimumRest: { minutesOfRest: 70 },
-                     songMinimumRest: { percent: 0.60 },
+                     songMinimumRest: { minutesOfRest: 180 },
                      dayOffset: { windowSizeMinutes: 60 }
                    }
 

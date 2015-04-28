@@ -53,8 +53,6 @@ angular.module('playolaApp')
                     $location.path('/station');
                     $modalInstance.dismiss();
 
-
-
                   });
                 })
               })

@@ -16,7 +16,6 @@ var rotationItemSchema = new Schema({
   _boo:                 { type: Number },
   _eoi:                 { type: Number },
   bin:                  { type: String },
-  weight:               { type: Number },
   assignedAt:           { type: Date, default: Date.now() },
   history: [
               { 

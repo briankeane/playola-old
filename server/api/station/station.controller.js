@@ -31,7 +31,9 @@ exports.show = function(req, res) {
 exports.create = function(req, res) {
   User.findOne({ _id: req.body._user }, function (err, user) {
     if (err) { return res.json(500, err); }
-    if (!user) {return res.json(404, { message: 'User not found' } ); }
+    if (!user) { return res.json(404, { message: 'User not found' } ); }
+    if (user._station) { return res.json(409, { message: 'Station Already Exists' }); }
+
     Station.create({ _user: req.body._user,
                   timezone: user.timezone }, function (err, station) {
       if (err) { 
@@ -41,30 +43,32 @@ exports.create = function(req, res) {
         // load the station with rotationItems based on the artists they suggested
         SongPool.getSongSuggestions(req.body.artists, function (err, songSuggestions) {
           if (err) { return res.json(500, err); }
-          console.log("song Suggestions length: " + songSuggestions.length);
+          if (!songSuggestions.length) { return res.json(500, { message: 'No Songs Suggested' }); }
+          
+          // initial ratio is 3/4/7 -- 16 units
+          var unitSize = Math.floor(songSuggestions.length/16.0);
+
+          // shuffle the collection
+          songSuggestions = _.shuffle(songSuggestions)
+          
           for (var i=0;i<songSuggestions.length;i++) {
-            // put the first 13 in heavy rotation
-            if (i<13) {
+
+            // put the first 4 in heavy rotation
+            if (i<=unitSize*4) {
               RotationItem.create({ _song: songSuggestions[i]._id, 
                                     _station: station._id,
-                                    bin: 'active',
-                                    weight: 27 });
-            // these go in medium rotation
-            } else if (i<40) {
+                                    bin: 'heavy' });
+            // the next 5 go in medium rotation
+            } else if (i<=unitSize*9) {
               RotationItem.create({ _song: songSuggestions[i]._id,
                                     _station: station._id,
-                                    bin: 'active',
-                                    weight: 17 });
-            // for now these also go in medium rotation
-            } else if (i<57) {
-              RotationItem.create({ _song: songSuggestions[i]._id,
-                                    _station: station._id,
-                                    bin: 'active',
-                                    weight: 17 });
-            
-            // we don't need the rest   
+                                    bin: 'medium' });
+            // the rest go in light rotation
             } else {
-              break;
+              RotationItem.create({ _song: songSuggestions[i]._id,
+                                    _station: station._id,
+                                    bin: 'light' });
+            
             }
           }
 
@@ -236,8 +240,11 @@ function createRotationItemsObject(rotationItems) {
 
   for (var i=0;i<rotationItems.length;i++) {
     
-    if (!rotationItemsObject[rotationItems[i].bin]) {
-      rotationItemsObject[rotationItems[i].bin] = [];
+    // don't include rotationItems that have been deleted
+    if (rotationItems[i].bin != 'inactive') {
+      if (!rotationItemsObject[rotationItems[i].bin]) {
+        rotationItemsObject[rotationItems[i].bin] = [];
+      }
     }
 
     rotationItemsObject[rotationItems[i].bin].push(rotationItems[i]);

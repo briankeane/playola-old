@@ -15,10 +15,8 @@
           <span class="songlist-title">{{ rotationItem._song.title }}</span>
           <span class="songlist-artist">{{ rotationItem._song.artist }}</span>
 
-          <select class="rotationSelect" ng-model="rotationItem.weight" ng-click="saveOldValue(rotationItem)" ng-change="updateRotationWeight(rotationItem)">
-            <option value='27'>Heavy</option>
-            <option value='17'>Medium</option>
-            <option value='2'>Light</option>
+          <select class="rotationSelect" ng-model="rotationItem.bin" ng-click="saveOldBin(rotationItem)" ng-change="updateRotationItemBin(rotationItem)"
+            ng-options="bin as bin for bin in bins">
           </select>
 
           <a href="#" class="close" title="delete" ng-click="removeRotationItem(rotationItem)">×</a>

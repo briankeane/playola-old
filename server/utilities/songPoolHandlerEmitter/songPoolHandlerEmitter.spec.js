@@ -1,3 +1,4 @@
+var app = require('../../app');
 var SpecHelper = require('../helpers/specHelper');
 var echojs = require('echojs');
 var echo = echojs({ key: process.env.ECHONEST_KEY });
@@ -28,6 +29,9 @@ describe('songPoolHandler', function (done) {
                           echonestId: 'SOTWSLV13CF6D275AF' }));
     SpecHelper.saveAll(songs, function (err, savedSongs) {
       SongPool.clearAllSongs()
+      .on('error', function (err) {
+        console.log(err);
+      })
       .on('finish', function () {
         done();
       });
@@ -35,7 +39,7 @@ describe('songPoolHandler', function (done) {
   });
 
   it('adds a song to the song pool', function (done) {
-    this.timeout(10000);
+    this.timeout(20000);
     //SongPool.clearAllSongs()
     //.on('finish', function () {
       SongPool.addSong(songs[0])
@@ -81,7 +85,7 @@ describe('songPoolHandler', function (done) {
   });
 
   it('adds and retrieves an array of all songs in the song pool', function (done) {
-    this.timeout(5000);
+    this.timeout(7000);
     SongPool.addSongs(songs)
     .on('finish', function () {
       SongPool.getAllSongs()
@@ -146,7 +150,7 @@ describe('songPoolHandler', function (done) {
       this.timeout(5000);
       SongPool.getSongSuggestions(['Rachel Loy'], function (err, playlist) {
         Song.find({}, function (err, allSongs) {
-          expect(playlist.length >= 57).to.equal(true);
+          expect(playlist.length >= 100).to.equal(true);
           expect(playlist[0].artist).to.be.a('String');
           expect(playlist[0].title).to.be.a('String');
           done();
@@ -157,7 +161,7 @@ describe('songPoolHandler', function (done) {
     it('suggests a playlist based on multiple artists', function (done) {
       this.timeout(5000);
       SongPool.getSongSuggestions(['Rachel Loy', 'Lily Allen', 'Miranda Lambert'], function (err, playlist) {
-        expect(playlist.length >= 57).to.equal(true);
+        expect(playlist.length >= 100).to.equal(true);
         expect(playlist[0].artist).to.be.a('String');
         expect(playlist[0].title).to.be.a('String');
         done();

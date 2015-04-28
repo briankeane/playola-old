@@ -55,7 +55,6 @@ function Handler() {
     var emitter = new events.EventEmitter();
 
     function deleteChunkOfSongs() {
-
       echo('tasteprofile/read').get({ id: config.ECHONEST_TASTE_PROFILE_ID, results: 1000 }, function (err, json) {
 
         // if there's an error, exit with error
@@ -163,6 +162,7 @@ function Handler() {
       // make the call
       echo('tasteprofile/update').post({ id: config.ECHONEST_TASTE_PROFILE_ID, data: data }, function (err, json) {
         if (err) { 
+console.log(err);
           emitter.emit('finish', err); 
           return;
         }
@@ -206,6 +206,7 @@ function Handler() {
     function makeEchonestRequest() {
       echo('playlist/static').get({ artist: artists, type: 'artist-radio', results: 100, limit: true,
                                   bucket: 'id:' + config.ECHONEST_TASTE_PROFILE_ID } ,function (err, json) {
+console.log(json.response["songs"]);
         if (err) { 
           console.log(err);
           setTimeout(makeEchonestRequest, 1000);
@@ -239,7 +240,7 @@ function Handler() {
           // add the songs
           for(var i=0;i<results.length;i++) {
             // add up to 4 songs from each artist
-            for(var j=0;((j<4) && (j<results[i].length));j++) {
+            for(var j=0;((j<=5) && (j<results[i].length));j++) {
               finalList.push(results[i][j]);
 
               // remove duplicate if it exists
@@ -260,17 +261,17 @@ function Handler() {
             if (!err) {
               finalList = finalList.concat(suggestedSongs);
             }
-
+console.log('suggested songs: ' + finalList.length);
             // if there's enough, exit
-            if (finalList.length > 57) {
+            if (finalList.length > 150) {
               callback(null, finalList);
             } else {
               // for now, fill with random songs
-              Song.findRandom({ _type: 'Song' }, {}, { limit: 57 }, function (err, randomSongs) {
+              Song.findRandom({ _type: 'Song' }, {}, { limit: 150 }, function (err, randomSongs) {
                 if (err) throw err;
                 var i=0;
 
-                while ((finalList.length < 57) && (i < randomSongs.length)) {
+                while ((finalList.length < 150) && (i < randomSongs.length)) {
                   var alreadyIncluded = false;
                   for (j=0; j<finalList.length; j++) {
                     if (finalList.length && (finalList[j].echonestId === randomSongs[i].echonestId)) {
@@ -307,6 +308,7 @@ function Handler() {
           waitForCompletedTicket(ticket, callback);
         }, 1500);
       } else {
+console.log(json.response);
         callback();
       }
     });

@@ -153,9 +153,8 @@ module.exports = function(grunt) {
       while(songs.length) {
         songArrays.push(songs.splice(0,300));
       }
-      songArrays.forEach(function (array) {
-        console.log(array[0]);
-      });
+
+      console.log('songArrayCount: ' + songArrays.length);
 
       SongPool.clearAllSongs()
       .on('finish', function (err) {

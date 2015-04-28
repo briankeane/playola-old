@@ -1,20 +1,14 @@
 'use strict';
 
 angular.module('playolaApp')
-  .controller('SongManagerCtrl', function ($scope, Auth, $location, $window, $timeout, $anchorScroll) {
+  .controller('SongManagerCtrl', function ($rootScope, $scope, Auth, $location, SharedData, $window, $timeout, $anchorScroll) {
     $scope.user = {};
     $scope.station = {};
     $scope.errors = {};
     $scope.catalogSearchResults = [];
     $scope.rotationItems = [];
     $scope.rotationItemsPendingRemoval = [];
-    
-    $scope.getRotationItems = function() {
-      Auth.getRotationItems($scope.currentStation._id, function (err, rotationItems) {
-        console.log(rotationItems);
-        $scope.rotationItems = rotationItems.active.sort(compareSong);
-      });
-    }
+    $scope.bins = [];
 
     $scope.removeRotationItem = function(rotationItem) {
       if ($scope.rotationItems.length <= 45) {
@@ -58,16 +52,17 @@ angular.module('playolaApp')
       }
     };
 
-    $scope.saveOldValue = function (item) {
-      item.oldValue = item.weight;
+    $scope.saveOldBin= function (item) {
+      item.oldValue = item.bin;
     };
 
-    $scope.updateRotationWeight = function (item) {
-      Auth.updateRotationWeight({ _id: item._id,
-                                  weight: item.weight}, function (err, newRotationItems) {
+    $scope.updateRotationItemBin = function (item) {
+      Auth.updateRotationBin({ _id: item._id,
+                                  bin: item.bin }, function (err, newRotationItems) {
+        
         // if there was an error, keep the old value the same and let the user know
         if (err) {
-          item.weight = item.oldValue;
+          item.bin = item.oldBin;
           $scope.rotationItemsMessage = "Error: Unable to change rotation level for: " + item._song.title +
                                                     " by " + item._song.artist +
                                                     ".  Please try again.";
@@ -107,8 +102,6 @@ angular.module('playolaApp')
         insertedIndex = $scope.rotationItems.length-1;
       }
 
-      // ADD LATER scroll to inserted item
-
       // Add song
       Auth.createRotationItem(newRotationItem, function (err, results) {
         if (err) { 
@@ -141,13 +134,16 @@ angular.module('playolaApp')
 
     $scope.currentUser = Auth.getCurrentUser();
 
-    if (!$scope.currentStation._id) {
-      $timeout(function () {
-        $scope.getRotationItems();
-      }, 1000);
-    } else {
-      $scope.getRotationItems();
+    if (!SharedData.myStation) {
+      $rootScope.$on('rotationItemsLoaded', function () {
+        $scope.bins = SharedData.bins;
+        $scope.rotationItems = SharedData.rotationItemsArray;
+      })
     }
+    $scope.bins = SharedData.bins;
+    $scope.rotationItems = SharedData.rotationItemsArray;
+
+
   });
 
 function compareSong(a,b) {

@@ -114,33 +114,11 @@ function Scheduler() {
   // ******************************************************************************
 
   this.chooseSong = function (attrs) {
-    // station: station,
-    // workingRestHistory: workingRestHistory,
-    // bin: clock.items[clockIndex],
-    // rotationItems: rotationItems,
-    // fullSchedule: fullSchedule
-    // if not called from generatePlaylist, set up warnings array
-    if (!warnings) {
-      var warnings = [];
-    }
-
-    // send through the filters
+    var warnings = [];
+    
     var previousPossibleSongs = attrs.songlist;
-
-    if (attrs.station.rules.artistMinimumRest) {
-      var newSonglist = Rules.artistMinimumRest({ airtime: attrs.airtime,
-                                                  schedule: attrs.fullSchedule,
-                                                  songlist: previousPossibleSongs,
-                                                  minutesOfRest: attrs.station.rules.artistMinimumRest.minutesOfRest
-                                                });
-
-      if (newSonglist.length) {
-        previousPossibleSongs = newSonglist;
-      } else {
-        warnings.push('artistMinimumRest violated -- would have eliminated all choices');
-      }
-    }
-
+    
+    // send through the filters
     if (attrs.station.rules.songMinimumRest) {
       var newSonglist = Rules.songMinimumRest({ airtime: attrs.airtime,
                                                 schedule: attrs.fullSchedule,
@@ -150,9 +128,25 @@ function Scheduler() {
       if (newSonglist.length) {
         previousPossibleSongs = newSonglist;
       } else {
-        warnings.push('songMinimumRest violated -- would have eliminated all choices');
+        warnings.push({ message: 'songMinimumRest violated -- would have eliminated all choices' });
       }
     }
+
+    if (attrs.station.rules.artistMinimumRest) {
+
+      var newSonglist = Rules.artistMinimumRest({ airtime: attrs.airtime,
+                                                  schedule: attrs.fullSchedule,
+                                                  songlist: previousPossibleSongs,
+                                                  minutesOfRest: attrs.station.rules.artistMinimumRest.minutesOfRest
+                                                });
+
+      if (newSonglist.length) {
+        previousPossibleSongs = newSonglist;
+      } else {
+        warnings.push({ message: 'artistMinimumRest violated -- would have eliminated all choices' });
+      }
+    }
+
 
     if (attrs.station.rules.dayOffset) {
       var newSonglist = Rules.dayOffset({ airtime: attrs.airtime,
@@ -163,13 +157,27 @@ function Scheduler() {
       if (newSonglist.length) {
         previousPossibleSongs = newSonglist;
       } else {
-        warnings.push('dayOffset violated -- would have eliminated all choices');
+        warnings.push({ message: 'dayOffset violated -- would have eliminated all choices' });
       }
     }
 
     // randomly pick song from what's left
     var song = _.sample(previousPossibleSongs);
-    return song;
+
+
+
+if (song.title === attrs.fullSchedule[attrs.fullSchedule.length-1]._audioBlock.title) { 
+  console.log('SAMESONGDAMMIT');
+  console.log(warnings);
+  console.log(_.map(previousPossibleSongs, function (song) { return song.title; }));
+
+}
+
+
+
+
+    return { song: song,
+            warnings: warnings };
   };
 
   this.generatePlaylist = function (attrs, callback) {
@@ -271,13 +279,13 @@ function Scheduler() {
           var currentSonglist = bins[clock.items[clockIndex].bin];
           // Before attempting to grab a song, make sure the bin exists and has songs
           while (!currentSonglist) {
-            warnings.push(clock.items[clockIndex] + ' bin was empty...');
+            warnings.push({ message: clock.items[clockIndex] + ' bin was empty...' });
             clockIndex++;
             if (clockIndex >= clock.items.length) {
               // for now, randomly select a bin
               var keys = Object.keys(bins)
               currentSonglist = bins[keys[keys.length * Math.random() << 0]];
-              warnings.push('clock did not fill time');
+              warnings.push({ message: 'clock did not fill time' });
 
             } else {
               currentSonglist = clock.items[clockIndex];
@@ -285,21 +293,21 @@ function Scheduler() {
           }
 
           // grab the next song
-          var newSong = self.chooseSong({ airtime: nextAirtime,
+          var result = self.chooseSong({ airtime: nextAirtime,
                                           station: station,
                                           songlist: currentSonglist,
                                           fullSchedule: fullSchedule
                                         });
+          var newSong = result.song;
+
+          // grab any warnings if they existed
+          warnings = warnings.concat(result.warnings);
           var newSpin = { playlistPosition: previousSpin.playlistPosition + 1,
                           _audioBlock: newSong,
                           _station: station };
           
           // adjust airtimes
           self.addScheduleTimeToSpin(station, previousSpin, newSpin);
-
-          // // update workingRestHistory
-          // workingRestHistory.artists[newSong.artist] = newSpin.airtime;
-          // workingRestHistory.audioBlocks[newSong.id] = newSpin.airtime;
 
           fullSchedule.push(newSpin);
           clockIndex += 1;
@@ -342,157 +350,19 @@ function Scheduler() {
               var logEntry = LogEntry.newFromSpin(savedSpins[0]);
               logEntry.save(function (err, savedLogEntry) {
                 savedSpins[0].remove(function (err, removedSpin) {
-                  callback (null, savedStation);
+console.log(warnings);
+                  callback (null, { warnings: warnings, station: savedStation });
                 });
               });
             } else {
-              callback(null, station);
+console.log(warnings);
+              callback(null, { warnings: warnings, station: savedStation });
             }
           });
         });
       });
     });
   };
-
-  this.oldGeneratePlaylist = function (attrs, callback) {
-    var previousSpin;
-    var recentlyPlayedSongs = [];
-    var spins = [];
-    var sampleArray;
-
-    // unpack attrs
-    var station = attrs.station
-
-
-    // return if playlistEndTime is out of range
-    if (attrs.playlistEndTime && (moment().add(1,'days').isBefore(moment(attrs.playlistEndTime)))) {
-      attrs.playlistEndTime = moment().add(1,'days').toDate();
-    }
-
-    // create the endTime
-    var playlistEndTime = attrs.playlistEndTime || new Date(new Date().getTime() + 2*60*60*1000);
-
-    // grab the playlist and logs
-    LogEntry.getRecent({ _station: station.id,
-                         count: 30 }, function (err, currentLogEntries) {
-
-      Spin.getFullPlaylist(station.id, function (err, currentPlaylist) {
-
-        // ** preload the recentlyPlayed list ***
-        
-        // go backwards through currentPlaylist
-        for (var i=currentPlaylist.length-1;i>=0;i--) {
-          if (currentPlaylist[i]._type === 'Song') {
-            recentlyPlayedSongs.push(currentPlaylist[i]);
-          }
-          // if there's enough, break out
-          if (recentlyPlayedSongs >= 20) {
-            break;
-          }
-        }
-
-        // if needed, go through log entries too
-        for (var i=0;i<currentLogEntries; i++) {
-          if (recentlyPlayedSongs.length >= 20) {
-            break;
-          }
-          if (currentLogEntries[i]._audioBlock._type === 'Song') {
-            recentlyPlayedSongs.push(currentLogEntries[i]._audioBlock);
-          }
-        }
-
-        // create the sampleArray
-        createSampleArray(station, function (err, createdSampleArray) {
-          sampleArray = createdSampleArray;
-          // Set previousSpin
-          // IF LOG exists
-          if (currentLogEntries.length) {
-            // IF log but no playlist
-            if (!currentPlaylist.length) {
-              previousSpin = { playlistPosition: currentLogEntries[0].playlistPosition,
-                                        airtime: currentLogEntries[0].airtime,
-                                        _audioBlock: currentLogEntries[0]._audioBlock,
-                                        _station: station
-                                      };
-            } else { // (log and playlist exist) 
-              previousSpin = currentPlaylist[currentPlaylist.length-1];
-            }
-          } else {  // (this is a new station)
-            // create 1st spin and set it as the previous spin
-            spins.push({ playlistPosition: 1,
-                                  _audioBlock: chooseSong(),
-                                  airtime: new Date(),
-                                  _station: station
-                                  });
-            previousSpin = spins[0];
-          }
-
-          // WHILE before playlistEndTime
-          while (previousSpin.airtime < playlistEndTime) {
-            // create the new spin
-            var newSpin = { playlistPosition: previousSpin.playlistPosition + 1,
-                            _audioBlock: chooseSong(),
-                            _station: station,
-                          };
-            // add the airtime
-            self.addScheduleTimeToSpin(station, previousSpin, newSpin);
-
-            spins.push(newSpin);
-            previousSpin = newSpin;
-          
-          } // ENDWHILE
-
-          // Save the spins
-          var spinsToSave = _.map(spins, function(spin) { return new Spin(spin); });
-          Helper.saveAll(spinsToSave, function (err, savedSpins) {
-
-            // update and save the station
-            station.lastAccuratePlaylistPosition = previousSpin.playlistPosition;
-            station.save(function (err, savedStation) {
-
-              // if it's the first playlist, start the station
-              if (currentLogEntries.length === 0) {
-                var firstSpin = spins[0];
-                var logEntry = new LogEntry({ _station: station.id,
-                                              _audioBlock: firstSpin._audioBlock,
-                                              playlistPosition: firstSpin.playlistPosition,
-                                              airtime: firstSpin.airtime,
-                                              durationOffset: firstSpin.durationOffset });
-                logEntry.save(function (err, savedLogEntry) {
-                  Spin.findByIdAndRemove(savedSpins[0].id, function (err, removedSpin) {
-                    callback(null, station);
-                    return;
-                  });
-                });
-              // otherwise just go back
-              } else {
-                callback(null, station);
-                return;
-              }
-            });
-          });
-        });
-      });
-    });
-
-    // chooses a random song from the sampleArray
-    function chooseSong() {
-      var song = _.sample(sampleArray);
-
-      // while the id is in the recentlyPlayedSongs array, pick another
-      while(recentlyPlayedSongs.some(function (e) { return e.id === song.id; })) {
-        song = _.sample(sampleArray);
-      }
-
-      // adjust recentlyPlayedSongs
-      recentlyPlayedSongs.push(song);
-      if (recentlyPlayedSongs.length >= 20) {
-        recentlyPlayedSongs.shift();
-      }
-
-      return song;
-    }
-  }
 
   function checkForFollowingCommercial(startTimeMS, endTimeMS) {
     if ((Math.floor(startTimeMS/1800000.0) !== Math.floor(endTimeMS/1800000.0))) {
@@ -712,10 +582,10 @@ function Scheduler() {
       self.updateAirtimes({ station: station,
                             endTime: new Date() }, function (err, updatedStation) {
         station = updatedStation;
-        
+
         // make sure the playlist lasts until now
-        self.generatePlaylist({ station: station, endTime: Date.now() }, function (err, updatedStation) {
-          station = updatedStation;
+        self.generatePlaylist({ station: station, endTime: Date.now() }, function (err, result) {
+          station = result.station;
 
           // get the playlist
           Spin.getPartialPlaylist({ _station: station.id, 
@@ -753,7 +623,8 @@ function Scheduler() {
                                     endTime: new Date(Date.now() + 60*60*2.5*1000) }, function (err, station) {
         self.bringCurrent(station, function () {
           self.generatePlaylist({ station: station,
-                                      playlistEndTime: new Date(Date.now() + 60*60*2*1000) }, function (err, station) {
+                                      playlistEndTime: new Date(Date.now() + 60*60*2*1000) }, function (err, result) {
+            station = result.station;
             Spin.getPartialPlaylist({ _station: station.id,
                                       endTime: new Date(Date.now() + 60*60*2*1000) }, function (err, playlist) {
 

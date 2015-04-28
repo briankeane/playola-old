@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('playolaApp')
-  .controller('SongMarkupCtrl', function ($scope, Auth, $timeout) {
+  .controller('SongMarkupCtrl', function ($rootScope, $scope, Auth, SharedData, $timeout) {
     $scope.rotationItemsToMarkup = [];
     $scope.currentStation = Auth.getCurrentStation();
     $scope.waveforms;
@@ -21,27 +21,30 @@ angular.module('playolaApp')
       }, 100);
     }
 
-    $timeout(function () {
-      Auth.getRotationItems($scope.currentStation.id, function (err, rotationItems) {
-        if (err) { console.log(err); }
-        
-        // store the full list and calculate it's number of pages
-        $scope.rotationItems = rotationItems.active;
-        $scope.totalPages = Math.ceil(rotationItems.active.length/10.0);
-
-        var activeRotationItems = rotationItems.active;
-        for (var i=0;i<activeRotationItems.length;i++) {
-          //if (!activeRotationItems[i].eom || (!activeRotationItems[i].boo) || (!activeRotationItems[i].eoi === undefined)) {
-            $scope.rotationItemsToMarkup.push(activeRotationItems[i]);
-          //}
-
-          // limit it to 10 songs
-          if ($scope.rotationItemsToMarkup.length >= 10) {
-            break;
-          }
-        }
+    if (!SharedData.myStation) {
+      $rootScope.$on('rotationItemsLoaded', function () {
+        loadRotationItems();
       });
-    }, 1000);
+    } else {
+      loadRotationItems();
+    }
+
+    function loadRotationItems() {
+      $scope.rotationItems = SharedData.rotationItemsArray;
+      $scope.totalPages = Math.ceil(SharedData.rotationItemsArray.length/10.0);
+
+      var activeRotationItems = SharedData.rotationItemsArray;
+      for (var i=0;i<activeRotationItems.length;i++) {
+        //if (!activeRotationItems[i].eom || (!activeRotationItems[i].boo) || (!activeRotationItems[i].eoi === undefined)) {
+          $scope.rotationItemsToMarkup.push(activeRotationItems[i]);
+        //}
+
+        // limit it to 10 songs
+        if ($scope.rotationItemsToMarkup.length >= 10) {
+          break;
+        }
+      }
+    }
 
     $scope.nextPage = function () {
       if ($scope.currentPage < $scope.totalPages) {

@@ -264,10 +264,10 @@ angular.module('playolaApp')
         }).$promise;
       },
 
-      updateRotationWeight: function (rotationItemObject, callback) {
+      updateRotationBin: function (rotationItemObject, callback) {
         var cb = callback || angular.noop;
 
-        return Station.updateRotationWeight({ id: currentStation._id }, { rotationItemId: rotationItemObject._id, weight: rotationItemObject.weight }, function (updatedRotationItems) {
+        return Station.updateRotationBin({ id: currentStation._id }, { rotationItemId: rotationItemObject._id, bin: rotationItemObject.bin }, function (updatedRotationItems) {
           return cb(null, updatedRotationItems.rotationItems)
         }, function (err) {
           return cb(err);

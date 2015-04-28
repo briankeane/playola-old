@@ -30,7 +30,7 @@ function rules() {
     var windowStart = new Date(attrs.airtime.getTime() - attrs.minutesOfRest*60*1000);
 
     var recentSpins = _.filter(attrs.schedule, function (spin) {
-      return ((spin.airtime > windowStart) && (spin.airtime < attrs.airtime));
+      return ((spin.airtime > windowStart) && (spin.airtime <= (new Date(attrs.airtime.getTime() + 10000))));   // 10 secs after song start
     });
 
     // create a searchable object
@@ -43,11 +43,14 @@ function rules() {
   };
 
   this.songMinimumRest = function (attrs) {
+    var minutesOfRest = attrs.minutesOfRest || 70;
     var songChoices = attrs.songlist;
-    var windowStart = new Date(attrs.airtime.getTime() - attrs.minutesOfRest*60*1000);
-
+    var windowStart = new Date(attrs.airtime.getTime() - minutesOfRest*60*1000);
     var recentSpins = _.filter(attrs.schedule, function (spin) {
-      return ((spin.airtime > windowStart) && (spin.airtime < attrs.airtime));
+// console.log('windowStart: ' + windowStart);
+// console.log('attrs.airtime: ' + attrs.airtime);
+// console.log('spin.airtime: ' + spin.airtime);
+      return ((spin.airtime >= windowStart) && (spin.airtime <= (new Date(attrs.airtime.getTime() + 10000))));
     });
 
     var usedSongs = {};

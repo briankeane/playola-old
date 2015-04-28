@@ -25,11 +25,6 @@ module.exports = function (grunt) {
 
   // Define the configuration for all the tasks
   grunt.initConfig({
-    mocha_debug: {
-      options: {
-        check: 'server/**/*.js'
-      }
-    },
 
     uglify: {
       options: {
@@ -680,8 +675,6 @@ module.exports = function (grunt) {
   ]);
 
   grunt.loadTasks('gruntTasks');
-
-  grunt.loadNpmTasks('grunt-mocha-debug');
 
   grunt.registerTask('loadDB', function() {
     return grunt.task.run([
