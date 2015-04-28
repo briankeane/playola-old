@@ -193,7 +193,7 @@ if (song.title === attrs.fullSchedule[attrs.fullSchedule.length-1]._audioBlock.t
     }
 
     // create the endTime
-    var playlistEndTime = attrs.playlistEndTime || new Date(new Date().getTime() + 2*60*60*1000);
+    var playlistEndTime = attrs.playlistEndTime || new Date(new Date().getTime() + 3*60*60*1000);
 
     // grab the rotationItems
     RotationItem.findAllForStation(station.id, function (err, rotationItems) {
@@ -620,13 +620,13 @@ console.log(warnings);
 
       // make sure schedule is accurate 2 hours from now
       self.updateAirtimes({ station: station,
-                                    endTime: new Date(Date.now() + 60*60*2.5*1000) }, function (err, station) {
+                                    endTime: new Date(Date.now() + 60*60*3*1000) }, function (err, station) {
         self.bringCurrent(station, function () {
           self.generatePlaylist({ station: station,
-                                      playlistEndTime: new Date(Date.now() + 60*60*2*1000) }, function (err, result) {
+                                      playlistEndTime: new Date(Date.now() + 60*60*3*1000) }, function (err, result) {
             station = result.station;
             Spin.getPartialPlaylist({ _station: station.id,
-                                      endTime: new Date(Date.now() + 60*60*2*1000) }, function (err, playlist) {
+                                      endTime: new Date(Date.now() + 60*60*3*1000) }, function (err, playlist) {
 
               if(err) callback(err);
               LogEntry.getMostRecent(station.id, function (err, nowPlaying) {
