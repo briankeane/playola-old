@@ -177,12 +177,12 @@ exports.createRotationItem = function (req,res) {
   });
 };
 
-exports.updateRotationWeight = function (req,res,next) {
+exports.updateRotationBin = function (req,res,next) {
   RotationItem.findById(req.body.rotationItemId, function (err, rotationItem) {
     if (err) return next(err);
     if (!rotationItem) return res.json(401);
 
-    rotationItem.updateWeight(req.body.weight, function (err, updatedRotationItem) {
+    rotationItem.updateBin(req.body.bin, function (err, updatedRotationItem) {
       if (err) return next(err);
 
       RotationItem.findAllForStation(rotationItem._station, function (err, rotationItems) {
@@ -245,9 +245,10 @@ function createRotationItemsObject(rotationItems) {
       if (!rotationItemsObject[rotationItems[i].bin]) {
         rotationItemsObject[rotationItems[i].bin] = [];
       }
+      
+      rotationItemsObject[rotationItems[i].bin].push(rotationItems[i]);
     }
 
-    rotationItemsObject[rotationItems[i].bin].push(rotationItems[i]);
   }
   return rotationItemsObject;
 }

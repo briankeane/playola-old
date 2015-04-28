@@ -12,7 +12,7 @@ router.get('/me', auth.isAuthenticated(), controller.me);
 router.get('/:id/getRotationItems', auth.isAuthenticated(), controller.getRotationItems)
 router.get('/:id/getProgram', auth.isAuthenticated(), controller.getProgram)
 router.put('/:id/removeRotationItem', auth.isAuthenticated(), controller.removeRotationItem)
-router.put('/:id/updateRotationWeight', auth.isAuthenticated(), controller.updateRotationWeight)
+router.put('/:id/updateRotationBin', auth.isAuthenticated(), controller.updateRotationBin)
 router.post('/:id/createRotationItem', auth.isAuthenticated(), controller.createRotationItem)
 router.get('/:id', controller.show);
 router.post('/', controller.create);
