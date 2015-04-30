@@ -138,18 +138,29 @@ angular.module('playolaApp')
         text: 'To record commentary, click on the "Record" tab...',
         selector: '#recordTab a',
         placement: 'left'
-      },
-      // {
-      //   type: 'function',
-      //   fn: activateRecordTab
-      // }
+      }
     ];
+
+    // tour end functions
+    $scope.onFinish = function () {
+      Auth.reportTourTaken('mainListenTour', function (user) {
+        SharedData.user = user;
+      });
+    }
+
+    $scope.onSkip = function () {
+      Auth.reportTourTaken('mainListenTour', function (user) {
+        SharedData.user = user;
+      });
+    }
 
     $timeout(function () {
       Auth.getTwitterFriends(function (err, result) {
         $scope.twitterFriends = result.friends;
 
-        if (!(SharedData.user.tours && SharedData.user.tours.listenMain)) {
+        // if they haven't taken the tour yet
+        if (!(SharedData.user.tours && SharedData.user.tours.mainListenTour)) {
+          
           // insert no-friends commentary
           if (!$scope.twitterFriends.length) {
             $scope.listenMainJoyrideConfig.splice(1,0,

@@ -45,6 +45,8 @@ angular.module('playolaApp')
       }
     }
 
+    $scope.activeTab = 'catalog';
+
     // **************************************************************************************
     // *                                Uploader Listeners                                  *
     // **************************************************************************************
@@ -493,6 +495,4 @@ angular.module('playolaApp')
         SharedData.user = user;
       });
     }
-
-    $scope.scheduleJoyride = true;
   });
