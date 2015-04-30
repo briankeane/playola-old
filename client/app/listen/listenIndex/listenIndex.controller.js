@@ -10,7 +10,10 @@ angular.module('playolaApp')
     $scope.inputs = { 
                     searchText: '' 
                   };
-
+    $scope.activeTab = { friends: true,
+                        topStations: false,
+                        search: false
+                       };
 
     $timeout(function () {
       Auth.getTopStations({}, function (err, result) {
@@ -83,6 +86,18 @@ angular.module('playolaApp')
       }
     });
 
+    $scope.activateTab = function (tabName) {
+      for (var prop in $scope.activeTab) {
+        if ($scope.activeTab.hasOwnProperty(prop)) {
+          if (prop === tabName) {
+            $scope.activeTab[prop] = true;
+          } else {
+            $scope.activeTab[prop] = false;
+          }
+        }
+      }
+    }
+
     $scope.listenMainJoyrideConfig = [
       {
         type:"title",
@@ -96,48 +111,21 @@ angular.module('playolaApp')
         "</div>"
       },
       {
+        // open the topStations tab
+        type: 'function',
+        fn: function (movingForward) {
+          if (movingForward) {
+            $scope.activateTab('topStations');
+          } else {
+            $scope.activateTab('friends');
+          }
+        }
+      },
+      {
         type:"element",
-        heading:"Now Playing",
-        text: "These are the most popular stations on Playola right now.",
+        heading:"Top Stations",
+        text: "The 'Top Stations' tab contains the most popular stations on Playola right now.",
         selector: "#topStationsTab a"
-      },
-      {
-        type: "element",
-        heading: "The Schedule",
-        text: "This is the list of songs that you are about to broadcast.",
-        selector: "#station-list"
-      },
-      {
-        type: "title",
-        heading: "Changing Spin Order",
-        text: "You can change the order of a spin by grabbing it with your mouse and dragging it up or down.",
-        attachToBody: true
-      },
-      {
-        type: "title",
-        heading: "Commercial Blocks",
-        text: "Commercial Blocks will automatically adjust around your changes.",
-        attachToBody: true
-      },
-      {
-        type: "element",
-        heading: "Remove Spin",
-        text: "Remove a spin by clicking on the 'x'",
-        selector: "#station-list"
-      },
-      {
-        type: 'element',
-        heading: 'The Catalog',
-        text: 'You can search for songs to play here.  Type the title or artist in this box.  When the search results appear, you can drag them right into the schedule on the left.',
-        selector: '#searchbox',
-        placement: 'left'
-      },
-      {
-        type: 'element',
-        heading: 'Record Commentary',
-        text: 'To record commentary, click on the "Record" tab...',
-        selector: '#recordTab a',
-        placement: 'left'
       }
     ];
 

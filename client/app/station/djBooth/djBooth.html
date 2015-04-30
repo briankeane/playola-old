@@ -65,7 +65,7 @@
       <p class="sub-headline">Add Songs or Your Own Commentary</p>
       
       <tabset id="catalogAndRecordPanel" justified="true">
-        <tab heading="Add Songs" class="{active: activeTab==='catalog'}" id="catalogTab" ng-click="activeTab='catalog'">
+        <tab heading="Add Songs" active="activeTab.catalogSearch" id="catalogTab">
           <div class="content"  id="all-songs-source-container">
           
             <div>   <!--  extra container for tab/sortable-ui interaction  -->
@@ -86,7 +86,8 @@
             </div>
           </div>
         </tab>
-        <tab heading="Record" class="{active: activeTab==='record'}" id="recordTab" ng-click="activeTab='record'">
+
+        <tab heading="Record" active="activeTab.record" id="recordTab">
           <div class="content" id="record">
             <div> <!-- extra container for tab/sortable-ui interaction  -->
               <div ng-include="'components/audioRecorder/audioRecorder.html'" >
@@ -94,7 +95,7 @@
             </div>
           </div>
         </tab>
-        <tab heading="Upload" class="{active: activeTab==='upload'}" id="uploadTab" ng-click="activeTab='upload'">
+        <tab heading="Upload" active="activeTab.upload" id="uploadTab">
           <div class="content" id="uploader">
             <div ng-include="'components/uploader/uploader.html'"></div>
           </div>
@@ -105,39 +106,3 @@
     </div>
   </div>
 </div>
-
-<!-- JOYRIDE -->
-<!-- <ol class='joyride-list' id="tour" data-joyride>
-  <li data-text="Next" data-button="Continue" data-options="prev_button: false">
-    <h4>Welcome!</h4>
-    <p>Welcome to Playola, where we set up a 24-hour-a-day radio station and hand you the controls.  Press Continue to see how it works!</p>
-  </li>
-  <li data-id="nowPlaying" data-button="Next">
-    <h4>Now Playing</h4>
-    <p>This is what's currently playing on your station. You can mute the station with the center button.</p>
-  </li>
-  <li data-id="station-list" data-button="Next" data-prev-text="Prev" data-options="tip_location:top;">
-    <h4>The Queue</h4>
-    <p>This is the station of songs that are about to play on your station.</p>
-  </li>
-  <li data-class="ui-sortable-handle:first" data-text="Next" data-prev-text="Prev">
-    <h4>Change the Spin Order</h4>
-    <p>Change the order of songs by grabbing the song with your mouse, and dragging it up or down. Times and commercials will automatically adjust.</p>
-  </li>
-  <li data-class="close:first" data-button="Next" data-prev-text="Prev">
-    <h4>Remove a Spin</h4>
-    <p>Remove a song from the queue by clicking on the 'x'.</p>
-  </li>
-  <li data-id="catalog-list" data-button="Next" data-prev-text="Prev" data-options="tip_location:top;">
-    <h4>Catalogue</h4>
-    <p>Search our catalogue of songs here.  You can add any song to the queue by dragging it in with your mouse.</p>
-  </li>
-  <li data-id="record-tab" data-button="Next" data-options="tip_location:left;">
-    <h4>Voice-Tracking</h4>
-    <p>In Chrome and Firefox you can record commentary, then drag it right into the setlist for DJ voiceovers.</p>
-  </li>
-  <li data-button="Done">
-    <h4>Thanks!</h4>
-    <p>Thanks for taking the tour! Happy broadcasting!</p>
-  </li>
-</ol> -->

@@ -8,7 +8,7 @@ angular.module('playolaApp')
     $scope.catalogSearchResults = [];
     $scope.mostRecentCommentary = {};
     
-    $scope.activeTab = 'catalog';
+    $scope.activeTab = {catalogSearch: true};
     
     $scope.player = AudioPlayer;
     $scope.currentUser = Auth.getCurrentUser();
@@ -44,8 +44,6 @@ angular.module('playolaApp')
         $scope.scheduleJoyride = true;
       }
     }
-
-    $scope.activeTab = 'catalog';
 
     // **************************************************************************************
     // *                                Uploader Listeners                                  *
@@ -421,22 +419,22 @@ angular.module('playolaApp')
         placement: 'left'
       },
       {
+        // open the record tab
+        type: 'function',
+        fn: function (movingForward) {
+          if (movingForward) {
+            $scope.activeTab = { record: true };
+          } else {
+            $scope.activeTab = { catalogSearch: true };
+          }
+        }
+      },
+      {
         type: 'element',
         heading: 'Record Commentary',
         text: 'To record commentary, click on the "Record" tab...',
         selector: '#recordTab a',
         placement: 'left'
-      },
-      {
-        // open the record tab
-        type: 'function',
-        fn: function (movingForward) {
-          if (movingForward) {
-            $scope.activeTab = 'record';
-          } else {
-            $scope.activeTab = 'catalog';
-          }
-        }
       },
       {
         type: 'element',
@@ -464,9 +462,9 @@ angular.module('playolaApp')
         type: 'function',
         fn: function (movingForward) {
           if (movingForward) {
-            $scope.activeTab = 'upload';
+            $scope.activeTab = {upload:true};
           } else {
-            $scope.activeTab = 'record';
+            $scope.activeTab = {record:true};
           }
         }
       },
@@ -495,4 +493,7 @@ angular.module('playolaApp')
         SharedData.user = user;
       });
     }
+
+    // uncomment to test tour
+    $scope.scheduleJoyride = true;
   });

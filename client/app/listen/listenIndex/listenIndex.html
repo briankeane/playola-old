@@ -2,9 +2,9 @@
   <div ng-joy-ride="listenMainJoyrideStart" config="listenMainJoyrideConfig" on-finish="onFinish()"  on-skip="onSkip()"></div>
   <h1 class="headline">Listen</h1>
   
-  <tabset class="tabs" id="findStationsPanel" justified="true">
-    <tab heading="Your Friends' Stations" id="friendsTab">
-      <div class="content active" id="twitter-friends">
+  <tabset id="findStationsPanel" justified="true">
+    <tab heading="Your Friends' Stations" id="friendsTab" active="activeTab.friends">
+      <div class="content" id="twitter-friends" >
         <div class="row">
           <a ng-repeat="friend in twitterFriends" ng-href="#" ng-click="playStation(friend._station._id);">
             <article class="top-station station-square col-sm-6 col-md-3">
@@ -20,8 +20,8 @@
         </div>
       </div>
     </tab>
-    <tab heading="Top Stations">
-      <div class="content" id="top-stations">
+    <tab heading="Top Stations" id="topStationsTab" active="activeTab.topStations">
+      <div class="content" id="top-stations" >
         <div class="row">
           <a ng-repeat="station in topStations" ng-href="#" ng-click="playStation(station._id);">
             <article class="top-station station-square col-sm-6 col-md-3">
@@ -38,8 +38,8 @@
         </div>      
       </div>
     </tab>
-    <tab heading="Search">
-      <div class="content active" id="all-songs-source-container">
+    <tab heading="Search" active="activeTab.search">
+      <div class="content" id="all-songs-source-container">
         <div>   <!--  extra container for tab/sortable-ui interaction  -->
           <span for="searchbox">Search Text:</span>
           <input type="text" id="searchbox" placeholder="Enter Title and/or Artist Here" ng-model="inputs.searchText" ng-model-options="{ debounce: 500 }" ng-change="findStationsByKeywords(inputs.searchText)">
