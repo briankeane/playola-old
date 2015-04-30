@@ -98,8 +98,8 @@ angular.module('playolaApp')
       {
         type:"element",
         heading:"Now Playing",
-        text: "This is what you're streaming right now, live to your listeners.",
-        selector: "#nowPlayingList li"
+        text: "These are the most popular stations on Playola right now.",
+        selector: "#topStationsTab a"
       },
       {
         type: "element",
@@ -162,13 +162,13 @@ angular.module('playolaApp')
               {
                 type: "title",
                 heading: "Your Friends",
-                text: "<span style=''<i>awkward...</i>"
+                text: "<i>awkward...</i>"
               }
             );
 
           // otherwise insert normal commentary
           } else {
-            $scope.listenMainJoyrideConfig.splice(1,0, [
+            $scope.listenMainJoyrideConfig.splice(1,0, 
               {
                 type: 'element',
                 heading: 'Friends',
@@ -176,7 +176,7 @@ angular.module('playolaApp')
                 selector: '#friendsTab a',
                 placement: 'bottom'
               }
-            ]);
+            );
           }
           $scope.listenMainJoyrideStart = true;
         }

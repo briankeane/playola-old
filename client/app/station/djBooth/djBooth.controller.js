@@ -369,31 +369,6 @@ angular.module('playolaApp')
       $scope.setPlaylist();
     }
 
-    $scope.activateRecordTab = function (movingForward) {
-      if (movingForward) {
-        $scope.activeTab = 'record';
-      } else {
-        $scope.activeTab = 'catalog';
-      }
-    }
-
-    $scope.activateUploadTab = function (movingForward) {
-      if (movingForward) {
-        $scope.activeTab = 'upload';
-      } else {
-        $scope.activeTab = 'record';
-      }
-    }
-
-
-    function fillCatalogInput (movingForward) {
-      if (movingForward) {
-        $scope.$root.searchText = 'Rachel Loy';
-      } else {
-        $scope.$root.searchText = '';
-      }
-    }
-
     $scope.joyrideConfig = [
       {
         type:"title",
@@ -451,8 +426,15 @@ angular.module('playolaApp')
         placement: 'left'
       },
       {
+        // open the record tab
         type: 'function',
-        fn: $scope.activateRecordTab
+        fn: function (movingForward) {
+          if (movingForward) {
+            $scope.activeTab = 'record';
+          } else {
+            $scope.activeTab = 'catalog';
+          }
+        }
       },
       {
         type: 'element',
@@ -475,9 +457,16 @@ angular.module('playolaApp')
         selector: '#uploadTab a',
         placement: 'left'
       },
-      {
+      { 
+        // open the upload tab
         type: 'function',
-        fn: $scope.activateUploadTab
+        fn: function (movingForward) {
+          if (movingForward) {
+            $scope.activeTab = 'upload';
+          } else {
+            $scope.activeTab = 'record';
+          }
+        }
       },
       {
         type: 'element',
@@ -505,4 +494,5 @@ angular.module('playolaApp')
       });
     }
 
+    $scope.scheduleJoyride = true;
   });
