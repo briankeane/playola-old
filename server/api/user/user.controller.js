@@ -154,7 +154,7 @@ exports.reportTourTaken = function (req,res) {
     if (!tourObject) {
       tourObject = {};
     }
-    tourObject.mySchedule = true;
+    tourObject[req.body.tour] = true;
     user.tours = tourObject;
     user.markModified('tours');
     user.save(function (err, updatedUser) {
