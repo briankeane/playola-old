@@ -8,6 +8,8 @@ angular.module('playolaApp')
     $scope.catalogSearchResults = [];
     $scope.mostRecentCommentary = {};
     
+    $scope.activeTab = 'catalog';
+    
     $scope.player = AudioPlayer;
     $scope.currentUser = Auth.getCurrentUser();
 
@@ -31,7 +33,17 @@ angular.module('playolaApp')
       AudioPlayer.loadStation(SharedData.myStation._id);
     }
 
-
+    if (!SharedData.user) {
+      $rootScope.$on('userLoaded', function () {
+        if (!(SharedData.user.tours && SharedData.user.tours.mySchedule)) {
+          $scope.scheduleJoyride = true;
+        }
+      });
+    } else {
+      if (!(SharedData.user.tours && SharedData.user.tours.mySchedule)) {
+        $scope.scheduleJoyride = true;
+      }
+    }
 
     // **************************************************************************************
     // *                                Uploader Listeners                                  *
@@ -356,4 +368,148 @@ angular.module('playolaApp')
     } else {
       $scope.setPlaylist();
     }
+
+    function activateRecordTab (movingForward) {
+      if (movingForward) {
+        $scope.activeTab = 'record';
+      } else {
+        $scope.activeTab = 'catalog';
+      }
+    }
+
+    function activateUploadTab (movingForward) {
+      if (movingForward) {
+        $scope.activeTab = 'upload';
+      } else {
+        $scope.activeTab = 'record';
+      }
+    }
+
+    function fillCatalogInput (movingForward) {
+      if (movingForward) {
+        $scope.$root.searchText = 'Rachel Loy';
+      } else {
+        $scope.$root.searchText = '';
+      }
+
+    }
+
+    $scope.joyrideConfig = [
+      {
+        type:"title",
+        heading:"Welcome to Playola",
+        text: "" +
+        "<div class='row'>" +
+          "<div id='title-text' class='col-md-12'>" +
+            "<span class='main-text'>Welcome to Playola, where we set up a 24-hour-a-day radio station and hand you the controls.  Here's how it works:" +
+            "</span>" +
+          "</div>" +
+        "</div>"
+      },
+      {
+        type:"element",
+        heading:"Now Playing",
+        text: "This is what you're streaming right now, live to your listeners.",
+        selector: "#nowPlayingList li"
+      },
+      {
+        type: "element",
+        heading: "The Schedule",
+        text: "This is the list of songs that you are about to broadcast.",
+        selector: "#station-list"
+      },
+      {
+        type: "title",
+        heading: "Changing Spin Order",
+        text: "You can change the order of a spin by grabbing it with your mouse and dragging it up or down.",
+        attachToBody: true
+      },
+      {
+        type: "title",
+        heading: "Commercial Blocks",
+        text: "Commercial Blocks will automatically adjust around your changes.",
+        attachToBody: true
+      },
+      {
+        type: "element",
+        heading: "Remove Spin",
+        text: "Remove a spin by clicking on the 'x'",
+        selector: "#station-list"
+      },
+      {
+        type: 'element',
+        heading: 'The Catalog',
+        text: 'You can search for songs to play here.  Type the title or artist in this box.',
+        selector: '#searchbox',
+        placement: 'left'
+      },
+      {
+        type: 'element',
+        heading: 'The Catalog',
+        text: 'The search results will appear here.  When they do, you can drag the songs straight into the playlist.',
+        selector: '#all-songs-source-container',
+        placement: 'left'
+      },
+      {
+        type: 'element',
+        heading: 'Record Commentary',
+        text: 'To record commentary, click on the "Record" tab...',
+        selector: '#recordTab a',
+        placement: 'left'
+      },
+      {
+        type: 'function',
+        fn: activateRecordTab
+      },
+      {
+        type: 'element',
+        heading: 'Recording',
+        text: "When you're ready to record, press the Record Button and talk in your best DJ Voice.",
+        selector: '#record',
+        placement: 'left'
+      },
+      {
+        type: 'element',
+        heading: 'Recording',
+        text: 'When your recording is finished processing, it will appear here.  Then you can just drag it right into the schedule.',
+        selector: '#recordings',
+        placement: 'left'
+      },
+      {
+        type: 'element',
+        heading: 'Upload',
+        text: "If we don't have a song you'd like to play, click on the 'Upload' tab.",
+        selector: '#uploadTab a',
+        placement: 'left'
+      },
+      {
+        type: 'function',
+        fn: activateUploadTab
+      },
+      {
+        type: 'element',
+        heading: "Upload",
+        text: "Just drag your songs or song files right into this drop-area... You can even drag them straight from iTunes!",
+        selector: '#upload-drop-area',
+        placement: 'left'
+      },
+      {
+        type: 'title',
+        heading: 'Thanks',
+        text: 'That oughtta get you started.  Thanks for taking the tour!'
+      }
+    ];
+
+    $scope.onFinish = function () {
+      Auth.reportTourTaken('myScheduleTour', function (user) {
+        SharedData.user = user;
+      });
+    }
+
+    $scope.onSkip = function () {
+      Auth.reportTourTaken('myScheduleTour', function (user) {
+        SharedData.user = user;
+      });
+    }
+
   });

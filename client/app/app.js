@@ -10,7 +10,8 @@ angular.module('playolaApp', [
   'angularMoment',
   'angularFileUpload',
   'ui.tree',
-  'ui.sortable'
+  'ui.sortable',
+  'ngJoyRide'
 ])
   .config(function ($stateProvider, $urlRouterProvider, $locationProvider, $httpProvider) {
     $urlRouterProvider

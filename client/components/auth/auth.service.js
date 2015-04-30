@@ -114,6 +114,15 @@ angular.module('playolaApp')
         }).$promise;
       },
 
+      reportTourTaken: function (tourName, callback) {
+        var cb = callback || angular.noop;
+
+        return User.reportTourTaken({ id: currentUser._id }, { tour: tourName }, function (user) {
+          return cb(user);
+        }, function (err) {
+          return cb(err);
+        }).$promise;
+      },
       /**
       * Set User Zipcode
       *

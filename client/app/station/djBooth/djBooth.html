@@ -1,4 +1,5 @@
- <div class="mic-image-inverse">
+<div class="mic-image-inverse">
+  <div ng-joy-ride="scheduleJoyride" config="joyrideConfig" on-finish="onFinish()"  on-skip="onSkip()"></div>
   <div class="row top-row">
     <h1 class="headline">Your Station</h1>
     <p class="sub-headline">Here's What You're Broadcasting Right Now...</p>
@@ -64,8 +65,8 @@
       <p class="sub-headline">Add Songs or Your Own Commentary</p>
       
       <tabset id="catalogAndRecordPanel" justified="true">
-        <tab heading="Add Songs">
-          <div class="content active" id="all-songs-source-container">
+        <tab heading="Add Songs" active='activeTab==="catalog"' id="catalogTab">
+          <div class="content"  id="all-songs-source-container">
           
             <div>   <!--  extra container for tab/sortable-ui interaction  -->
               <span for="searchbox">Search Text:</span>
@@ -85,7 +86,7 @@
             </div>
           </div>
         </tab>
-        <tab heading="Record">
+        <tab heading="Record" active="activeTab==='record'" id="recordTab">
           <div class="content" id="record">
             <div> <!-- extra container for tab/sortable-ui interaction  -->
               <div ng-include="'components/audioRecorder/audioRecorder.html'" >
@@ -93,7 +94,7 @@
             </div>
           </div>
         </tab>
-        <tab heading="Upload">
+        <tab heading="Upload" active="activeTab==='upload'" id="uploadTab">
           <div class="content" id="uploader">
             <div ng-include="'components/uploader/uploader.html'"></div>
           </div>
@@ -115,32 +116,26 @@
     <h4>Now Playing</h4>
     <p>This is what's currently playing on your station. You can mute the station with the center button.</p>
   </li>
-
   <li data-id="station-list" data-button="Next" data-prev-text="Prev" data-options="tip_location:top;">
     <h4>The Queue</h4>
     <p>This is the station of songs that are about to play on your station.</p>
   </li>
-
   <li data-class="ui-sortable-handle:first" data-text="Next" data-prev-text="Prev">
     <h4>Change the Spin Order</h4>
     <p>Change the order of songs by grabbing the song with your mouse, and dragging it up or down. Times and commercials will automatically adjust.</p>
   </li>
-
   <li data-class="close:first" data-button="Next" data-prev-text="Prev">
     <h4>Remove a Spin</h4>
     <p>Remove a song from the queue by clicking on the 'x'.</p>
   </li>
-
   <li data-id="catalog-list" data-button="Next" data-prev-text="Prev" data-options="tip_location:top;">
     <h4>Catalogue</h4>
     <p>Search our catalogue of songs here.  You can add any song to the queue by dragging it in with your mouse.</p>
   </li>
-
   <li data-id="record-tab" data-button="Next" data-options="tip_location:left;">
     <h4>Voice-Tracking</h4>
     <p>In Chrome and Firefox you can record commentary, then drag it right into the setlist for DJ voiceovers.</p>
   </li>
-
   <li data-button="Done">
     <h4>Thanks!</h4>
     <p>Thanks for taking the tour! Happy broadcasting!</p>

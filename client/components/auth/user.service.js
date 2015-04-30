@@ -18,6 +18,12 @@ angular.module('playolaApp')
           controller:'update'
         }
       },
+      reportTourTaken: {
+        method: 'PUT',
+        params: {
+          controller: 'reportTourTaken'
+        }
+      },
       get: {
         method: 'GET',
         params: {

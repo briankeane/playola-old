@@ -19,6 +19,7 @@ router.put('/:id/update', auth.isAuthenticated(), controller.update);
 router.put('/:id/setZipcode', auth.isAuthenticated(), controller.setZipcode);
 router.put('/:id/follow', auth.isAuthenticated(), controller.follow);
 router.put('/:id/unfollow', auth.isAuthenticated(), controller.unfollow);
+router.put('/:id/reportTourTaken', auth.isAuthenticated(), controller.reportTourTaken);
 
 
 module.exports = router;

@@ -144,6 +144,26 @@ exports.update = function(req, res) {
   });
 };
 
+exports.reportTourTaken = function (req,res) {
+  User.findById(req.params.id, function (err, user) {
+    if (err) { return handleError(res, err); }
+    if (!user) { return res.send(404); }
+    
+    var tourObject = user.tours;
+
+    if (!tourObject) {
+      tourObject = {};
+    }
+    tourObject.mySchedule = true;
+    user.tours = tourObject;
+    user.markModified('tours');
+    user.save(function (err, updatedUser) {
+      if (err) { return handleError(res, err); }
+      return res.json(200, updatedUser);
+    });
+  });
+};
+
 exports.findByKeywords = function (req, res) {
   User.keywordSearch(req.query.searchString, function (err, searchResults) {
     if (err) { return res.send(500, err); }

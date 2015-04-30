@@ -21,7 +21,8 @@ var UserSchema = new Schema({
   provider:               { type: String },
   salt:                   { type: String },
   lastCommercial:         {},
-  twitter:                {}
+  twitter:                {},
+  tours:                  {} 
 }, {
   toObject: { getters: true },
   toJSON: { virtuals: true }

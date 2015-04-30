@@ -180,8 +180,8 @@ angular.module('playolaApp')
       if (SharedData.rotationItems) {
         $scope.rotationItems = SharedData.rotationItems;
         $scope.rotationItemAudioBlockIds = [];
-        for(var i=0;i<rotationItems.active.length;i++) {
-          $scope.rotationItemAudioBlockIds.push(rotationItems.active[i]._song._id);
+        for(var i=0;i<$scope.rotationItems.length;i++) {
+          $scope.rotationItemAudioBlockIds.push(rotationItems[i]._song._id);
         }
       } else {
         $rootScope.$on('rotationItemsLoaded', getRotationItems);
