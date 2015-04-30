@@ -1,9 +1,9 @@
 <div class="mic-image-inverse">
-
+  <div ng-joy-ride="listenMainJoyrideStart" config="listenMainJoyrideConfig" on-finish="onFinish()"  on-skip="onSkip()"></div>
   <h1 class="headline">Listen</h1>
   
   <tabset class="tabs" id="findStationsPanel" justified="true">
-    <tab heading="Your Friends' Stations">
+    <tab heading="Your Friends' Stations" id="friendsTab">
       <div class="content active" id="twitter-friends">
         <div class="row">
           <a ng-repeat="friend in twitterFriends" ng-href="#" ng-click="playStation(friend._station._id);">

@@ -86,7 +86,7 @@
             </div>
           </div>
         </tab>
-        <tab heading="Record" active="activeTab==='record'" id="recordTab">
+        <tab heading="Record" active="activeTab==='record'" id="recordTab" ng-click="activeTab='record'">
           <div class="content" id="record">
             <div> <!-- extra container for tab/sortable-ui interaction  -->
               <div ng-include="'components/audioRecorder/audioRecorder.html'" >
@@ -94,7 +94,7 @@
             </div>
           </div>
         </tab>
-        <tab heading="Upload" active="activeTab==='upload'" id="uploadTab">
+        <tab heading="Upload" active="activeTab==='upload'" id="uploadTab" ng-click="activeTab='upload'">
           <div class="content" id="uploader">
             <div ng-include="'components/uploader/uploader.html'"></div>
           </div>

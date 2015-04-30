@@ -369,7 +369,7 @@ angular.module('playolaApp')
       $scope.setPlaylist();
     }
 
-    function activateRecordTab (movingForward) {
+    $scope.activateRecordTab = function (movingForward) {
       if (movingForward) {
         $scope.activeTab = 'record';
       } else {
@@ -377,7 +377,7 @@ angular.module('playolaApp')
       }
     }
 
-    function activateUploadTab (movingForward) {
+    $scope.activateUploadTab = function (movingForward) {
       if (movingForward) {
         $scope.activeTab = 'upload';
       } else {
@@ -385,13 +385,13 @@ angular.module('playolaApp')
       }
     }
 
+
     function fillCatalogInput (movingForward) {
       if (movingForward) {
         $scope.$root.searchText = 'Rachel Loy';
       } else {
         $scope.$root.searchText = '';
       }
-
     }
 
     $scope.joyrideConfig = [
@@ -439,15 +439,8 @@ angular.module('playolaApp')
       {
         type: 'element',
         heading: 'The Catalog',
-        text: 'You can search for songs to play here.  Type the title or artist in this box.',
+        text: 'You can search for songs to play here.  Type the title or artist in this box.  When the search results appear, you can drag them right into the schedule on the left.',
         selector: '#searchbox',
-        placement: 'left'
-      },
-      {
-        type: 'element',
-        heading: 'The Catalog',
-        text: 'The search results will appear here.  When they do, you can drag the songs straight into the playlist.',
-        selector: '#all-songs-source-container',
         placement: 'left'
       },
       {
@@ -459,7 +452,7 @@ angular.module('playolaApp')
       },
       {
         type: 'function',
-        fn: activateRecordTab
+        fn: $scope.activateRecordTab
       },
       {
         type: 'element',
@@ -484,7 +477,7 @@ angular.module('playolaApp')
       },
       {
         type: 'function',
-        fn: activateUploadTab
+        fn: $scope.activateUploadTab
       },
       {
         type: 'element',
