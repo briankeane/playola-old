@@ -86,18 +86,6 @@ angular.module('playolaApp')
       }
     });
 
-    $scope.activateTab = function (tabName) {
-      for (var prop in $scope.activeTab) {
-        if ($scope.activeTab.hasOwnProperty(prop)) {
-          if (prop === tabName) {
-            $scope.activeTab[prop] = true;
-          } else {
-            $scope.activeTab[prop] = false;
-          }
-        }
-      }
-    }
-
     $scope.listenMainJoyrideConfig = [
       {
         type:"title",
@@ -115,9 +103,9 @@ angular.module('playolaApp')
         type: 'function',
         fn: function (movingForward) {
           if (movingForward) {
-            $scope.activateTab('topStations');
+            $scope.activeTab = { topStations: true };
           } else {
-            $scope.activateTab('friends');
+            $scope.activeTab = { friends: true };
           }
         }
       },
@@ -126,6 +114,49 @@ angular.module('playolaApp')
         heading:"Top Stations",
         text: "The 'Top Stations' tab contains the most popular stations on Playola right now.",
         selector: "#topStationsTab a"
+      },
+      {
+        type:"element",
+        heading:"Now Playing",
+        text: "Hover over the station to see what it's playing right now... Click on it to listen.",
+        selector: "#topStationSquares-1",
+        placement: 'right'
+      },
+      {
+        type: 'function',
+        fn: function (movingForward) {
+          if (movingForward) {
+            $scope.activeTab = { search: true };
+          } else {
+            $scope.activeTab = { topStations: true };
+          }
+        }
+      },
+      {
+        type: 'element',
+        heading: 'Search',
+        text: "Click on the 'Search' tab to search for stations by twitter handle or screen name.",
+        selector: '#searchTab',
+        placement: 'left'
+      },
+      {
+        type: 'function',
+        fn: function (movingForward) {
+          if (movingForward) {
+            if ($scope.twitterFriends.length) {
+              $scope.activeTab = { friends: true };
+            } else {
+              $scope.activeTab = { topStations: true };
+            }
+          } else {
+            $scope.activeTab = { search: true };
+          }
+        }
+      },
+      { 
+        type: 'title',
+        heading: 'Thanks',
+        text: 'Thanks for taking the tour... Happy listening!'
       }
     ];
 

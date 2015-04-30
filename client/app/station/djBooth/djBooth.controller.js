@@ -495,5 +495,5 @@ angular.module('playolaApp')
     }
 
     // uncomment to test tour
-    $scope.scheduleJoyride = true;
+    // $scope.scheduleJoyride = true;
   });

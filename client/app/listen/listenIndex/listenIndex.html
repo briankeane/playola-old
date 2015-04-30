@@ -24,7 +24,7 @@
       <div class="content" id="top-stations" >
         <div class="row">
           <a ng-repeat="station in topStations" ng-href="#" ng-click="playStation(station._id);">
-            <article class="top-station station-square col-sm-6 col-md-3">
+            <article class="top-station station-square col-sm-6 col-md-3" id="topStationSquares-{{$index}}">
               <img class="twitter-pic" src="{{station._user.profileImageUrl}}" />
               <div class="overlay">
                 <h3 class="overlay-twitter-handle">@{{station._user.twitterHandle}}</h3>
@@ -38,7 +38,7 @@
         </div>      
       </div>
     </tab>
-    <tab heading="Search" active="activeTab.search">
+    <tab heading="Search" active="activeTab.search" id="searchTab">
       <div class="content" id="all-songs-source-container">
         <div>   <!--  extra container for tab/sortable-ui interaction  -->
           <span for="searchbox">Search Text:</span>
