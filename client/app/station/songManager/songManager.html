@@ -1,4 +1,5 @@
 <div class='mic-image-inverse'>
+  <div ng-joy-ride="mySongsJoyride" config="mySongsJoyrideConfig" on-finish="onFinish()"  on-skip="onSkip()"></div>
   <div class="row top-row">
     <h1 class="headline">Song Manager</h1>
   </div>
@@ -41,35 +42,8 @@
   </div>
 </div>
 
-<div class="brown-background">
+<!-- <div class="brown-background">
   <button id='resetStation'>Reset Station</button>
   <button id='resetSongList'>Reset SongList</button>
 
-</div>
-
-<!-- JOYRIDE -->
-<ol class='joyride-list' id="tour" data-joyride>
-  <li data-text="Next" data-button="Next" data-options="prev_button: false">
-    <h4>Station Playlist</h4>
-    <p>On this page, you can choose which songs to automatically include in your playlist.</p>
-  </li>
-  <li data-id="spinsPerWeekFieldset" data-button="Next" data-options="tip_location:top;">
-    <h4>Song List</h4>
-    <p>These are the songs that your station plays.  To remove a song, double-click it or drag it back into the main catalogue.</p>
-  </li>
-
-  <li data-class="rotationSelect" data-text="Next" data-prev-text="Prev">
-    <h4>Level of Rotation</h4>
-    <p>This determines how often the song is played.  Heavy songs are played frequently, light songs are played once or twice per week.</p>
-  </li>
-
-  <li data-id="catalog-list" data-button="Next" data-prev-text="Prev" data-options="tip_location:top;">
-    <h4>The Catalog</h4>
-    <p>This is the list of all available songs. To add a song to your station, just drag it over or double-click it.</p>
-  </li>
-
-  <li data-button="Done">
-    <h4>Thanks!</h4>
-    <p>Thanks for taking the tour!</p>
-  </li>
-</ol>
+</div> -->

@@ -14,6 +14,7 @@ angular.module('playolaApp')
     self.myStation;
     self.bins;
     self.rotationItemsArray;
+    self.micStatus = {};
     var promises = []
 
     // create object for tracking if all data loaded

@@ -133,17 +133,72 @@ angular.module('playolaApp')
     $scope.currentStation = Auth.getCurrentStation()
 
     $scope.currentUser = Auth.getCurrentUser();
+    
+    function loadItems () {
+      $scope.bins = SharedData.bins;
+      $scope.rotationItems = SharedData.rotationItemsArray;
+      
+      if (!(SharedData.user.tours && SharedData.user.tours.mySongsTour)) {
+        $scope.mySongsJoyride=true;
+      }
+
+    }
 
     if (!SharedData.myStation) {
       $rootScope.$on('rotationItemsLoaded', function () {
-        $scope.bins = SharedData.bins;
-        $scope.rotationItems = SharedData.rotationItemsArray;
-      })
+        loadItems();
+      });
+    } else {
+      loadItems();
     }
+
     $scope.bins = SharedData.bins;
     $scope.rotationItems = SharedData.rotationItemsArray;
 
+    // tour end functions
+    $scope.onFinish = function () {
+      Auth.reportTourTaken('mySongsTour', function (user) {
+        SharedData.user = user;
+      });
+    }
 
+    $scope.onSkip = function () {
+      Auth.reportTourTaken('mySongsTour', function (user) {
+        SharedData.user = user;
+      });
+    }
+
+    $scope.mySongsJoyrideConfig = [
+      {
+        type:"title",
+        heading:"My Songs",
+        text: "" +
+        "<div class='row'>" +
+          "<div id='title-text' class='col-md-12'>" +
+            "<span class='main-text'>This page stores all the songs that our song scheduler uses to create your schedule." +
+            "</span>" +
+          "</div>" +
+        "</div>"
+      },
+      {
+        type: "element",
+        heading: "MySongs",
+        text: "These are the songs that will play on your station.  To increase or decrease how often a song is played, change it's category.  Heavier songs " +
+        "are played the most, light songs are played the least.",
+        selector: '#spinsPerWeekList'
+      },
+      {
+        type: 'element',
+        heading: 'Adding a Song',
+        text: "To add a song to the scheduler, type the title or artist into the searchbox.  When the song you want appears below, double-click on the station.",
+        selector: '#searchbox'
+      },
+      {
+        type: 'title',
+        heading: 'Playola',
+        text: 'Ok, have at it.'
+      }
+    ];
   });
 
 function compareSong(a,b) {

@@ -1,5 +1,5 @@
 angular.module('playolaApp')
-  .controller('AudioRecorderCtrl', function ($scope, $location, Auth, $sce, FileUploader, AudioPlayer) {
+  .controller('AudioRecorderCtrl', function (SharedData, $scope, $location, Auth, $sce, FileUploader, AudioPlayer) {
 
     $scope.refreshProgramFromServer;      // filled with reference when needed
     
@@ -10,7 +10,7 @@ angular.module('playolaApp')
     $scope.blobs = [];
     $scope.recordingCounter = 0;
     $scope.wasMuted;
-
+    $scope.micStatus = SharedData.micStatus;
 
 
     // **************************************************************************
@@ -219,18 +219,29 @@ angular.module('playolaApp')
 
       audio_context = new AudioContext;
       console.log('Audio context set up.');
-      console.log('navigator.getUserMedia ' + (navigator.getUserMedia ? 'available.' : 'not present!'));
+      if (!navigator.getUserMedia) {
+        SharedData.micStatus.unsupported = true;
+        SharedData.micStatus.permissionDenied = false;
+        SharedData.micStatus.enabled = false;
+      }
+      navigator.getUserMedia({audio: true}, function(stream) {
+
+        console.log("This is running");
+        SharedData.micStatus.enabled = true;
+        startUserMedia(stream);
+
+      }, function(e) {
+        $scope.recordingEnabled = false;
+
+        console.log('No live audio input: ' + e);
+        SharedData.micStatus.permissionDenied = true;
+        SharedData.micStatus.enabled = false;
+        SharedData.micStatus.unsupported = false;
+      });
     } catch (e) {
-      alert('No web audio support in this browser! ' + e);
+        SharedData.micStatus.unsupported = true;
+        SharedData.micStatus.permissionDenied = false;
+        SharedData.micStatus.enabled = false;
     }
 
-    navigator.getUserMedia({audio: true}, function(stream) {
-
-      console.log("This is running");
-      startUserMedia(stream);
-
-    }, function(e) {
-      $scope.recordingEnabled = false;
-      console.log('No live audio input: ' + e);
-    });
   });

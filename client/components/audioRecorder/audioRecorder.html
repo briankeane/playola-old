@@ -1,14 +1,28 @@
 <div ng-controller="AudioRecorderCtrl">
   <h4>Record</h4>
-  <button id="startRecording" ng-click="startRecordingPressed()" class="glyphicon glyphicon-">record</button>
-  <button id="stopRecording" ng-click="stopRecordingPressed()" ng-disabled="stopDisabled">stop</button>
-  <canvas id="volumeMeter"></canvas>
+  <div class="micWorking" ng-show="micStatus.enabled">
+    <button id="startRecording" ng-click="startRecordingPressed()" class="glyphicon glyphicon-">record</button>
+    <button id="stopRecording" ng-click="stopRecordingPressed()" ng-disabled="stopDisabled">stop</button>
+    <canvas id="volumeMeter"></canvas>
 
-  <div id="recording-tree">
-    <ol ui-sortable="audioRecordingList" ng-model="recordings" id="recordings">
-      <li ng-repeat="recording in recordings" class="commentary" opacity="0.3">
-        <audio controls type="audio/mpeg" href="{{recording.url}}" src="{{recording.url}}" />
-      </li>
-    </ol>
+    <div id="recording-tree">
+      <ol ui-sortable="audioRecordingList" ng-model="recordings" id="recordings">
+        <li ng-repeat="recording in recordings" class="commentary" opacity="0.3">
+          <audio controls type="audio/mpeg" href="{{recording.url}}" src="{{recording.url}}" />
+        </li>
+      </ol>
+    </div>
+  </div>
+  <div class="waitingForApproval" ng-show="(!micStatus || (!micStatus.permissionDenied && !micStatus.unsupported && !micStatus.enabled))">
+    <h3>If you'd like to record messages for in-between the songs, please give us permission to use your mic</h3>
+    <p>Your browser should ask you at the top of the window...</p>
+  </div>
+  <div class="micDenied" ng-show="micStatus.permissionDenied">
+    <h3>Fine. We didn't want to talk to you, either.</h3>
+    <p>I kid, I kid</p>
+  </div>
+  <div class="micNotSupported" ng-show="micStatus.unsupported">
+    <h3>This browser won't support recording :/</h3>
+    <p>If you go grab <a href="https://www.google.com/chrome/browser/desktop/">Chrome</a> real quick we can start voice-tracking...</p>
   </div>
 </div>
