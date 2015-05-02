@@ -391,7 +391,7 @@ angular.module('playolaApp')
        * @return {Boolean}
        */
       isLoggedIn: function() {
-        return currentUser.hasOwnProperty('role');
+        return (currentUser && currentUser.hasOwnProperty('role'));
       },
 
       /**
@@ -417,7 +417,7 @@ angular.module('playolaApp')
        * @return {Boolean}
        */
       isAdmin: function() {
-        return currentUser.role === 'admin';
+        return (currentUser && (currentUser.role === 'admin'));
       },
 
       /**
