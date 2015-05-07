@@ -98,6 +98,7 @@ function SongProcessor() {
   };
 
   this.addSongToSystem = function (originalFilepath, callback) {
+var startTime = Date.now();
     // convert file
     Converter.convertFile(originalFilepath, function (err, filepath) {
       // if it's unconvertable.. no use left for file. just return
@@ -105,7 +106,7 @@ function SongProcessor() {
         callback(err);
         return;
       }
-
+console.log('conversion done at ' + (Date.now() - startTime) + 'ms')
       // otherwise grab the tags
       self.getTags(filepath, function (err, tags) {
         // if it's unreadable, delete it and fuggettaboutit
@@ -113,7 +114,7 @@ function SongProcessor() {
           callback(err);
           return;
         } 
-
+console.log('tags done in ' + (Date.now() - startTime) + 'ms')
         // if there's not enough info, store the file for future use
         if (!tags.title || !tags.artist) {
           Storage.storeUnprocessedSong(filepath, function (err, key) {
@@ -130,7 +131,6 @@ function SongProcessor() {
           });
           //return;
         }
-
         // get closest echonest tags
         self.getEchonestInfo({ title: tags.title, artist: tags.artist }, function (err, match) {
           if (err || !match) {
@@ -138,6 +138,7 @@ function SongProcessor() {
             return;
           }
 
+console.log('echonest info done in ' + (Date.now() - startTime) + 'ms')
           // if a suitable match was not found...
           if ((match.titleMatchRating < 0.75) || (match.artistMatchRating < 0.75)) {
             
@@ -158,7 +159,7 @@ function SongProcessor() {
               callback(err);
               return;
             }
-
+console.log('database check done in ' + (Date.now() - startTime) + 'ms')
             // if the song already exists, callback with song exists error
             if (songs.length) {
               var err = new Error('Song Already Exists');
@@ -175,7 +176,7 @@ function SongProcessor() {
               if (err) {
                 itunesInfo = {};
               }
-              
+console.log('itunes done in ' + (Date.now() - startTime) + 'ms')
               // store the song on S3
               Storage.storeSong({ title: match.title,
                                   artist: match.artist,
@@ -188,7 +189,7 @@ function SongProcessor() {
                   callback(new Error('Audio File Storage Error'));
                   return;
                 }
-
+console.log('song store done in ' + (Date.now() - startTime) + 'ms')
                 // add to DB
                 var song = new Song({ title: match.title,
                                      artist: match.artist,
@@ -202,18 +203,23 @@ function SongProcessor() {
                                      itunesInfo: itunesInfo })
                 
                 song.save(function (err, newSong) {
-                  if (err) callback(err);
-
+                  if (err) {
+                    callback(err);
+                    return;
+                  }
+console.log('song save done in ' + (Date.now() - startTime) + 'ms')
                   // delete the file 
                   if (fs.exists(filepath)) fs.unlink(filepath, function () {});
 
                   // add song to Echonest
                   SongPool.addSong(newSong)
                   .on('finish', function () {
+console.log('conversion finish in ' + (Date.now() - startTime) + 'ms')
                     callback(null, newSong);
                     return;
                   })
                   .on('error', function(err) {
+console.log('songpool error done in ' + (Date.now() - startTime) + 'ms')
                     var error = new Error('Song Added to System but not to Song Pool');
                     callback(err, newSong);
                     return;

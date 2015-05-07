@@ -1,35 +1,36 @@
 angular.module('playolaApp')
   .controller('uploaderCtrl', function ($scope, Auth, FileUploader, $modal) {
-    $scope.uploader = new FileUploader({ url: 'api/v1/uploads',
+    $scope.uploader = new FileUploader({ url: 'http://localhost:3000/api/v1/upload',
+                                        headers: { 'Access-Control-Allow-Origin': '*' },
                                           autoUpload: true });
 
-      $scope.uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
-          console.info('onWhenAddingFileFailed', item, filter, options);
-      };
-      $scope.uploader.onAfterAddingFile = function(fileItem) {
-          console.info('onAfterAddingFile', fileItem);
-      };
-      $scope.uploader.onAfterAddingAll = function(addedFileItems) {
-          console.info('onAfterAddingAll', addedFileItems);
-      };
-      $scope.uploader.onBeforeUploadItem = function(item) {
-          console.info('onBeforeUploadItem', item);
-      };
-      $scope.uploader.onProgressItem = function(fileItem, progress) {
-          console.info('onProgressItem', fileItem, progress);
-      };
-      $scope.uploader.onProgressAll = function(progress) {
-          console.info('onProgressAll', progress);
-      };
-      $scope.uploader.onSuccessItem = function(fileItem, response, status, headers) {
-          console.info('onSuccessItem', fileItem, response, status, headers);
-      };
-      $scope.uploader.onErrorItem = function(fileItem, response, status, headers) {
-          console.info('onErrorItem', fileItem, response, status, headers);
-      };
-      $scope.uploader.onCancelItem = function(fileItem, response, status, headers) {
-          console.info('onCancelItem', fileItem, response, status, headers);
-      };
+      // $scope.uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
+      //     console.info('onWhenAddingFileFailed', item, filter, options);
+      // };
+      // $scope.uploader.onAfterAddingFile = function(fileItem) {
+      //     console.info('onAfterAddingFile', fileItem);
+      // };
+      // $scope.uploader.onAfterAddingAll = function(addedFileItems) {
+      //     console.info('onAfterAddingAll', addedFileItems);
+      // };
+      // $scope.uploader.onBeforeUploadItem = function(item) {
+      //     console.info('onBeforeUploadItem', item);
+      // };
+      // $scope.uploader.onProgressItem = function(fileItem, progress) {
+      //     console.info('onProgressItem', fileItem, progress);
+      // };
+      // $scope.uploader.onProgressAll = function(progress) {
+      //     console.info('onProgressAll', progress);
+      // };
+      // $scope.uploader.onSuccessItem = function(fileItem, response, status, headers) {
+      //     console.info('onSuccessItem', fileItem, response, status, headers);
+      // };
+      // $scope.uploader.onErrorItem = function(fileItem, response, status, headers) {
+      //     console.info('onErrorItem', fileItem, response, status, headers);
+      // };
+      // $scope.uploader.onCancelItem = function(fileItem, response, status, headers) {
+      //     console.info('onCancelItem', fileItem, response, status, headers);
+      // };
       $scope.uploader.onCompleteItem = function(fileItem, response, status, headers) {
         if (response.status === 'info needed') {
           fileItem.status = response.status;
@@ -94,23 +95,20 @@ angular.module('playolaApp')
               $scope.selectedSong.index = 'ECHONESTIDNOTFOUND';
             }
 
-            $scope.submitSongWithEchonestId = function (form) {
-              $scope.submitted = true;
+            // $scope.submitSongWithEchonestId = function (form) {
+            //   $scope.submitted = true;
 
-              if (form.$valid) {
-                if ($scope.selectedSong.index === 'ECHONESTIDNOTFOUND') {
-                  $modalInstance.close();
+            //   if (form.$valid) {
+            //     if ($scope.selectedSong.index === 'ECHONESTIDNOTFOUND') {
+            //       $modalInstance.close();
 
-                // if echonestID was provided, resubmit upload
-                } else {
+            //     // if echonestID was provided, resubmit upload
+            //     } else {
 
-                  Auth.resubmitUploadWithEchonestId(uploadInfo, function (err, result) {
-
-                  });
-                }
+            //     }
                 
-              }
-            };
+            //   }
+            // };
 
           }
         }).result.then(function () {
@@ -159,6 +157,9 @@ angular.module('playolaApp')
                                       uploadId: item.uploadId,
                                       tags: item.tags
                                     };
+                  Auth.resubmitUploadWithEchonestId(uploadInfo, function (err, result) {
+
+                  });
 
           }
 
