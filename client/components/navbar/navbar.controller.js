@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('playolaApp')
-  .controller('NavbarCtrl', function ($scope, $rootScope, $location, $window, Auth) {
+  .controller('NavbarCtrl', function ($scope, $rootScope, $location, $window, Auth, $document) {
     $scope.menu = [{
       'title': 'Home',
       'link': '/'
@@ -25,4 +25,15 @@ angular.module('playolaApp')
     $scope.isActive = function(route) {
       return route === $location.path();
     };
+
+
+    // *********** front-end functions *************
+    $scope.isScrolledDown = function () {
+      if ($window.pageYOffset > 10) {
+        console.log('isScrolledDown');
+      } else {
+        console.log('isNotScrolledDown');
+      }
+      return ($window.pageYOffset > 10);
+    }
   });

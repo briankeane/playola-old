@@ -1,0 +1,13 @@
+.main-nav {
+  -webkit-transform: translateZ(0);
+  -webkit-transition: height 0.3s ease;
+  moz-transition: height 0.3s ease;
+  -o-transition: height 0.3s ease;
+  -ms-transition:height 0.3s ease;
+  transition: height 0.3s ease;
+}
+
+.inner-nav ul li a {
+  height: 75px;
+  line-height: 75px;
+}

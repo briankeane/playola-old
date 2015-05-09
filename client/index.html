@@ -20,10 +20,19 @@
     <!-- build:css({.tmp,client}) app/app.css -->
     <link rel="stylesheet" href="app/app.css">
       <!-- injector:css -->
+      <link rel="stylesheet" href="app/audioplayer.css">
+      <link rel="stylesheet" href="app/style.css">
+      <link rel="stylesheet" href="components/navbar/navbar.css">
       <!-- endinjector -->
     <!-- endbuild -->
   </head>
   <body ng-app="playolaApp">
+    <!-- Home Section -->
+    <section class="home-section bg-dark-alfa-70 parallax-2 fixed-height-small" data-background="images/section-bg-15.jpg" id="home">
+        <div class="js-height-parent container">
+         </div>
+    </section>
+  <!-- End Home Section -->
   <div ng-include="'components/navbar/navbar.html'"></div>
   <div ng-include="'components/audioPlayer/audioPlayer.html'"></div>
     <!--[if lt IE 7]>
@@ -67,6 +76,8 @@
       <script src="bower_components/jquery-ui/jquery-ui.js"></script>
       <script src="bower_components/angular-ui-sortable/sortable.js"></script>
       <script src="bower_components/ng-joyride/ng-joyride.js"></script>
+      <script src="bower_components/matchmedia/matchMedia.js"></script>
+      <script src="bower_components/ngSticky/lib/sticky.js"></script>
       <!-- endbower -->
       <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- endbuild -->
@@ -111,9 +122,9 @@
           <script src="components/modal/modal.service.js"></script>
           <script src="components/mongoose-error/mongoose-error.directive.js"></script>
           <script src="components/navbar/navbar.controller.js"></script>
+          <script src="components/navbar/scrollPosition.directive.js"></script>
           <script src="components/sharedData/sharedData.service.js"></script>
           <script src="components/uploader/uploader.controller.js"></script>
-          <script src="components/vendorJavascript/jquery.sticky.js"></script>
           <!-- endinjector -->
         <!-- endbuild -->
 </body>
