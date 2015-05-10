@@ -1,3 +1,4 @@
+<div ng-controller="NavbarCtrl">
 <!-- Navigation panel -->
 <nav sticky scroll-position="scroll" class="main-nav dark stick-fixed" ng-class="{ transparent: scroll < 10, 'small-height': scroll > 10 }">
   <div class="full-wrapper relative clearfix">
@@ -15,12 +16,12 @@
   <div class="inner-nav desktop-nav">
     <ul class="clearlist">
       <li>
-        <a href="#" class="active">Listen </a>
+        <a ng-show="isLoggedIn()" href="/station" class="active">Listen </a>
       </li>
          
       <!-- Item With Sub -->
       <li>
-        <a href="#" class="mn-has-sub">Broadcast<i class="fa fa-angle-down"></i></a>
+        <a ng-show="isLoggedIn()" href="#" mn-has-sub class="mn-has-sub">Broadcast<i class="fa fa-angle-down"></i></a>
           
         <!-- Sub Multilevel -->
         <ul class="mn-sub mn-has-multi">
@@ -29,21 +30,14 @@
                   
             <ul>
               <li>
-                <a href="#">ITEM 1</a>
+                <a href="/station/djBooth">My Schedule</a>
               </li>
               <li>
-                <a href="#">ITEM 2</a>
+                <a href="/station/songManager">My Songs</a>
               </li>
               <li>
-                <a href="#">ITEM 3</a>
-              </li>
-              <li>
-                <a href="#">ITEM 4</a>
-              </li>
-              <li>
-                <a href="#">ITEM 5</a>
-              </li>
-                     
+                <a href="/station/songMarkup">Song Markup</a>
+              </li>  
             </ul>
                   
           </li>
@@ -52,10 +46,13 @@
       </li>
       <!-- End Sub Multilevel Main -->
                     
+      <!-- Divider -->
+      <li ng-show="isLoggedIn();"><a>&nbsp;|&nbsp;</a></li>
+      <!-- End Divider -->
                
       <!-- Item With Sub -->
       <li>
-        <a href="#" class="mn-has-sub">@BrianKeaneTunes<i class="fa fa-angle-down"></i></a>
+        <a href="#" ng-show="isLoggedIn();" class="mn-has-sub">@BrianKeaneTunes<i class="fa fa-angle-down"></i></a>
           
         <!-- Sub Multilevel -->
         <ul class="mn-sub mn-has-multi">
@@ -64,33 +61,14 @@
               
             <ul>
               <li>
-                <a href="#"><i class="fa fa-plus-circle fa-sm"></i> Stuff 1</a>
+                <a href="#"><i class="fa fa-plus-circle fa-sm"></i>Settings</a>
               </li>
               <li>
-                <a href="#"><i class="fa fa-tachometer fa-sm"></i> Stuff 2 </a>
+                <a href="#"><i class="fa fa-tachometer fa-sm"></i>Station Creator</a>
               </li>
               <li>
-                <a href="#"><i class="fa fa-link fa-sm"></i> Stuff  3</a>
+                <a href="#" ng-click="logout()"><i class="fa fa-link fa-sm"></i>Logout</a>
               </li>
-              <li>
-                <a href="#"><i class="fa fa-th-large fa-sm"></i> Stuff 4</a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-align-justify fa-sm"></i> Stuff 5</a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-th fa-sm"></i> Stuff 6</a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-heart-o fa-sm"></i> Stuff 7</a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-heart fa-sm"></i> Stuff 8</a>
-              </li>
-              <li>
-                <a href="#"><i class="fa fa-comment fa-sm"></i> Stuff 9</a>
-              </li>
-                  
             </ul>
               
           </li>
@@ -100,24 +78,17 @@
       <!-- End Item With Sub -->
       
      
-      <!-- Divider -->
-      <li><a>&nbsp;|&nbsp;</a></li>
-      <!-- End Divider -->
       
       <!-- RIGHT NAV ITEMS -->
       <li>
-        <a href="#"><i class=""></i> ITEM</a>
+        <a href="#" ng-show="!isLoggedIn()" ng-click="loginOauth('twitter')"><i class=""></i>Sign Up / Sign In</a>
       </li>
       <!-- End ITEM -->
       
-       <!-- ADMIN -->
-      <li>
-        <a href="#"><i class="fa fa-tachometer"></i> ADMIN</a>
-      </li>
-      <!-- End ADMIN -->
      </ul>
     </div>
         <!-- End Main Menu -->
   </div>
 </nav>
 <!-- End Navigation panel -->
+</div>

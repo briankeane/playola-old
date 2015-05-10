@@ -25,15 +25,4 @@ angular.module('playolaApp')
     $scope.isActive = function(route) {
       return route === $location.path();
     };
-
-
-    // *********** front-end functions *************
-    $scope.isScrolledDown = function () {
-      if ($window.pageYOffset > 10) {
-        console.log('isScrolledDown');
-      } else {
-        console.log('isNotScrolledDown');
-      }
-      return ($window.pageYOffset > 10);
-    }
   });
