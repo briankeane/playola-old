@@ -483,13 +483,13 @@ angular.module('playolaApp')
     ];
 
     $scope.onFinish = function () {
-      Auth.reportTourTaken('myScheduleTour', function (user) {
+      Auth.reportTourTaken('mySchedule', function (user) {
         SharedData.user = user;
       });
     }
 
     $scope.onSkip = function () {
-      Auth.reportTourTaken('myScheduleTour', function (user) {
+      Auth.reportTourTaken('mySchedule', function (user) {
         SharedData.user = user;
       });
     }

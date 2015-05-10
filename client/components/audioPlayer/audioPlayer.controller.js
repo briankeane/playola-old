@@ -15,7 +15,7 @@ angular.module('playolaApp')
     $scope.rotationItemAudioBlockIds = [];
     $scope.player = AudioPlayer;
     $scope.volume;
-    $scope.isCollapsed = true;
+    $scope.isCollapsed = false;
 
 
     // event-driven functions
@@ -216,5 +216,10 @@ angular.module('playolaApp')
         AudioPlayer.loadStation(newValue);
       }
     });
+
+    $scope.toggleAudioPlayerCollapse = function () {
+      $scope.isCollapsed = !$scope.isCollapsed;
+      console.log('collapse ran ' + $scope.isCollapsed);
+    }
 
   });
