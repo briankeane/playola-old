@@ -10,7 +10,7 @@
             
         <div style="float:left; width:415px; margin-left:25px; line-height:25px; font-size:20px;">
            {{player.nowPlaying._audioBlock.title}}
-          <div ng-show="palyer.nowPlaying._audioBlock._type==='CommercialBlock'" style="font-size:13px;">{{player.nowPlaying._audioBlock.artist}} / {{player.nowPlaying._audioBlock.artist}} </div>
+          <div ng-show="palyer.nowPlaying._audioBlock._type !== 'CommercialBlock'" style="font-size:13px;">{{player.nowPlaying._audioBlock.artist}} / {{player.nowPlaying._audioBlock.artist}} </div>
             
             <div style="font-size:11px; color:#AC0002;">
               <a href="{{player.nowPlaying._audioBlock.trackViewUrl}}"><i>Buy on iTunes</i></a>

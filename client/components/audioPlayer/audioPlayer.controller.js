@@ -218,8 +218,11 @@ angular.module('playolaApp')
     });
 
     $scope.toggleAudioPlayerCollapse = function () {
-      $scope.isCollapsed = !$scope.isCollapsed;
-      console.log('collapse ran ' + $scope.isCollapsed);
+      if (!Auth.isLoggedIn()) {
+        $scope.isCollaped = true;
+      } else {
+        $scope.isCollapsed = !$scope.isCollapsed; 
+      }
     }
 
   });

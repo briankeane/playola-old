@@ -1,0 +1,179 @@
+<div ng-joy-ride="scheduleJoyride" config="joyrideConfig" on-finish="onFinish()"  on-skip="onSkip()"></div>
+
+<!-- MAIN SECTION -->
+<section class="page-section background-image">
+<div class="container relative">
+        
+  <!-- Row -->
+  <div class="row">
+            
+    <!-- Col -->       
+    <div class="col-sm-7 mb-xs-40">
+      <h1><i class="fa fa-volume-up "></i>&nbsp; NOW PLAYING</h1>
+      
+      <dl class="accordion">
+      <dt class="current">
+        <span class="artist-name"><i class="fa fa-music fa-sm"></i> {{player.nowPlaying._audioBlock.artist}} / {{player.nowPlaying._audioBlock.title}}</span>
+          <progressbar class="artist-spacer" type="dynamic" animate="false" value="songPercentComplete"></progressbar>
+          <div class="pad3t"><div class="player-lft-time">{{nowPlayingElapsedString}}</div>
+          <div class="player-rt-time">-{{nowPlayingRemainingString}}</div>
+          </div>
+                                       
+        </dt>
+      </dl>
+      <ul id="station-list">
+        <div  ui-sortable="playlistOptions" class="stationList" ng-model="playlist">
+          <div  class="outerDragGroup" ng-repeat="spin in playlist track by spin._id">
+            <div class="dragGroup">
+
+              <dl class="accordion" >
+                <dt class="musicbox song" ng-show="(spin._audioBlock._type === 'Song')">
+                  <span class="next-artist-name"><i class="fa fa-music fa-sm"></i> {{ spin._audioBlock.artist }} / {{ spin._audioBlock.title }}</span>
+                  <span class="timestamp-container">{{ formatTime(spin.airtime) }}</span> 
+                  <div class="close-icon" title="delete" ng-click="removeSpin(spin, $index);" ng-show="removable(spin, $index);"><i class="fa fa-times"></i></div>
+                </dt>
+              </dl>
+
+              <dl class="accordion" >
+                <dt class="musicbox_playing commentary" ng-show="(spin._audioBlock._type==='Commentary')">
+                  <span class="next-artist-name"><i class="fa fa-play fa-sm active"></i> Commentary</span>
+                  <span class="timestamp-container">{{ formatTime(spin.airtime) }}</span>
+                  <div class="close-icon close-icon-hover" title="delete" ng-click="removeSpin(spin, $index);" ng-show="removable(spin, $index);"><i class="fa fa-times"></i></div>
+                </dt>
+              </dl>
+            
+              <dl class="accordion" >
+                <dt class="commercials" ng-show="(spin._audioBlock._type === 'CommercialBlock')">
+                  <span class="next-artist-name"><i class="fa fa-dot-circle-o fa-sm"></i> Commercial</span>
+                  <span class="commerical-timestamp">{{ formatTime(spin.airtime) }}</span>
+                </dt>
+              </dl>
+
+            </div>
+            <dl class="accordion" >
+              <dt class="commercials" ng-show="spin.commercialsFollow && !spin.beingDragged">
+                <span class="next-artist-name"><i class="fa fa-dot-circle-o fa-sm"></i> Commercial</span>
+                <span class="commerical-timestamp">{{ formatTime(spin.airtime) }}</span>
+              </dt>
+            </dl>
+          </div>
+        </div>
+      </ul>
+    </dl>
+  </div>
+            
+  <!-- End Col -->  
+  
+  <!-- Col -->
+            
+  <div class="col-sm-5 mb-xs-40">
+    <h1><i class="fa fa-headphones "></i>&nbsp; YOUR BEATS</h1>
+    <div class="col-sm-8 col-sm-offset-2 weird-bootstrap-fix">
+                
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs tpl-tabs animate">
+      <li class="active">
+        <a href="#one" data-toggle="tab"><i class="fa fa-plus"></i>&nbsp; ADD SONGS</a>
+      </li>
+      <li>
+        <a href="#two" data-toggle="tab"><i class="fa fa-microphone"></i>&nbsp; RECORD</a>
+      </li>
+      <li>
+        <a href="#three" data-toggle="tab"><i class="fa fa-upload"></i>&nbsp; UPLOAD</a>
+      </li>
+    </ul>
+  
+    <!-- Tab panes -->
+    <div class="tab-content tpl-tabs-cont section-text">
+      <div class="tab-pane fade in active" id="one">
+
+        <dl class="accordion">
+          <dt class="current">
+            <!-- <form>
+              <div style="width:50px; margin:15px 8px 0 0; float:left;">SEARCH:</div> <input style="height:35px; float:left; width:80%; margin:5px 0px 0 15px; padding:15px; color:#000; font-size:14px;" type="text" name="firstname">
+            </form>-->
+                    
+            <div class="mb-20 mb-md-10">
+              <!-- Name -->
+              <input type="text" name="search" id="name-4" class="form-control input-lg" maxlength="100" placeholder="Enter Title and/or Artist Here" ng-model="$root.searchText" ng-model-options="{ debounce: 500 }" ng-change="findSongs($root.searchText)">
+            </div>
+          </dt>
+                
+          <form><input class="song-search" type="checkbox"></form>
+          
+          <div class="my-songs-only color-fix">only my songs</div> 
+          <div class="clearfix"></div>
+        </dl>
+
+
+        <!-- Toggle -->
+        <dl class="accordion" id="catalog-list" ui-sortable="catalogList" ng-model="catalogSearchResults">
+          <dt class="music_content" ng-repeat="song in catalogSearchResults" >
+            <span class="my-songs-list">{{ song.artist }}/ {{ song.title }}</span>
+          </dt>
+                
+        </dl>
+      </div>
+      <div class="tab-pane fade color-fix" id="two">
+        Short desctiption for the recording functionality
+        <br><br>
+        <div class="mb-10">
+          <a href="#" class="btn btn-mod btn-large btn-round"><i class="fa fa-microphone"></i> Record</a>
+            <a href="#" class="btn btn-mod btn-border btn-large btn-round"><i class="fa fa-stop"></i> Stop</a>
+        </div>           
+      </div>
+                    
+        <div class="tab-pane fade color-fix" id="three">
+                     
+          Drop Songs here:
+          <br>
+          <div class="que-lenght-box"></div>
+          <h4>UPLOAD QUEUE <span class="font13"> &nbsp;|&nbsp; Queue Length: 0</span></h4>
+           
+           
+          <div>
+            <div class="upload-name">Name</div>
+            <div class="upload-progress">Progress</div>
+            <div class="upload-status">Status</div>
+            <div class="upload-status">Actions</div>                                        
+          </div>
+           
+          <div>
+            <div class="upload-name">Filename.mp3</div>
+            <div class="upload-progress">
+              <div class="upload-border"></div>
+            </div>
+            <div class="upload-add"><i class="fa fa-plus"></i></div>
+            <div class="upload-progress">
+              <div>
+                <a href="#" class="btn btn-mod btn-round"><i class="fa fa-trash-o"></i> Delete</a>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="upload-name">Filename.mp3</div>
+            <div class="upload-progress">
+              <div class="upload-border"></div>
+            </div>
+            <div class="upload-error-status"><i class="fa fa-exclamation-triangle"></i></i></div>
+            <div class="upload-progress">
+              <div>
+                <a href="#" class="btn btn-mod btn-round"><i class="fa fa-trash-o"></i> Delete</a>
+              </div>
+            </div>
+          </div>
+           
+           <div class="clearfix"></div>
+           <div class="mar15t">Queue Progress</div>
+           <div class="que-progress-box"></div>
+          </div>              
+        </div>
+      </div>
+    </div>
+            
+                        
+  <!-- End Toggle -->
+  </div>
+<!-- End Col -->                                     
+</div>

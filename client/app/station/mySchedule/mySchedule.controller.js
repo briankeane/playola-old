@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('playolaApp')
-  .controller('djBoothCtrl', function ($rootScope, CommentaryPreviewPlayer, AudioPlayer, $scope, FileUploader, Auth, $location, $window, $timeout, moment, $interval, $modal, $sce, SharedData) {
+  .controller('myScheduleCtrl', function ($rootScope, CommentaryPreviewPlayer, AudioPlayer, $scope, FileUploader, Auth, $location, $window, $timeout, moment, $interval, $modal, $sce, SharedData) {
     $scope.user = SharedData.user;
     $scope.errors = {};
     $scope.playlist = [];

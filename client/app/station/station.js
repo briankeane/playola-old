@@ -10,10 +10,10 @@ angular.module('playolaApp')
         authenticate: true
       })
 
-      .state('djBooth', {
-        url:'/station/djBooth',
-        templateUrl: 'app/station/djBooth/djBooth.html',
-        controller: 'djBoothCtrl',
+      .state('mySchedule', {
+        url:'/station/mySchedule',
+        templateUrl: 'app/station/mySchedule/mySchedule.html',
+        controller: 'myScheduleCtrl',
         authenticate: true
       })
 
