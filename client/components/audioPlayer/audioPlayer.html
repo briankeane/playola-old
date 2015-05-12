@@ -1,16 +1,16 @@
 <!-- Audio Player -->
-<div id="css3-animated-example" ng-controller="AudioPlayerCtrl">
+<div id="css3-animated-example" ng-controller="AudioPlayerCtrl" ng-show="player.nowPlaying">
   <h3 style=" margin:0px; font-size:15px; text-align:center;" ng-class="{open: !isCollapsed }"><a href="#" ng-click="toggleAudioPlayerCollapse()"><i class="fa fa-music "></i>&nbsp; AUDIO PLAYER</a></h3>
         
   <div collapse="isCollapsed" ng-class="{open: !isCollapsed }">
     <div class="content">
       <div  style="height:120px;" >
-        <div style="float:left; height:100px; width:100px;"><img style="border:1px solid #cccccc; padding:2px;" src="{{player.nowPlaying._audioBlock.albumArtworkUrl}}" width="100px">
+        <div style="float:left; height:100px; width:100px;"><img style="border:1px solid #cccccc; padding:2px;" ng-src="{{getAlbumPicture(player.nowPlaying)}}" width="100px">
         </div>
             
         <div style="float:left; width:415px; margin-left:25px; line-height:25px; font-size:20px;">
            {{player.nowPlaying._audioBlock.title}}
-          <div ng-show="palyer.nowPlaying._audioBlock._type !== 'CommercialBlock'" style="font-size:13px;">{{player.nowPlaying._audioBlock.artist}} / {{player.nowPlaying._audioBlock.artist}} </div>
+          <div ng-show="player.nowPlaying._audioBlock._type !== 'CommercialBlock'" style="font-size:13px;">{{player.nowPlaying._audioBlock.artist}} / {{player.nowPlaying._audioBlock.artist}} </div>
             
             <div style="font-size:11px; color:#AC0002;">
               <a href="{{player.nowPlaying._audioBlock.trackViewUrl}}"><i>Buy on iTunes</i></a>

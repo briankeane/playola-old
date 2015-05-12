@@ -217,6 +217,14 @@ angular.module('playolaApp')
       }
     });
 
+    $scope.getAlbumPicture = function (spin) {
+      if (spin._audioBlock._type === 'CommercialBlock') {
+        return 'http://static.playola.fm/frownFace2.png';
+      } else if (spin._audioBlock._type === 'Song') {
+        return spin._audioBlock.albumArtworkUrl;
+      }
+    }
+
     $scope.toggleAudioPlayerCollapse = function () {
       if (!Auth.isLoggedIn()) {
         $scope.isCollaped = true;
