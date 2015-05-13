@@ -7,11 +7,12 @@
     <div class="col-sm-12 col-md-7">
       <h4 class="small-headline">Your Songs</h4>
       <p class="sub-headline">These are the songs that will automatically play when you're not around.</p>
-      <div class="alert alert-danger" role="alert" ng-show="rotationItemsMessage">
+      <div class="alert alert-danger" role="alert" ng-hide="!rotationItemsMessage">
             {{ rotationItemsMessage }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="rotationItemsMessage = null;"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close" ng-click="rotationItemsMessage = undefined;"><span aria-hidden="true">&times;</span></button>
       </div>
-      <ul id="spinsPerWeekList" ng-model="rotationItems" dnd-list="rotationItems"  dnd-drop="newSongDropped(event, index, item, external, type)">
+
+      <ul id="rotationItemsList" ui-sortable="rotationItemsListOptions" ng-model="rotationItems">
         <li ng-repeat="rotationItem in rotationItems" id="songId{{rotationItem._song._id}}">
           <span class="songlist-title">{{ rotationItem._song.title }}</span>
           <span class="songlist-artist">{{ rotationItem._song.artist }}</span>
@@ -29,14 +30,35 @@
     <div class="col-sm-12 col-md-5 columns no-gutter">
       <h4 class="small-headline">Songs</h4>
       <p class="sub-headline">Search our Catalog</p>  
-      <input type="text" id="searchbox" placeholder="Enter Title and/or Artist Here" ng-model="searchText" ng-model-options="{ debounce: 500 }" ng-change="findSongs(searchText)"/>
+      <div class="tab-pane fade in active" id="one">
 
-      <ul id="catalog-list" class="song-manager-page" dnd-list="catalogSearchResults">
-        <li ng-repeat="song in catalogSearchResults"  dnd-draggable="song" dnd-moved="catalogSearchResults.splice($index, 1)" dnd-effect-allowed="move"  dnd-selected="catalogSearchResults.selected = item" ng-class="{'selected': models.selected === song}">
-          <span class="songlist-title">{{ song.title }}</span>
-          <span class="songlist-artist">{{ song.artist }}</span>
-        </li>
-      </ul>
+        <dl class="accordion">
+          <dt class="current">
+            <!-- <form>
+              <div style="width:50px; margin:15px 8px 0 0; float:left;">SEARCH:</div> <input style="height:35px; float:left; width:80%; margin:5px 0px 0 15px; padding:15px; color:#000; font-size:14px;" type="text" name="firstname">
+            </form>-->
+                    
+            <div class="mb-20 mb-md-10">
+              <!-- Name -->
+              <input type="text" name="search" id="name-4" class="form-control input-lg" maxlength="100" placeholder="Enter Title and/or Artist Here" ng-model="$root.searchText" ng-model-options="{ debounce: 500 }" ng-change="findSongs($root.searchText)">
+            </div>
+          </dt>
+                
+          <form><input class="song-search" type="checkbox"></form>
+          
+          <div class="my-songs-only color-fix">only my songs</div> 
+          <div class="clearfix"></div>
+        </dl>
+
+
+        <!-- Toggle -->
+        <dl class="accordion" id="catalog-list" ui-sortable="catalogListOptions" ng-model="catalogSearchResults">
+          <dt class="music_content" ng-repeat="song in catalogSearchResults" >
+            <span class="my-songs-list">{{ song.artist }}/ {{ song.title }}</span>
+          </dt>
+                
+        </dl>
+      </div>
 
     </div>
   </div>

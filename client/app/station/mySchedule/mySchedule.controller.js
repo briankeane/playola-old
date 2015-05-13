@@ -295,7 +295,7 @@ angular.module('playolaApp')
       receive: function (event, ui) {
         var audioBlock = ui.item.sortable.model;
         var index = ui.item.sortable.dropindex;
-
+        
         // grab the start time
         if (audioBlock._type === 'Song') {
           
@@ -307,8 +307,7 @@ angular.module('playolaApp')
                           _id: 'addedSpin',
                         }
 
-          // insert the new spin
-          $scope.playlist.splice(index, 0, newSpin);
+                        
 
           // update playlistPositions
           for (var i=index+1;i<$scope.playlist.length;i++) {

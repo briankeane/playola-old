@@ -1,9 +1,17 @@
 <div ng-controller="AudioRecorderCtrl">
-  <h4>Record</h4>
-  <div class="micWorking" ng-show="micStatus.enabled">
-    <button id="startRecording" ng-click="startRecordingPressed()" class="glyphicon glyphicon-">record</button>
-    <button id="stopRecording" ng-click="stopRecordingPressed()" ng-disabled="stopDisabled">stop</button>
+  <div ng-show="micStatus.enabled">
+
+    Short desctiption for the recording functionality
+    <br><br>
+
     <canvas id="volumeMeter"></canvas>
+
+    <br><br>
+
+    <div class="mb-10">
+      <a href="#" ng-click="startRecordingPressed()" id="startRecording" class="btn btn-mod btn-large btn-round"><i class="fa fa-microphone"></i> Record</a>
+      <a href="#" class="btn btn-mod btn-border btn-large btn-round" id="stopRecording" ng-click="stopRecordingPressed()" ng-disabled="stopDisabled"><i class="fa fa-stop"></i> Stop</a>
+    </div>
 
     <div id="recording-tree">
       <ol ui-sortable="audioRecordingList" ng-model="recordings" id="recordings">
@@ -13,6 +21,8 @@
       </ol>
     </div>
   </div>
+
+
   <div class="waitingForApproval" ng-show="(!micStatus || (!micStatus.permissionDenied && !micStatus.unsupported && !micStatus.enabled))">
     <h3>If you'd like to record messages for in-between the songs, please give us permission to use your mic</h3>
     <p>Your browser should ask you at the top of the window...</p>

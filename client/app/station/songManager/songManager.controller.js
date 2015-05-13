@@ -70,65 +70,88 @@ angular.module('playolaApp')
       });
     };
 
-    $scope.newSongDropped = function (event, index, song, type) {
-      // create an actual rotationItem
-      var newRotationItem = { weight: 17,
-                              bin: 'medium',
-                              _song: song }
-      var insertedIndex = -1;
+    $scope.rotationItemsListOptions = {
+      connectWith: '#catalog-list',
+      receive: function (event, ui) {
 
-      // insert it at the proper index
-      for (var i=0;i<$scope.rotationItems.length;i++) {
-        // IF the song is already in the list, give error message and exit
-        if ((compareSong($scope.rotationItems[i], newRotationItem) === 0) && 
-                    ($scope.rotationItems[i]._song._id === newRotationItem._song._id)) {
-          $scope.rotationItemsMessage = "Error: That song is already in rotation";
+        // cancel the sort... manually reset the array
+        // var holderArray = $scope.catalogSearchResults.slice();
+        // ui.item.sortable.cancel();
+        // $scope.catalogSearchResults = holderArray;
 
-          // ADD LATER: scroll to it
-          return;
+        var song = ui.item.sortable.model;
+        var index = ui.item.sortable.dropindex;
 
-        // ELSE IF it's time to insert... 
-        } else if (compareSong($scope.rotationItems[i], newRotationItem) === 1) {
-          $scope.rotationItems.splice(i,0,newRotationItem);
-          if (i===0) { $scope.$apply(); }     // this is needed only when inserted in 1st slot... not sure why
-          insertedIndex = i;
-          break;
-        }
-      }
+        // remove the dropped item
+        $scope.rotationItems.splice(index,1);
 
-      // IF it wasn't included put it last
-      if (insertedIndex < 0) {
-        $scope.rotationItems.push(newRotationItem);
-        insertedIndex = $scope.rotationItems.length-1;
-      }
+        // create an actual rotationItem
+        var newRotationItem = { bin: 'medium',
+                                _song: song }
+        var insertedIndex = -1;
 
-      // Add song
-      Auth.createRotationItem(newRotationItem, function (err, results) {
-        if (err) { 
-          // remove inserted object
-          for (var i=0;i<$scope.rotationItems.length;i++) {
-            if (newRotationItem._song._id === $scope.rotationItems[i]._song._id) {
-              $scope.rotationItems.splice(i,1);
-              $scope.$apply();
-              break;   
-            }
-          }
-          // display error message
-          $scope.rotationItemsMessage = 'Error: Could not add ' + newRotationItem._song.title + ' by ' + newRotationItem._song.artist + 
-                                        '.  Please try again.';
-        } else {
-          // put new ID into object
-          for (var i=0;i<$scope.rotationItems.length;i++) {
-            if (newRotationItem._song._id === $scope.rotationItems[i]._song._id) {
-              $scope.rotationItems[i]._id = results.newRotationItem._id;
-              break;   
-            }
+        // insert it at the proper index
+        for (var i=0;i<$scope.rotationItems.length;i++) {
+          // IF the song is already in the list, give error message and exit
+          if ((compareSong($scope.rotationItems[i], newRotationItem) === 0) || 
+                      ($scope.rotationItems[i]._song._id === newRotationItem._song._id)) {
+            $scope.$apply(function () { 
+              $scope.rotationItemsMessage = "Error: That song is already in rotation";
+            });
+
+            // ADD LATER: scroll to it
+            return;
+
+          // ELSE IF it's time to insert... 
+          } else if (compareSong($scope.rotationItems[i], newRotationItem) === 1) {
+            $scope.rotationItems.splice(i,0,newRotationItem);
+            if (i===0) { $scope.$apply(); }     // this is needed only when inserted in 1st slot... not sure why
+            insertedIndex = i;
+            break;
           }
         }
 
-      });
+        // IF it wasn't included put it last
+        if (insertedIndex < 0) {
+          $scope.rotationItems.push(newRotationItem);
+          insertedIndex = $scope.rotationItems.length-1;
+        }
 
-    }
+        // Add song
+        Auth.createRotationItem(newRotationItem, function (err, results) {
+          if (err) { 
+            // remove inserted object
+            for (var i=0;i<$scope.rotationItems.length;i++) {
+              if (newRotationItem._song._id === $scope.rotationItems[i]._song._id) {
+                $scope.rotationItems.splice(i,1);
+                $scope.$apply();
+                break;   
+              }
+            }
+            // display error message
+            $scope.rotationItemsMessage = 'Error: Could not add ' + newRotationItem._song.title + ' by ' + newRotationItem._song.artist + 
+                                          '.  Please try again.';
+          } else {
+            // put new ID into object
+            for (var i=0;i<$scope.rotationItems.length;i++) {
+              if (newRotationItem._song._id === $scope.rotationItems[i]._song._id) {
+                $scope.rotationItems[i]._id = results.newRotationItem._id;
+                break;   
+              }
+            }
+          }
+        });
+      }
+    };
+
+    $scope.catalogListOptions = {
+      connectWith: '#rotationItemsList',
+      update: function (event, ui) {
+        ui.item.sortable.cancel();
+        $scope.$apply();
+        //debugger;
+      }
+    };
 
     $scope.currentStation = Auth.getCurrentStation()
 
