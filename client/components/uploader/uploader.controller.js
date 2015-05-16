@@ -1,7 +1,8 @@
 angular.module('playolaApp')
   .controller('uploaderCtrl', function ($scope, Auth, FileUploader, $modal) {
-    $scope.uploader = new FileUploader({ url: 'http://localhost:3000/api/v1/upload',
-                                        headers: { 'Access-Control-Allow-Origin': '*' },
+    $scope.uploader = new FileUploader({ url: 'http://upload.playola.fm/uploads',
+                                        //headers: { 'Access-Control-Allow-Origin': '*' },
+                                          withCredentials: true,
                                           autoUpload: true });
 
       // $scope.uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
@@ -31,8 +32,9 @@ angular.module('playolaApp')
       // $scope.uploader.onCancelItem = function(fileItem, response, status, headers) {
       //     console.info('onCancelItem', fileItem, response, status, headers);
       // };
+
       $scope.uploader.onCompleteItem = function(fileItem, response, status, headers) {
-        if (response.status === 'info needed') {
+        if (response.status === 'More Info Needed') {
           fileItem.status = response.status;
           fileItem.possibleMatches = response.possibleMatches;
           fileItem.tags = response.tags;
