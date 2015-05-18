@@ -345,10 +345,30 @@ angular.module('playolaApp')
         }).$promise;
       },
 
-      resubmitUploadWithEchonestId: function (item, callback) {
+      submitUploadWithNewTags: function (item, callback) {
         var cb = callback || angular.noop;
 
-        return new Upload.resubmitWithEchonestId(item, { _id: item.uploadId }, function (result) {
+        return new Upload.submitWithNewTags(item, { _id: item.uploadId }, function (result) {
+          return cb(null, result);
+        }, function (err) {
+          return cb(err);
+        }).$promise;
+      },
+
+      submitUploadViaEchonestId: function (item, callback) {
+        var cb = callback || angular.noop;
+
+        return new Upload.submitViaEchonestId(item, { _id: item.uploadId }, function (result) {
+          return cb(null, result);
+        }, function (err) {
+          return cb(err);
+        }).$promise;
+      },
+
+      submitUploadWithoutEchonestId: function (item, callback) {
+        var cb = callback || angular.noop;
+
+        return new Upload.submitWithoutEchonestId(item, { _id: item.uploadId }, function (result) {
           return cb(null, result);
         }, function (err) {
           return cb(err);

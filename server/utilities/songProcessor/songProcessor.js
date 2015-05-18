@@ -54,9 +54,8 @@ function SongProcessor() {
     var url = 'https://itunes.apple.com/search?' + qs.stringify( { term: ((attrs.artist || '') + ' ' + (attrs.title || '')) });
 
     request(url, function (error, response, body) {
-      console.log('error: ' + error);
-      console.log('response: ' + response);
 
+      // wait 1/2 sec and try again if iTunes is unhappy with us
       if (response.statusCode === 403) {
         console.log(response.statusCode);
         setTimeout(self.getItunesInfo(attrs, callback), 500);
@@ -65,179 +64,74 @@ function SongProcessor() {
 
       var match;
       var responseObj = JSON.parse(body);
+
+      // if there was no match found, return an error
       if (responseObj.resultCount === 0) {
         var err = new Error('iTunes match not found');
         callback(err);
         return;
-      } else {
-        match = responseObj.results[0];
       }
+
+      // otherwise get the closest match
+      var bestMatchIndex = 0;
+      for (i=0;i<responseObj.results.length;i++) {
+        responseObj.results[i].titleMatchRating = natural.JaroWinklerDistance(attrs.title.toLowerCase(), responseObj.results[i].trackName.toLowerCase());
+        responseObj.results[i].artistMatchRating = natural.JaroWinklerDistance(attrs.artist.toLowerCase(), responseObj.results[i].artistName.toLowerCase());
+        responseObj.results[i].matchRating = responseObj.results[i].titleMatchRating + responseObj.results[i].artistMatchRating;
+        
+        // if this is a better match, mark it down
+        if (responseObj.results[i].matchRating > responseObj.results[bestMatchIndex].matchRating) {
+          bestMatchIndex = i;
+        }
+      }
+      match = responseObj.results[bestMatchIndex];
 
       // add the 600x600 albumArtwork
       if (match.artworkUrl100) {
         match.albumArtworkUrl = match.artworkUrl100.replace('100x100-75.jpg', '600x600-75.jpg');
       }
+
+      // rename album for consistency
+      match.album = match.collectionName;
+
       callback(null, match);
       return;
-    })
+    });
   };
 
 
   this.getSongMatchPossibilities = function (attrs, callback) {
-    echo('song/search').get({ combined: attrs.artist + ' ' + attrs.title 
+    echo('song/search').get({ combined: attrs.artist + ' ' + attrs.title,
+                              bucket: ['id:rdio-US','id:spotify', 'tracks'] 
                             }, function (err, json) {
       var songsArray = json.response.songs;
 
+      // rename attrs for consistency
       for(var i=0;i<songsArray.length;i++) {
         songsArray[i].artist = songsArray[i].artist_name;
         songsArray[i].echonestId = songsArray[i].id;
+
+        // grab album name if available
+        for (var j=0;j<songsArray[i].tracks.length;j++) {
+          if (songsArray[i].tracks[j].album_name) {
+            songsArray[i].album = songsArray[i].tracks[j].album_name
+            break;
+          }
+        }
+
+        
       }
+
 
       callback(null, songsArray);
     });
   };
 
-  this.addSongToSystem = function (originalFilepath, callback) {
-var startTime = Date.now();
-    // convert file
-    Converter.convertFile(originalFilepath, function (err, filepath) {
-      // if it's unconvertable.. no use left for file. just return
-      if (err) {
-        callback(err);
-        return;
-      }
-console.log('conversion done at ' + (Date.now() - startTime) + 'ms')
-      // otherwise grab the tags
-      self.getTags(filepath, function (err, tags) {
-        // if it's unreadable, delete it and fuggettaboutit
-        if (err) {
-          callback(err);
-          return;
-        } 
-console.log('tags done in ' + (Date.now() - startTime) + 'ms')
-        // if there's not enough info, store the file for future use
-        if (!tags.title || !tags.artist) {
-          Storage.storeUnprocessedSong(filepath, function (err, key) {
-            if (err) { 
-              callback (err); 
-              return;
-            } else {
-              var error = new Error('No Id Info in File');
-              error.key = key;
-              error.filepath = filepath;
-              callback(error);
-              return;
-            }
-          });
-          //return;
-        }
-        // get closest echonest tags
-        self.getEchonestInfo({ title: tags.title, artist: tags.artist }, function (err, match) {
-          if (err || !match) {
-            callback(err);
-            return;
-          }
-
-console.log('echonest info done in ' + (Date.now() - startTime) + 'ms')
-          // if a suitable match was not found...
-          if ((match.titleMatchRating < 0.75) || (match.artistMatchRating < 0.75)) {
-            
-            // store it on s3
-            Storage.storeUnprocessedSong(filepath, function (err, key) {
-              var error = new Error('Song info not found');
-              error.tags = tags;
-              error.key = key;
-              error.filepath = filepath;
-              callback(error);
-              return;
-            });
-          }
-          Song.findAllByTitleAndArtist( { title: match.title,
-                                        artist: match.artist 
-                                        }, function (err, songs) {
-            if (err) {
-              callback(err);
-              return;
-            }
-console.log('database check done in ' + (Date.now() - startTime) + 'ms')
-            // if the song already exists, callback with song exists error
-            if (songs.length) {
-              var err = new Error('Song Already Exists');
-              err.song = songs[0];
-              err.filepath = filepath;
-              callback(err);
-              return;
-            }
-
-            // if it made it here... we're good!
-            
-            // grab the itunes artwork
-            self.getItunesInfo({ title: match.title, artist: match.artist }, function (err, itunesInfo) {
-              if (err) {
-                itunesInfo = {};
-              }
-console.log('itunes done in ' + (Date.now() - startTime) + 'ms')
-              // store the song on S3
-              Storage.storeSong({ title: match.title,
-                                  artist: match.artist,
-                                  album: match.album,
-                                  duration: tags.duration,
-                                  echonestId: match.echonestId,
-                                  filepath: filepath,
-                                  }, function (err, key) {
-                if (err) {
-                  callback(new Error('Audio File Storage Error'));
-                  return;
-                }
-console.log('song store done in ' + (Date.now() - startTime) + 'ms')
-                // add to DB
-                var song = new Song({ title: match.title,
-                                     artist: match.artist,
-                                     album: match.album,
-                                     duration: tags.duration,
-                                     echonestId: match.echonestId,
-                                     key: key,
-                                     albumArtworkUrl: itunesInfo.albumArtworkUrl,
-                                     albumArtworkUrlSmall: itunesInfo.artworkUrl100,
-                                     trackViewUrl: itunesInfo.trackViewUrl,
-                                     itunesInfo: itunesInfo })
-                
-                song.save(function (err, newSong) {
-                  if (err) {
-                    callback(err);
-                    return;
-                  }
-console.log('song save done in ' + (Date.now() - startTime) + 'ms')
-                  // delete the file 
-                  if (fs.exists(filepath)) fs.unlink(filepath, function () {});
-
-                  // add song to Echonest
-                  SongPool.addSong(newSong)
-                  .on('finish', function () {
-console.log('conversion finish in ' + (Date.now() - startTime) + 'ms')
-                    callback(null, newSong);
-                    return;
-                  })
-                  .on('error', function(err) {
-console.log('songpool error done in ' + (Date.now() - startTime) + 'ms')
-                    var error = new Error('Song Added to System but not to Song Pool');
-                    callback(err, newSong);
-                    return;
-                  });
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  };
 
   this.addSongViaEchonestId = function (info, callback) {
     // check to see if new song is in database
-    Song.findAllByTitleAndArtist( { title: info.title,
-                                        artist: info.artist 
-                                        }, function (err, songs) {
+    Song.find( { echonestId: info.echonestId, 
+               }, function (err, songs) {
       if (err) {
         callback(err);
         return;
@@ -261,7 +155,7 @@ console.log('songpool error done in ' + (Date.now() - startTime) + 'ms')
         // store the song
         Storage.finalizeUpload({ title: info.title,
                               artist: info.artist,
-                              album: info.album,
+                              album: info.album || itunesInfo.collectionName,
                               duration: info.duration,
                               echonestId: info.echonestId,
                               key: info.filename,
@@ -276,7 +170,7 @@ console.log('songpool error done in ' + (Date.now() - startTime) + 'ms')
           // add to DB
           song = new Song({ title: info.title,
                             artist: info.artist,
-                            album: info.album,
+                            album: info.album || itunesInfo.collectionName,
                             duration: info.duration,
                             echonestId: info.echonestId,
                             key: newKey,
@@ -304,7 +198,8 @@ console.log('songpool error done in ' + (Date.now() - startTime) + 'ms')
   }
 
   this.getEchonestInfo = function (attrs, callback) {
-    echo('song/search').get({ combined: attrs.artist + ' ' + attrs.title
+    echo('song/search').get({ combined: attrs.artist + ' ' + attrs.title,
+                              bucket: ['id:rdio-US','id:spotify', 'tracks'],
                             }, function (err, json) {
       if (err) callback(err);
       var matches = json.response.songs;
@@ -333,6 +228,14 @@ console.log('songpool error done in ' + (Date.now() - startTime) + 'ms')
       closestMatch.artist = closestMatch.artist_name;
       closestMatch.genres = [];
 
+      // grab album name if available
+      for (var i=0;i<tags.tracks.length;i++) {
+        if (track[i].album_name) {
+          tags.album = track[i].album_name
+          break;
+        }
+      }
+
       // add genere tags
       echo('artist/profile').get({ name: closestMatch.artist, bucket: 'genre' }, function (err, artistProfile) {
         if (err) {
@@ -349,6 +252,144 @@ console.log('songpool error done in ' + (Date.now() - startTime) + 'ms')
         }
       });
     });
+  };
+
+  this.addSongToSystem = function (originalFilepath, callback) {
+    // ******** THIS FUNCTION IS NOW HANDLED BY THE RAILS APP ****************
+
+
+//     // convert file
+//     Converter.convertFile(originalFilepath, function (err, filepath) {
+//       // if it's unconvertable.. no use left for file. just return
+//       if (err) {
+//         callback(err);
+//         return;
+//       }
+// console.log('conversion done at ' + (Date.now() - startTime) + 'ms')
+//       // otherwise grab the tags
+//       self.getTags(filepath, function (err, tags) {
+//         // if it's unreadable, delete it and fuggettaboutit
+//         if (err) {
+//           callback(err);
+//           return;
+//         } 
+// console.log('tags done in ' + (Date.now() - startTime) + 'ms')
+//         // if there's not enough info, store the file for future use
+//         if (!tags.title || !tags.artist) {
+//           Storage.storeUnprocessedSong(filepath, function (err, key) {
+//             if (err) { 
+//               callback (err); 
+//               return;
+//             } else {
+//               var error = new Error('No Id Info in File');
+//               error.key = key;
+//               error.filepath = filepath;
+//               callback(error);
+//               return;
+//             }
+//           });
+//           //return;
+//         }
+//         // get closest echonest tags
+//         self.getEchonestInfo({ title: tags.title, artist: tags.artist }, function (err, match) {
+//           if (err || !match) {
+//             callback(err);
+//             return;
+//           }
+
+// console.log('echonest info done in ' + (Date.now() - startTime) + 'ms')
+//           // if a suitable match was not found...
+//           if ((match.titleMatchRating < 0.75) || (match.artistMatchRating < 0.75)) {
+            
+//             // store it on s3
+//             Storage.storeUnprocessedSong(filepath, function (err, key) {
+//               var error = new Error('Song info not found');
+//               error.tags = tags;
+//               error.key = key;
+//               error.filepath = filepath;
+//               callback(error);
+//               return;
+//             });
+//           }
+//           Song.findAllByTitleAndArtist( { title: match.title,
+//                                         artist: match.artist 
+//                                         }, function (err, songs) {
+//             if (err) {
+//               callback(err);
+//               return;
+//             }
+// console.log('database check done in ' + (Date.now() - startTime) + 'ms')
+//             // if the song already exists, callback with song exists error
+//             if (songs.length) {
+//               var err = new Error('Song Already Exists');
+//               err.song = songs[0];
+//               err.filepath = filepath;
+//               callback(err);
+//               return;
+//             }
+
+//             // if it made it here... we're good!
+            
+//             // grab the itunes artwork
+//             self.getItunesInfo({ title: match.title, artist: match.artist }, function (err, itunesInfo) {
+//               if (err) {
+//                 itunesInfo = {};
+//               }
+// console.log('itunes done in ' + (Date.now() - startTime) + 'ms')
+//               // store the song on S3
+//               Storage.storeSong({ title: match.title,
+//                                   artist: match.artist,
+//                                   album: match.album,
+//                                   duration: tags.duration,
+//                                   echonestId: match.echonestId,
+//                                   filepath: filepath,
+//                                   }, function (err, key) {
+//                 if (err) {
+//                   callback(new Error('Audio File Storage Error'));
+//                   return;
+//                 }
+// console.log('song store done in ' + (Date.now() - startTime) + 'ms')
+//                 // add to DB
+//                 var song = new Song({ title: match.title,
+//                                      artist: match.artist,
+//                                      album: match.album,
+//                                      duration: tags.duration,
+//                                      echonestId: match.echonestId,
+//                                      key: key,
+//                                      albumArtworkUrl: itunesInfo.albumArtworkUrl,
+//                                      albumArtworkUrlSmall: itunesInfo.artworkUrl100,
+//                                      trackViewUrl: itunesInfo.trackViewUrl,
+//                                      itunesInfo: itunesInfo })
+                
+//                 song.save(function (err, newSong) {
+//                   if (err) {
+//                     callback(err);
+//                     return;
+//                   }
+// console.log('song save done in ' + (Date.now() - startTime) + 'ms')
+//                   // delete the file 
+//                   if (fs.exists(filepath)) fs.unlink(filepath, function () {});
+
+//                   // add song to Echonest
+//                   SongPool.addSong(newSong)
+//                   .on('finish', function () {
+// console.log('conversion finish in ' + (Date.now() - startTime) + 'ms')
+//                     callback(null, newSong);
+//                     return;
+//                   })
+//                   .on('error', function(err) {
+// console.log('songpool error done in ' + (Date.now() - startTime) + 'ms')
+//                     var error = new Error('Song Added to System but not to Song Pool');
+//                     callback(err, newSong);
+//                     return;
+//                   });
+//                 });
+//               });
+//             });
+//           });
+//         });
+//       });
+//     });
   };
 }
 

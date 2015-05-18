@@ -12,13 +12,13 @@ angular.module('playolaApp')
           id:'me'
         }
       },
-      resubmitWithEchonestId: {
+      submitViaEchonestId: {
         method: 'PUT',
         params: {
-          controller: 'resubmitWithEchonestId'
+          controller: 'submitViaEchonestId'
         }
       },
-      resubmitWithUpdatedTags: {
+      submitWithoutEchonestId: {
         method: 'PUT',
         params: {
           controller: 'resubmitWithUpdatedTags'

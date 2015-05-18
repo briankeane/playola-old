@@ -4,10 +4,10 @@
   <p>Please choose the song from the list of matches</p>
   <p>Your File Info:</p>
   <p>Filename: <b class="filenameDisplay">{{item.file.name}}</b><br></p>
-  <p>Title: <b class="titleDisplay">{{item.tags.title}}</b><br></p>
-  <p>Artist: <b class="artistDisplay">{{item.tags.artist}}</b></p>
+  <p>Title: <b class="titleDisplay">{{item.uploadItem.tags.title}}</b><br></p>
+  <p>Artist: <b class="artistDisplay">{{item.uploadItem.tags.artist}}</b></p>
 
-  <form class="form" name="form" ng-submit="submitSongWithEchonestId(form)" novalidate id="chooseId">
+  <form class="form" name="form" ng-submit="submitForm(form)" novalidate id="chooseId">
     <div id="chooseSongContainer">
       <table id="chooseSongTable">
         <thead>
@@ -15,13 +15,15 @@
             <th></th>
             <th>Artist</th>
             <th>Title</th>
+            <th>Album</th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="match in item.possibleMatches">
+          <tr ng-repeat="match in item.uploadItem.possibleMatches">
             <td><input ng-required="!selectedSong.index" type="radio" value="{{$index}}" name="songSelect" id="songSelect" ng-model="selectedSong.index"/></td>
             <td>{{match.artist}}</td> 
             <td>{{match.title}}</td>
+            <td>{{match.album}}</td>
           </tr>
         </tbody>
       </table>

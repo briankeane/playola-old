@@ -1,8 +1,8 @@
 angular.module('playolaApp')
   .controller('uploaderCtrl', function ($scope, Auth, FileUploader, $modal) {
     $scope.uploader = new FileUploader({ url: 'http://upload.playola.fm/uploads',
-                                        //headers: { 'Access-Control-Allow-Origin': '*' },
-                                          withCredentials: true,
+                                        // headers: { 'Access-Control-Allow-Origin': '*' },
+                                          //withCredentials: true,
                                           autoUpload: true });
 
       // $scope.uploader.onWhenAddingFileFailed = function(item /*{File|FileLikeObject}*/, filter, options) {
@@ -36,12 +36,10 @@ angular.module('playolaApp')
       $scope.uploader.onCompleteItem = function(fileItem, response, status, headers) {
         if (response.status === 'More Info Needed') {
           fileItem.status = response.status;
-          fileItem.possibleMatches = response.possibleMatches;
-          fileItem.tags = response.tags;
-          fileItem.filename = response.filename;
+          fileItem.uploadItem = response.upload
           fileItem.isSuccess = false;
           fileItem.isNeedInfo = true;
-          fileItem.uploadId = response._id;
+          fileItem.uploadId = response.upload._id;
         } else if (response.status === 'Song Already Exists') {
           fileItem.status = response.status;
           fileItem.isSuccess = true;
@@ -83,11 +81,11 @@ angular.module('playolaApp')
             $scope.item = item;
             $scope.selectedSong = {}
             $scope.selectedSong.index = '';
-            $scope.oldTitle = item.tags.title;
-            $scope.oldAlbum = item.tags.album;
-            $scope.oldArtist = item.tags.artist;
+            $scope.oldTitle = item.uploadItem.tags.title;
+            $scope.oldAlbum = item.uploadItem.tags.album;
+            $scope.oldArtist = item.uploadItem.tags.artist;
             $scope.tagsChanged = false;
-            $scope.tags = item.tags;
+            $scope.tags = item.uploadItem.tags;
 
             $scope.cancel = function () {
               $modalInstance.dismiss('cancel');
@@ -97,20 +95,49 @@ angular.module('playolaApp')
               $scope.selectedSong.index = 'ECHONESTIDNOTFOUND';
             }
 
-            // $scope.submitSongWithEchonestId = function (form) {
-            //   $scope.submitted = true;
+            $scope.submitForm = function () {
+              $scope.submitted = true;
+              
+              // IF it was not found, resubmit request...
+              if ($scope.selectedSong.index === 'ECHONESTIDNOTFOUND') {
+                if ($scope.tagsChanged) {
+                  var uploadInfo = { uploadId: item.upload._id,
+                                     tags: item.tags }
+                  Auth.submitUploadWithoutEchonestId(uploadInfo, function (err, response) {
+                    if (err) {
 
-            //   if (form.$valid) {
-            //     if ($scope.selectedSong.index === 'ECHONESTIDNOTFOUND') {
-            //       $modalInstance.close();
+                    } else {
+                      if (response.status === 'Song Added') {
+                        item.isNeedInfo = false;
+                        item.status = response.status
+                        item.isSuccess = true;
+                        item.songId = response.song._id;
+                        $modal.Instance.dismiss('close');
+                      }
+                    }
+                  });
+                }
+              // if echonestID was provided, resubmit upload
+              }  else {
+                var index = parseInt($scope.selectedSong.index);
+                var uploadInfo = { artist: item.uploadItem.possibleMatches[index].artist,
+                                    title: item.uploadItem.possibleMatches[index].title,
+                                    echonestId: item.uploadItem.possibleMatches[index].echonestId,
+                                    album: item.uploadItem.possibleMatches[index].album || item.uploadItem.album,
+                                    uploadId: item.uploadItem._id,
+                                    tags: item.uploadItem.tags
+                                  };
+                Auth.submitUploadViaEchonestId(uploadInfo, function (err, result) {
+                  if (response.status === 'Song Already Exists' || 'Song Added') {
+                    item.isNeedInfo = false;
+                    item.status = response.status;
+                    item.isSuccess = true;
+                    item.songId = response.song._id;
+                  }
+                });
 
-            //     // if echonestID was provided, resubmit upload
-            //     } else {
-
-            //     }
-                
-            //   }
-            // };
+              }
+            };
 
           }
         }).result.then(function () {
@@ -143,26 +170,6 @@ angular.module('playolaApp')
                 }
               });
             }
-            // $modal.open({
-            //   templateUrl: 'components/uploader/getSongWithoutEchonest.modal.html',
-
-            // });
-
-
-
-          } else {
-                  var index = parseInt($scope.selectedSong.index);
-                  var uploadInfo = { artist: item.possibleMatches[index].artist,
-                                      title: item.possibleMatches[index].title,
-                                      echonestId: item.possibleMatches[index].echonestId,
-                                      album: item.possibleMatches[index].album,
-                                      uploadId: item.uploadId,
-                                      tags: item.tags
-                                    };
-                  Auth.resubmitUploadWithEchonestId(uploadInfo, function (err, result) {
-
-                  });
-
           }
 
         });

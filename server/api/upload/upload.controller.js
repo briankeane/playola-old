@@ -23,56 +23,58 @@ exports.show = function(req, res) {
 };
 
 exports.create = function(req, res) {
-  var originalFilepath = process.cwd() + '/server/data/unprocessedAudio/' + req.files.file.name;
-  SongProcessor.addSongToSystem(originalFilepath, function (err, newSong) {
-    if (err) {
-      if (err.message === 'File is Copy-Protected') {
-        // delete the song
-        fs.unlink(originalFilepath, function () {} );
-        return res.json(200, { status: 'File is Copy-Protected' });
+  // ****** THIS ACTION IS NOW HANDLED BY THE RAILS SERVER ********
 
-      } else if (err.message === 'No Id Info in File') {
-        // delete the song
-        fs.unlink(originalFilepath, function () {});
+  // var originalFilepath = process.cwd() + '/server/data/unprocessedAudio/' + req.files.file.name;
+  // SongProcessor.addSongToSystem(originalFilepath, function (err, newSong) {
+  //   if (err) {
+  //     if (err.message === 'File is Copy-Protected') {
+  //       // delete the song
+  //       fs.unlink(originalFilepath, function () {} );
+  //       return res.json(200, { status: 'File is Copy-Protected' });
 
-        // create an upload for this
-        var upload = Upload.create( { key: err.key, 
-                                      status: 'No Id Info in File' 
-                                    }, function (err, savedUpload) {
-          return res.json(200, savedUpload);
-        });
+  //     } else if (err.message === 'No Id Info in File') {
+  //       // delete the song
+  //       fs.unlink(originalFilepath, function () {});
 
-      } else if (err.message === 'Song info not found') {
-        // delete the file since it's been processed
-        console.log(err.filepath);
-        fs.unlink(err.filepath, function () {} );
+  //       // create an upload for this
+  //       var upload = Upload.create( { key: err.key, 
+  //                                     status: 'No Id Info in File' 
+  //                                   }, function (err, savedUpload) {
+  //         return res.json(200, savedUpload);
+  //       });
 
-        // get possible matches for response
-        SongProcessor.getSongMatchPossibilities({ artist: err.tags.artist,
-                                                  title: err.tags.title,
-                                                  key: err.key 
-                                                }, function (matchErr, matches) {
-          Upload.create({ tags: err.tags,
-                          possibleMatches: matches,
-                          filename: req.files.file.name,
-                          status: 'info needed'
-                        }, function (err, savedUpload) {
-            return res.json(200, savedUpload);
-          });
-        });
-      } else if (err.message === 'Song Already Exists') {
-        fs.unlink(err.filepath, function () {} );
-        return res.json(200, { status: 'Song Already Exists',
-                               song: err.song });
-      }
-    } else {
-      return res.json(200, { status: 'added',
-                              song: newSong });
-    }
-  })
+  //     } else if (err.message === 'Song info not found') {
+  //       // delete the file since it's been processed
+  //       console.log(err.filepath);
+  //       fs.unlink(err.filepath, function () {} );
+
+  //       // get possible matches for response
+  //       SongProcessor.getSongMatchPossibilities({ artist: err.tags.artist,
+  //                                                 title: err.tags.title,
+  //                                                 key: err.key 
+  //                                               }, function (matchErr, matches) {
+  //         Upload.create({ tags: err.tags,
+  //                         possibleMatches: matches,
+  //                         filename: req.files.file.name,
+  //                         status: 'info needed'
+  //                       }, function (err, savedUpload) {
+  //           return res.json(200, savedUpload);
+  //         });
+  //       });
+  //     } else if (err.message === 'Song Already Exists') {
+  //       fs.unlink(err.filepath, function () {} );
+  //       return res.json(200, { status: 'Song Already Exists',
+  //                              song: err.song });
+  //     }
+  //   } else {
+  //     return res.json(200, { status: 'added',
+  //                             song: newSong });
+  //   }
+  // })
 }
 
-exports.resubmitWithEchonestId = function(req, res) {
+exports.submitViaEchonestId = function(req, res) {
   Upload.findById(req.params.id, function (err, upload) {
     if (!upload) return res.send(404);
 
@@ -81,7 +83,7 @@ exports.resubmitWithEchonestId = function(req, res) {
                                          album: req.query.album,
                                          duration: upload.tags.duration,
                                          echonestId: req.query.echonestId,
-                                         filename: upload.filename
+                                         filename: upload.key
                                          }, function (err, newSong) {
       if (err) {
         if (err.message === 'Song Already Exists') {
