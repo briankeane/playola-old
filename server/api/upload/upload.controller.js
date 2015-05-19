@@ -83,19 +83,21 @@ exports.submitViaEchonestId = function(req, res) {
                                          album: req.query.album,
                                          duration: upload.tags.duration,
                                          echonestId: req.query.echonestId,
-                                         filename: upload.key
+                                         key: upload.key
                                          }, function (err, newSong) {
       if (err) {
         if (err.message === 'Song Already Exists') {
           upload.remove();
           return res.json(200, { status: 'Song Already Exists',
                                song: err.song });
+        } else if (err.message === 'The specified key does not exist.') {
+          return res.json(401, { status: 'Upload Expired' })
         }
         res.json(500, err);
       } else {
         upload.remove();
-        res.json( { status: 'Song Added',
-                    song: newSong });
+        return res.json( { status: 'Song Added',
+                           song: newSong });
       }
 
     });

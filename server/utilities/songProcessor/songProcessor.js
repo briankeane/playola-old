@@ -141,7 +141,6 @@ function SongProcessor() {
       if (songs.length) {
         var err = new Error('Song Already Exists');
         err.song = songs[0];
-        err.filepath = filepath;
         callback(err);
         return;
       }
@@ -158,11 +157,10 @@ function SongProcessor() {
                               album: info.album || itunesInfo.collectionName,
                               duration: info.duration,
                               echonestId: info.echonestId,
-                              key: info.filename,
+                              key: info.key,
                             }, function (err, newKey) {
           if (err) {
             console.log(err);
-            console.log(info.filename);
             callback(new Error('Audio File Storage Error'));
             return;
           }
