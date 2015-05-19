@@ -94,7 +94,8 @@ exports.submitViaEchonestId = function(req, res) {
         res.json(500, err);
       } else {
         upload.remove();
-        res.json(newSong);
+        res.json( { status: 'Song Added',
+                    song: newSong });
       }
 
     });

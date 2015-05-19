@@ -1,6 +1,6 @@
 angular.module('playolaApp')
   .controller('uploaderCtrl', function ($scope, Auth, FileUploader, $modal) {
-    $scope.uploader = new FileUploader({ url: 'http://upload.playola.fm/uploads',
+    $scope.uploader = new FileUploader({ url: 'http://localhost:3000/uploads',
                                         // headers: { 'Access-Control-Allow-Origin': '*' },
                                           //withCredentials: true,
                                           autoUpload: true });
