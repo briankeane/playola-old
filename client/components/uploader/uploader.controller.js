@@ -14,12 +14,16 @@ angular.module('playolaApp')
       // $scope.uploader.onAfterAddingAll = function(addedFileItems) {
       //     console.info('onAfterAddingAll', addedFileItems);
       // };
-      // $scope.uploader.onBeforeUploadItem = function(item) {
-      //     console.info('onBeforeUploadItem', item);
-      // };
-      // $scope.uploader.onProgressItem = function(fileItem, progress) {
-      //     console.info('onProgressItem', fileItem, progress);
-      // };
+      $scope.uploader.onBeforeUploadItem = function(item) {
+          // set status to 'Uploading'
+          fileItem.status = 'Uploading';
+      };
+      $scope.uploader.onProgressItem = function(fileItem, progress) {
+          // switch status to processing after upload is complete
+          if (progress === 100) {
+            fileItem.status = 'Processing';
+          }
+      };
       // $scope.uploader.onProgressAll = function(progress) {
       //     console.info('onProgressAll', progress);
       // };
@@ -37,17 +41,12 @@ angular.module('playolaApp')
         if (response.status === 'More Info Needed') {
           fileItem.status = response.status;
           fileItem.uploadItem = response.upload
-          fileItem.isSuccess = false;
-          fileItem.isNeedInfo = true;
           fileItem.uploadId = response.upload._id;
         } else if (response.status === 'Song Already Exists') {
-          fileItem.status = response.status;
-          fileItem.isSuccess = true;
+          fileItem.status = 'Success';
           fileItem.songId = response.song._id;
-
         } else if (response.status === 'added') {
-          fileItem.status = response.status;
-          fileItem.isSuccess = true;
+          fileItem.status = 'Success';
           fileItem.songId = response.song._id;
         }
 
@@ -100,6 +99,33 @@ angular.module('playolaApp')
               
               // IF it was not found, resubmit request...
               if ($scope.selectedSong.index === 'ECHONESTIDNOTFOUND') {
+                // see if new tags are needed
+                $modal.open({
+                  templateUrl: 'components/uploader/getTags.modal.html',
+                  size: 'med',
+                  scope: $scope,
+                  controller: function ($modalInstance) {
+                    $scope.cancel = function () {
+                      $modalInstance.dismiss('cancel');
+                    };
+
+                    $scope.submitTagForm = function () {
+                      if ($scope.tagsChanged) {
+                        var uploadInfo = { uploadId: item.upload._id,
+                                            tags: $scope.tags }
+                        Auth.submitUploadWithNewTags(uploadInfo, function (err, response) {
+
+                        })
+                      }
+                    }
+
+                  }
+                })
+
+
+
+
+
                 if ($scope.tagsChanged) {
                   var uploadInfo = { uploadId: item.upload._id,
                                      tags: item.tags }
@@ -112,7 +138,7 @@ angular.module('playolaApp')
                         item.status = response.status
                         item.isSuccess = true;
                         item.songId = response.song._id;
-                        $modal.Instance.dismiss('close');
+                        $modalInstance.dismiss('close');
                       }
                     }
                   });
@@ -133,7 +159,7 @@ angular.module('playolaApp')
                     item.status = response.status;
                     item.isSuccess = true;
                     item.songId = response.song._id;
-                    $modal.Instance.dismiss('close');
+                    $modalInstance.dismiss('close');
                   }
                 });
 

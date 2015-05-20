@@ -4,6 +4,7 @@ var app = require('../../app');
 var expect = require('chai').expect;
 var fs = require('fs');
 var Song = require('../../api/song/song.model');
+var Upload = require('../../api/upload/upload.model');
 var Storage = require('../audioFileStorageHandler/audioFileStorageHandler');
 var SongPool = require('../songPoolHandlerEmitter/songPoolHandlerEmitter');
 var SongProcessor = require('./songProcessor');
@@ -52,32 +53,32 @@ describe('songProcessor', function (done) {
     });
   });
 
-  it('gets itunes info', function (done) {
+  xit('gets itunes info', function (done) {
     this.timeout(10000);
     SongProcessor.getItunesInfo({ artist: 'Miranda Lambert',
                                   title: 'Little Red Wagon'
                                 }, function (err, match) {
       expect(match.albumArtworkUrl).to.equal('http://is1.mzstatic.com/image/pf/us/r30/Music/v4/e5/22/a0/e522a052-63eb-d71e-7fbd-ccff670a399d/886444518710.600x600-75.jpg');
       expect(match.trackViewUrl).to.equal('https://itunes.apple.com/us/album/little-red-wagon/id849069497?i=849069513&uo=4');
-      expect(match.collectionName).to.equal('Platinum')
+      expect(match.album).to.equal('Platinum');
       done();
     });
   });
 
-  it('getSongMatchPossibilities', function (done) {
-    this.timeout(7000);
+  xit('getsSongMatchPossibilities', function (done) {
+    this.timeout(30000);
     SongProcessor.getSongMatchPossibilities({ artist: 'The Beatles',
                                               title: 'Eleanor Rigby' 
-                                            }, function (err, matches) {
-      expect(matches.length).to.equal(15);
-      expect(matches[0].artist).to.equal('The Beatles');
-      expect(matches[0].title).to.equal('ELEANOR RIGBY');
-      expect(matches[0].echonestId).to.equal('SOKTZBX12B20E5E4AB');
+                                            }, function (err, result) {                              
+      expect(result.possibleMatches.length).to.equal(15);
+      expect(result.possibleMatches[0].artist).to.equal('The Beatles');
+      expect(result.possibleMatches[0].title).to.equal('ELEANOR RIGBY');
+      expect(result.possibleMatches[0].echonestId).to.equal('SOKTZBX12B20E5E4AB');
       SongProcessor.getSongMatchPossibilities({ artist: 'Rachel Loy',
                                                 title: 'Stepladder' 
-                                              }, function (err, matches) {
-        expect(matches[0].artist).to.equal('Rachel Loy');
-        expect(matches[0].title).to.equal('Stepladder');
+                                              }, function (err, result) {
+        expect(result.possibleMatches[0].artist).to.equal('Rachel Loy');
+        expect(result.possibleMatches[0].title).to.equal('Stepladder');
         done();
       });
     }); 
@@ -85,19 +86,21 @@ describe('songProcessor', function (done) {
 
   xit('gets the echonest info', function (done) {
     this.timeout(60000);
-    SongProcessor.getEchonestInfo({ title: 'Stepladder', artist: 'Rachel Loy'
-                                   }, function (err, song) {
+    SongProcessor.getSongMatchPossibilities({ title: 'Stepladder', artist: 'Rachel Loy'
+                                            }, function (err, result) {
+      var song = result.closestMatch;
       expect(song.title).to.equal('Stepladder');
       expect(song.artist).to.equal('Rachel Loy');
       expect(song.echonestId).to.equal('SOOWAAV13CF6D1B3FA');
       expect(song.genres.length).to.equal(0);
-      SongProcessor.getEchonestInfo({ title: 'Kiss Me In The Dark',
+      SongProcessor.getSongMatchPossibilities({ title: 'Kiss Me In The Dark',
                                       artist: 'Randy Rogers'
-                                    }, function (err, song2) {
-        expect(song2.title.toLowerCase()).to.equal('kiss me in the dark');
-        expect(song2.artist).to.equal('Randy Rogers Band');
-        expect(song2.genres[0]).to.equal('texas country');
-        expect(song2.genres[1]).to.equal('outlaw country');
+                                    }, function (err, result2) {
+
+        expect(result2.closestMatch.title.toLowerCase()).to.equal('kiss me in the dark');
+        expect(result2.closestMatch.artist).to.equal('Randy Rogers Band');
+        expect(result2.closestMatch.genres[0]).to.equal('texas country');
+        expect(result2.closestMatch.genres[1]).to.equal('outlaw country');
         done();
       });
     });
@@ -373,7 +376,54 @@ describe('songProcessor', function (done) {
       });
     });
 
-    it('allows resubmission with chosen echonestId', function (done) {
+
+    it('processes a resubmitted upload with new tags', function (done) {
+      this.timeout(30000);
+      var uploader = s3HighLevel.uploadFile({ localFile: process.cwd() + '/server/data/testFiles/test.txt',
+                                              s3Params: {
+                                                Bucket: 'playolaunprocessedsongstest',
+                                                Key: 'test.txt'
+                                              }
+                                            });
+      uploader.on('end', function () {
+        SongPool.clearAllSongs()
+        .on('finish', function () {
+          Upload.create({ key: 'test.txt',
+                          status: 'More Info Needed',
+                          tags: { artist: 'Sting', title: 'If I Ever Lose My Faith In You', album: "Ten Summoner's Tales" } 
+                        }, function (err, newUpload) {
+            SongProcessor.processUploadWithUpdatedTags(newUpload, function (err, newSong) {
+              expect(newSong.title).to.equal('If I Ever Lose My Faith In You');
+              expect(newSong.artist).to.equal('Sting');
+              expect(newSong.album).to.equal("Ten Summoner's Tales");
+              expect(newSong.echonestId).to.equal('SOPUMUC14373D95FA3');
+              expect(newSong.albumArtworkUrl).to.equal('http://is1.mzstatic.com/image/pf/us/r30/Features/11/af/6e/dj.dertmkus.600x600-75.jpg');
+              expect(newSong.trackViewUrl).to.equal('https://itunes.apple.com/us/album/if-i-ever-lose-my-faith-in-you/id110871?i=110861&uo=4');
+              // make sure it was stored properly
+              Storage.getStoredSongMetadata(newSong.key, function (err, data) {
+                expect(data.title).to.equal(newSong.title);
+                expect(data.artist).to.equal(newSong.artist);
+                expect(data.duration).to.equal(newSong.duration);
+                expect(data.echonestId).to.equal(newSong.echonestId);
+
+                // make sure it was added to echonest
+                SongPool.getAllSongs()
+                .on('finish', function (err, allSongs) {
+console.log('allSongs:');
+console.log(allSongs[0]);
+                  expect(allSongs[0].echonestId).to.equal(newSong.echonestId);
+                  done();
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
+
+
+    xit('allows resubmission with chosen echonestId', function (done) {
       this.timeout(20000);
       var uploader = s3HighLevel.uploadFile({ localFile: process.cwd() + '/server/data/testFiles/test.txt',
                                     s3Params: {

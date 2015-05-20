@@ -50,6 +50,54 @@ function SongProcessor() {
     });
   };
 
+  this.processUploadWithUpdatedTags = function (upload, callback) {
+    //  get new possible matches
+    self.getSongMatchPossibilities(upload.tags, function (err, matches) {
+      if (err) {
+        callback(err);
+        return;
+      }
+      var closestMatch = matches.closestMatch;
+
+      // if a match was found
+      if (closestMatch && (closestMatch.matchRating >= 1.8)) {
+        // get the itunes info
+        self.getItunesInfo({ artist: closestMatch.artist,
+                              title: closestMatch.title 
+                            }, function (err, itunesInfo) {
+          // finalize the upload
+          Storage.finalizeUpload({ title: closestMatch.title,
+                                  artist: closestMatch.artist,
+                                  album: upload.tags.album || closestMatch.album || '',
+                                  duration: upload.duration || itunesInfo.trackTimeMillis,
+                                  key: upload.key,
+                                  echonestId: closestMatch.echonestId
+                                }, function (err, newKey) {
+
+            // add the song to the db
+            Song.create({ artist: closestMatch.artist,
+                          title: closestMatch.title,
+                          album: upload.tags.album || closestMatch.album || itunesInfo.album,
+                          echonestId: closestMatch.echonestId,
+                          duration: upload.duration || itunesInfo.trackTimeMillis,
+                          albumArtworkUrl: itunesInfo.albumArtworkUrl,
+                          albumArtworkUrlSmall: itunesInfo.albumArtworkUrlSmall,
+                          trackViewUrl: itunesInfo.trackViewUrl,
+                          itunesInfo: itunesInfo,
+                          key: newKey
+                        }, function (err, newSong) {
+              // add the song to the songpool
+              SongPool.addSong(newSong)
+              .on('finish', function () {
+                callback(null, newSong);
+              });
+            });
+          });
+        });
+      }
+    });
+  };
+
   this.getItunesInfo = function (attrs, callback) {
     var url = 'https://itunes.apple.com/search?' + qs.stringify( { term: ((attrs.artist || '') + ' ' + (attrs.title || '')) });
 
@@ -98,35 +146,6 @@ function SongProcessor() {
       return;
     });
   };
-
-
-  this.getSongMatchPossibilities = function (attrs, callback) {
-    echo('song/search').get({ combined: attrs.artist + ' ' + attrs.title,
-                              bucket: ['id:rdio-US','id:spotify', 'tracks'] 
-                            }, function (err, json) {
-      var songsArray = json.response.songs;
-
-      // rename attrs for consistency
-      for(var i=0;i<songsArray.length;i++) {
-        songsArray[i].artist = songsArray[i].artist_name;
-        songsArray[i].echonestId = songsArray[i].id;
-
-        // grab album name if available
-        for (var j=0;j<songsArray[i].tracks.length;j++) {
-          if (songsArray[i].tracks[j].album_name) {
-            songsArray[i].album = songsArray[i].tracks[j].album_name
-            break;
-          }
-        }
-
-        
-      }
-
-
-      callback(null, songsArray);
-    });
-  };
-
 
   this.addSongViaEchonestId = function (info, callback) {
     // check to see if new song is in database
@@ -195,10 +214,15 @@ function SongProcessor() {
     });
   }
 
-  this.getEchonestInfo = function (attrs, callback) {
-    echo('song/search').get({ combined: attrs.artist + ' ' + attrs.title,
-                              bucket: ['id:rdio-US','id:spotify', 'tracks'],
+  this.getSongMatchPossibilities = function (attrs, callback) {
+    // create search string
+    var searchString = (attrs.artist || '') + ' ' + (attrs.title || '');
+
+    // grab matches
+    echo('song/search').get({ combined: searchString,
+                              bucket: ['id:rdio-US', 'tracks'],
                             }, function (err, json) {
+
       if (err) callback(err);
       var matches = json.response.songs;
       
@@ -208,36 +232,44 @@ function SongProcessor() {
       var closestMatchIndex = 0;
       var closestMatchRating = 0;
 
-      // find the closest match
+      // calculate the artist & title match accuracy
       for (var i=0;i<matches.length;i++) {
         matches[i].artistMatchRating = natural.JaroWinklerDistance(matches[i].artist_name.toLowerCase(), attrs.artist.toLowerCase());
         matches[i].titleMatchRating = natural.JaroWinklerDistance(matches[i].title.toLowerCase(), attrs.title.toLowerCase());
+        matches[i].matchRating = matches[i].artistMatchRating + matches[i].titleMatchRating;
+      
+        // rename for consistency
+        matches[i].echonestId = matches[i].id;
+        matches[i].artist = matches[i].artist_name;
 
-        if ((matches[i].artistMatchRating + matches[i].titleMatchRating) > closestMatchRating) {
-          closestMatchIndex = i;
-          closestMatchRating = matches[i].artistMatchRating + matches[i].titleMatchRating;
-        } 
-      }
-
-      var closestMatch = matches[closestMatchIndex];
-
-      // rename for consistency
-      closestMatch.echonestId = closestMatch.id;
-      closestMatch.artist = closestMatch.artist_name;
-      closestMatch.genres = [];
-
-      // grab album name if available
-      for (var i=0;i<tags.tracks.length;i++) {
-        if (track[i].album_name) {
-          tags.album = track[i].album_name
-          break;
+        // grab album name if available
+        for (var j=0;j<matches[i].tracks.length;j++) {
+          if (matches[i].tracks[j].album_name) {
+            matches[i].album = matches[i].tracks[j].album_name
+            break;
+          }
         }
       }
 
-      // add genere tags
+      // SORT the matches... here's the 'compare' function
+      function compareMatches(a,b) {
+        if (a.matchRating < b.matchRating)
+          return 1;
+        if (a.matchRating > b.matchRating)
+          return -1;
+        return 0;
+      }
+
+      // and... the sort
+      matches = matches.sort(compareMatches);
+      
+      var closestMatch = matches[0];
+      closestMatch.genres = [];
+
+      // add genere tags to closest match
       echo('artist/profile').get({ name: closestMatch.artist, bucket: 'genre' }, function (err, artistProfile) {
         if (err) {
-          callback(null, closestMatch);
+          callback(null, { closestMatch: closestMatch, possibleMatches: matches });
         } else {
           // add the genres
           var genres = artistProfile.response.artist.genres;
@@ -246,7 +278,7 @@ function SongProcessor() {
             closestMatch.genres.push(genres[i].name);
           }
         
-          callback(null, closestMatch);
+          callback(null, { closestMatch: closestMatch, possibleMatches: matches });
         }
       });
     });

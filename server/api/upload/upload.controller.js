@@ -104,7 +104,7 @@ exports.submitViaEchonestId = function(req, res) {
   });
 }
 
-exports.resubmitWithUpdatedTags = function (req, res) {
+exports.submitWithUpdatedTags = function (req, res) {
   Upload.findById(req.params.id, function (err, upload) { 
     if (!upload) return res.send(404);
 

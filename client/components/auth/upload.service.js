@@ -18,10 +18,16 @@ angular.module('playolaApp')
           controller: 'submitViaEchonestId'
         }
       },
+      submitWithNewTags: {
+        method: 'PUT',
+        params: {
+          controller: 'submitWithNewTags'
+        }
+      },
       submitWithoutEchonestId: {
         method: 'PUT',
         params: {
-          controller: 'resubmitWithUpdatedTags'
+          controller: 'submitWithoutEchonestId'
         }
       }
     });
