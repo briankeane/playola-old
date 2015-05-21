@@ -61,39 +61,56 @@ function SongProcessor() {
 
       // if a match was found
       if (closestMatch && (closestMatch.matchRating >= 1.8)) {
-        // get the itunes info
-        self.getItunesInfo({ artist: closestMatch.artist,
-                              title: closestMatch.title 
-                            }, function (err, itunesInfo) {
-          // finalize the upload
-          Storage.finalizeUpload({ title: closestMatch.title,
-                                  artist: closestMatch.artist,
-                                  album: upload.tags.album || closestMatch.album || '',
-                                  duration: upload.duration || itunesInfo.trackTimeMillis,
-                                  key: upload.key,
-                                  echonestId: closestMatch.echonestId
-                                }, function (err, newKey) {
 
-            // add the song to the db
-            Song.create({ artist: closestMatch.artist,
-                          title: closestMatch.title,
-                          album: upload.tags.album || closestMatch.album || itunesInfo.album,
-                          echonestId: closestMatch.echonestId,
-                          duration: upload.duration || itunesInfo.trackTimeMillis,
-                          albumArtworkUrl: itunesInfo.albumArtworkUrl,
-                          albumArtworkUrlSmall: itunesInfo.albumArtworkUrlSmall,
-                          trackViewUrl: itunesInfo.trackViewUrl,
-                          itunesInfo: itunesInfo,
-                          key: newKey
-                        }, function (err, newSong) {
-              // add the song to the songpool
-              SongPool.addSong(newSong)
-              .on('finish', function () {
-                callback(null, newSong);
+        // check db for a copy
+        Song.find({ echonestId: closestMatch.echonestId }, function (err, songs) {
+          if (songs.length) {
+            var err = new Error('Song Already Exists');
+console.log('songs');
+console.log(songs);
+
+            err.song = songs[0];
+            callback(err);
+            return;
+          }
+          // get the itunes info
+          self.getItunesInfo({ artist: closestMatch.artist,
+                                title: closestMatch.title 
+                              }, function (err, itunesInfo) {
+            // finalize the upload
+            Storage.finalizeUpload({ title: closestMatch.title,
+                                    artist: closestMatch.artist,
+                                    album: upload.tags.album || closestMatch.album || '',
+                                    duration: upload.duration || itunesInfo.trackTimeMillis,
+                                    key: upload.key,
+                                    echonestId: closestMatch.echonestId
+                                  }, function (err, newKey) {
+
+              // add the song to the db
+              Song.create({ artist: closestMatch.artist,
+                            title: closestMatch.title,
+                            album: upload.tags.album || closestMatch.album || itunesInfo.album,
+                            echonestId: closestMatch.echonestId,
+                            duration: upload.duration || itunesInfo.trackTimeMillis,
+                            albumArtworkUrl: itunesInfo.albumArtworkUrl,
+                            albumArtworkUrlSmall: itunesInfo.albumArtworkUrlSmall,
+                            trackViewUrl: itunesInfo.trackViewUrl,
+                            itunesInfo: itunesInfo,
+                            key: newKey
+                          }, function (err, newSong) {
+                // add the song to the songpool
+                SongPool.addSong(newSong)
+                .on('finish', function () {
+                  callback(null, newSong);
+                });
               });
             });
           });
         });
+
+      // ELSE no match found in echonest db
+      } else {
+
       }
     });
   };
@@ -215,15 +232,14 @@ function SongProcessor() {
   }
 
   this.getSongMatchPossibilities = function (attrs, callback) {
-    // create search string
-    var searchString = (attrs.artist || '') + ' ' + (attrs.title || '');
-
     // grab matches
-    echo('song/search').get({ combined: searchString,
-                              bucket: ['id:rdio-US', 'tracks'],
+    echo('song/search').get({ combined: (attrs.artist || '') + ' ' + (attrs.title || '')
                             }, function (err, json) {
 
-      if (err) callback(err);
+      if (err) {
+        callback(err);
+        return;
+      }
       var matches = json.response.songs;
       
       // return null if no songs found
@@ -241,14 +257,6 @@ function SongProcessor() {
         // rename for consistency
         matches[i].echonestId = matches[i].id;
         matches[i].artist = matches[i].artist_name;
-
-        // grab album name if available
-        for (var j=0;j<matches[i].tracks.length;j++) {
-          if (matches[i].tracks[j].album_name) {
-            matches[i].album = matches[i].tracks[j].album_name
-            break;
-          }
-        }
       }
 
       // SORT the matches... here's the 'compare' function
@@ -265,24 +273,11 @@ function SongProcessor() {
       
       var closestMatch = matches[0];
       closestMatch.genres = [];
-
-      // add genere tags to closest match
-      echo('artist/profile').get({ name: closestMatch.artist, bucket: 'genre' }, function (err, artistProfile) {
-        if (err) {
-          callback(null, { closestMatch: closestMatch, possibleMatches: matches });
-        } else {
-          // add the genres
-          var genres = artistProfile.response.artist.genres;
-
-          for (var i=0;i<genres.length;i++) {
-            closestMatch.genres.push(genres[i].name);
-          }
-        
-          callback(null, { closestMatch: closestMatch, possibleMatches: matches });
-        }
-      });
+    
+      callback(null, { closestMatch: closestMatch, possibleMatches: matches });
     });
   };
+
 
   this.addSongToSystem = function (originalFilepath, callback) {
     // ******** THIS FUNCTION IS NOW HANDLED BY THE RAILS APP ****************

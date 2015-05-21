@@ -377,7 +377,52 @@ describe('songProcessor', function (done) {
     });
 
 
-    it('processes a resubmitted upload with new tags', function (done) {
+    xit('processes a resubmitted upload with new tags', function (done) {
+      this.timeout(40000);
+      Song.remove({}, function () {
+
+        var uploader = s3HighLevel.uploadFile({ localFile: process.cwd() + '/server/data/testFiles/test.txt',
+                                                s3Params: {
+                                                  Bucket: 'playolaunprocessedsongstest',
+                                                  Key: 'test.txt'
+                                                }
+                                              });
+        uploader.on('end', function () {
+          SongPool.clearAllSongs()
+          .on('finish', function () {
+            Upload.create({ key: 'test.txt',
+                            status: 'More Info Needed',
+                            tags: { artist: 'Sting', title: 'If I Ever Lose My Faith In You', album: "Ten Summoner's Tales" } 
+                          }, function (err, newUpload) {
+              SongProcessor.processUploadWithUpdatedTags(newUpload, function (err, newSong) {
+                expect(newSong.title).to.equal('If I Ever Lose My Faith In You');
+                expect(newSong.artist).to.equal('Sting');
+                expect(newSong.album).to.equal("Ten Summoner's Tales");
+                expect(newSong.echonestId).to.equal('SOPUMUC14373D95FA3');
+                expect(newSong.albumArtworkUrl).to.equal('http://is1.mzstatic.com/image/pf/us/r30/Features/11/af/6e/dj.dertmkus.600x600-75.jpg');
+                expect(newSong.trackViewUrl).to.equal('https://itunes.apple.com/us/album/if-i-ever-lose-my-faith-in-you/id110871?i=110861&uo=4');
+                // make sure it was stored properly
+                Storage.getStoredSongMetadata(newSong.key, function (err, data) {
+                  expect(data.title).to.equal(newSong.title);
+                  expect(data.artist).to.equal(newSong.artist);
+                  expect(data.duration).to.equal(newSong.duration);
+                  expect(data.echonestId).to.equal(newSong.echonestId);
+
+                  // make sure it was added to echonest
+                  SongPool.getAllSongs()
+                  .on('finish', function (err, allSongs) {
+                    expect(allSongs[0].echonestId).to.equal(newSong.echonestId);
+                    done();
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    });
+
+    it('does not add a resubmitted song that already exists', function (done) {
       this.timeout(30000);
       var uploader = s3HighLevel.uploadFile({ localFile: process.cwd() + '/server/data/testFiles/test.txt',
                                               s3Params: {
@@ -392,33 +437,21 @@ describe('songProcessor', function (done) {
                           status: 'More Info Needed',
                           tags: { artist: 'Sting', title: 'If I Ever Lose My Faith In You', album: "Ten Summoner's Tales" } 
                         }, function (err, newUpload) {
-            SongProcessor.processUploadWithUpdatedTags(newUpload, function (err, newSong) {
-              expect(newSong.title).to.equal('If I Ever Lose My Faith In You');
-              expect(newSong.artist).to.equal('Sting');
-              expect(newSong.album).to.equal("Ten Summoner's Tales");
-              expect(newSong.echonestId).to.equal('SOPUMUC14373D95FA3');
-              expect(newSong.albumArtworkUrl).to.equal('http://is1.mzstatic.com/image/pf/us/r30/Features/11/af/6e/dj.dertmkus.600x600-75.jpg');
-              expect(newSong.trackViewUrl).to.equal('https://itunes.apple.com/us/album/if-i-ever-lose-my-faith-in-you/id110871?i=110861&uo=4');
-              // make sure it was stored properly
-              Storage.getStoredSongMetadata(newSong.key, function (err, data) {
-                expect(data.title).to.equal(newSong.title);
-                expect(data.artist).to.equal(newSong.artist);
-                expect(data.duration).to.equal(newSong.duration);
-                expect(data.echonestId).to.equal(newSong.echonestId);
-
-                // make sure it was added to echonest
-                SongPool.getAllSongs()
-                .on('finish', function (err, allSongs) {
-console.log('allSongs:');
-console.log(allSongs[0]);
-                  expect(allSongs[0].echonestId).to.equal(newSong.echonestId);
-                  done();
-                });
+            Song.create({ artist: 'Sting', title: 'If I Ever Lose My Faith In You', echonestId: 'SOPUMUC14373D95FA3'
+                        }, function (err, newSong) {
+              SongProcessor.processUploadWithUpdatedTags(newUpload, function (err, newProcessedSong) {
+                expect(err.message).to.equal('Song Already Exists');
+                expect(err.song._id.equals(newSong._id)).to.equal(true);
+                done();
               });
             });
           });
         });
       });
+    });
+
+    xit('returns close matches if a match not found', function (done) {
+
     });
 
 
