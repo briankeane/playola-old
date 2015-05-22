@@ -66,8 +66,6 @@ function SongProcessor() {
         Song.find({ echonestId: closestMatch.echonestId }, function (err, songs) {
           if (songs.length) {
             var err = new Error('Song Already Exists');
-console.log('songs');
-console.log(songs);
 
             err.song = songs[0];
             callback(err);

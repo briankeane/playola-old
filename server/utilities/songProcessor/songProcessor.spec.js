@@ -437,9 +437,10 @@ describe('songProcessor', function (done) {
                           status: 'More Info Needed',
                           tags: { artist: 'Sting', title: 'If I Ever Lose My Faith In You', album: "Ten Summoner's Tales" } 
                         }, function (err, newUpload) {
-            Song.create({ artist: 'Sting', title: 'If I Ever Lose My Faith In You', echonestId: 'SOPUMUC14373D95FA3'
+            Song.create({ artist: 'Sting', title: 'If I Ever Lose My Faith In You', echonestId: 'SOQAWAF144F4EAF0F0'
                         }, function (err, newSong) {
               SongProcessor.processUploadWithUpdatedTags(newUpload, function (err, newProcessedSong) {
+      console.log(newProcessedSong);
                 expect(err.message).to.equal('Song Already Exists');
                 expect(err.song._id.equals(newSong._id)).to.equal(true);
                 done();

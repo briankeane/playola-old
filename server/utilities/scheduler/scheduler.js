@@ -56,10 +56,10 @@ function Scheduler() {
 
         // now get the rest of the spins and 
         Spin.getFullPlaylist(self.station.id, function (err, spins) {
-          // add the rest of the spins to the end of it
+          // add the rest of the spins to the end of the schedule
           schedule = schedule.concat(spins);
 
-          // now that we have the schedule... send it through all
+          // now that we have the schedule... send it through
           callback(null, schedule);
         });
       });
