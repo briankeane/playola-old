@@ -52,6 +52,7 @@ angular.module('playolaApp')
       self.clearPlayer();
       cancelTimeouts();
       self.isPlaying = false;
+      self.isLoading = false;
     });
 
     // *************************************************
@@ -72,7 +73,7 @@ angular.module('playolaApp')
       self.clearPlayer();
 
       self.isLoading = true;
-      self.isPlaying = true;
+      self.isPlaying = false;
 
       self.stationId = stationId;
 
@@ -101,6 +102,8 @@ angular.module('playolaApp')
           // start music, load next songs.
           var secsAlreadyElapsed = (Date.now() - new Date(self.nowPlaying.airtime).getTime())/1000;
           self.nowPlaying.source.start(0, secsAlreadyElapsed);
+
+          self.isPlaying = true;
 
           // fade out at end of song
           var eomSecs = (self.nowPlaying._audioBlock.eom + 1000 || self.nowPlaying._audioBlock.duration - 1000)/1000;

@@ -1,48 +1,51 @@
-<!-- Audio Player -->
-<div id="css3-animated-example" ng-controller="AudioPlayerCtrl" ng-show="player.nowPlaying">
-  <h3 style=" margin:0px; font-size:15px; text-align:center;" ng-class="{open: !isCollapsed }"><a href="#" ng-click="toggleAudioPlayerCollapse()"><i class="fa fa-music "></i>&nbsp; AUDIO PLAYER</a></h3>
-        
-  <div collapse="isCollapsed" ng-class="{open: !isCollapsed }">
-    <div class="content">
-      <div  style="height:120px;" >
-        <div style="float:left; height:100px; width:100px;"><img style="border:1px solid #cccccc; padding:2px;" ng-src="{{getAlbumPicture(player.nowPlaying)}}" width="100px">
-        </div>
-            
-        <div style="float:left; width:415px; margin-left:25px; line-height:25px; font-size:20px;">
-           {{player.nowPlaying._audioBlock.title}}
-          <div ng-show="player.nowPlaying._audioBlock._type !== 'CommercialBlock'" style="font-size:13px;">{{player.nowPlaying._audioBlock.artist}} / {{player.nowPlaying._audioBlock.artist}} </div>
-            
-            <div style="font-size:11px; color:#AC0002;">
-              <a href="{{player.nowPlaying._audioBlock.trackViewUrl}}"><i>Buy on iTunes</i></a>
-            </div>   
+<div ng-controller="AudioPlayerCtrl" ng-show="player.nowPlaying">
+  <!-- Audio Player -->
+  <div id="css3-animated-example">
+    <h3 style=" margin:0px; font-size:15px; text-align:center;" ng-class="{open: !isCollapsed }"><a href="#" ng-click="toggleAudioPlayerCollapse()"><i class="fa fa-music "></i>&nbsp; AUDIO PLAYER</a></h3>
           
-            <div>
-               <input min="0" max="1" step="0.01" type="range" ng-model="player.volume" ng-change="player.setVolume(player.volume)" />
-            </div>         
+    <div collapse="isCollapsed" ng-class="{open: !isCollapsed }">
+      <div class="content">
+        <div  style="height:120px;" >
+          <div style="float:left; height:100px; width:100px;"><img style="border:1px solid #cccccc; padding:2px;" ng-src="{{getAlbumPicture(player.nowPlaying)}}" width="100px">
           </div>
+              
+          <div style="float:left; width:415px; margin-left:25px; line-height:25px; font-size:20px;">
+             {{player.nowPlaying._audioBlock.title}}
+            <div ng-show="player.nowPlaying._audioBlock._type !== 'CommercialBlock'" style="font-size:13px;">{{player.nowPlaying._audioBlock.artist}} / {{player.nowPlaying._audioBlock.artist}} </div>
+              
+              <div style="font-size:11px; color:#AC0002;">
+                <a href="{{player.nowPlaying._audioBlock.trackViewUrl}}"><i>Buy on iTunes</i></a>
+              </div>   
             
-          <div class="preset-buttons-container">
-          <div>
-            <a href="#" style="float:left; margin-right:20px;" class="btn btn-mod btn-border btn-small btn-round"
-              ng-click="addToMyStation(player.nowPlaying._audioBlock._id)"
-              ng-disabled="checkForRotation(player.nowPlaying._audioBlock)">Add song to my station</a>
-            <a href="#" style="float:left;" class="btn btn-mod btn-border btn-small btn-round" ng-click="togglePreset(player.stationPlaying);" ng-disabled="presetButtonInfo(player.stationPlaying._id).disabled">Add station to presets</a>
-          </div><br>
-            
-            
-          <div class="mb-20 mb-md-10 mar15t">
-            <select  class="input-md form-control preset-buttons" ng-change="test2(preset);" ng-options= " p._id as formatPresetListItem(p) for p in presets" ng-model="selectedPresetId">
-              <option value=''>- Presets -</option>
-            </select>
-          </div>               
+              <div>
+                 <input min="0" max="1" step="0.01" type="range" ng-model="player.volume" ng-change="player.setVolume(player.volume)" />
+              </div>         
+            </div>
+              
+            <div class="preset-buttons-container">
+            <div>
+              <a href="#" style="float:left; margin-right:20px;" class="btn btn-mod btn-border btn-small btn-round"
+                ng-click="addToMyStation(player.nowPlaying._audioBlock._id)"
+                ng-disabled="checkForRotation(player.nowPlaying._audioBlock)">Add song to my station</a>
+              <a href="#" style="float:left;" class="btn btn-mod btn-border btn-small btn-round" ng-click="togglePreset(player.stationPlaying);" ng-disabled="presetButtonInfo(player.stationPlaying._id).disabled">Add station to presets</a>
+            </div><br>
+              
+              
+            <div class="mb-20 mb-md-10 mar15t">
+              <select  class="input-md form-control preset-buttons" ng-change="test2(preset);" ng-options= " p._id as formatPresetListItem(p) for p in presets" ng-model="selectedPresetId">
+                <option value=''>- Presets -</option>
+              </select>
+            </div>               
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
-<div class="bg-color">
-  <div class="station-name-box"></div>
+  <div class="bg-color">
+    <div class="station-name-box"></div>
+  </div>
+
 </div>
 
 <!-- DELETE ONCE STATIONNAME SITUATION FIGURED OUT -->
