@@ -16,7 +16,7 @@ angular.module('playolaApp')
       // };
       $scope.uploader.onBeforeUploadItem = function(item) {
           // set status to 'Uploading'
-          fileItem.status = 'Uploading';
+          item.status = 'Uploading';
       };
       $scope.uploader.onProgressItem = function(fileItem, progress) {
           // switch status to processing after upload is complete
@@ -99,6 +99,7 @@ angular.module('playolaApp')
               
               // IF it was not found, resubmit request...
               if ($scope.selectedSong.index === 'ECHONESTIDNOTFOUND') {
+                $modalInstance.dismiss('close');
                 // see if new tags are needed
                 $modal.open({
                   templateUrl: 'components/uploader/getTags.modal.html',
@@ -111,11 +112,16 @@ angular.module('playolaApp')
 
                     $scope.submitTagForm = function () {
                       if ($scope.tagsChanged) {
-                        var uploadInfo = { uploadId: item.upload._id,
+                        var uploadInfo = { uploadId: item.uploadItem._id,
                                             tags: $scope.tags }
                         Auth.submitUploadWithNewTags(uploadInfo, function (err, response) {
 
                         })
+                      
+                      // ELSE tags have not changed
+                      } else {
+                        // add without echonestId
+                        Auth.submitUploadWithoutEchonestId
                       }
                     }
 

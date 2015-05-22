@@ -119,6 +119,8 @@ function Scheduler() {
     var previousPossibleSongs = attrs.songlist;
     
     // send through the filters
+
+    // SONG REST
     if (attrs.station.rules.songMinimumRest) {
       var newSonglist = Rules.songMinimumRest({ airtime: attrs.airtime,
                                                 schedule: attrs.fullSchedule,
@@ -132,6 +134,7 @@ function Scheduler() {
       }
     }
 
+    // ARTIST REST
     if (attrs.station.rules.artistMinimumRest) {
 
       var newSonglist = Rules.artistMinimumRest({ airtime: attrs.airtime,
@@ -147,7 +150,7 @@ function Scheduler() {
       }
     }
 
-
+    // DAY OFFSET FILTER
     if (attrs.station.rules.dayOffset) {
       var newSonglist = Rules.dayOffset({ airtime: attrs.airtime,
                                           schedule: attrs.fullSchedule,
@@ -170,7 +173,6 @@ if (song.title === attrs.fullSchedule[attrs.fullSchedule.length-1]._audioBlock.t
   console.log('SAMESONGDAMMIT');
   console.log(warnings);
   console.log(_.map(previousPossibleSongs, function (song) { return song.title; }));
-
 }
 
 
