@@ -36,7 +36,7 @@
 
               <dl class="accordion" >
                 <dt class="musicbox_playing commentary" ng-show="(spin._audioBlock._type==='Commentary')">
-                  <span class="next-artist-name"><i class="fa fa-play fa-sm active"></i> Commentary</span>
+                  <span class="next-artist-name"><i class="fa fa-play fa-sm active"  ng-click="previewCommentary($index)"></i> Commentary</span>
                   <span class="timestamp-container">{{ formatTime(spin.airtime) }}</span>
                   <div class="close-icon close-icon-hover" title="delete" ng-click="removeSpin(spin, $index);" ng-show="removable(spin, $index);"><i class="fa fa-times"></i></div>
                 </dt>
