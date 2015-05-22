@@ -114,7 +114,7 @@ angular.module('playolaApp')
                       if ($scope.tagsChanged) {
                         var uploadInfo = { uploadId: item.uploadItem._id,
                                             tags: $scope.tags }
-                        Auth.submitUploadWithNewTags(uploadInfo, function (err, response) {
+                        Auth.submitUploadWithUpdatedTags(uploadInfo, function (err, response) {
 
                         })
                       

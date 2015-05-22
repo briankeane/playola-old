@@ -345,7 +345,7 @@ angular.module('playolaApp')
         }).$promise;
       },
 
-      submitUploadWithNewTags: function (item, callback) {
+      submitUploadWithUpdatedTags: function (item, callback) {
         var cb = callback || angular.noop;
 
         return new Upload.submitWithNewTags(item, { _id: item.uploadId }, function (result) {

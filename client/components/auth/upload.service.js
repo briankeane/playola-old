@@ -21,7 +21,7 @@ angular.module('playolaApp')
       submitWithNewTags: {
         method: 'PUT',
         params: {
-          controller: 'submitWithNewTags'
+          controller: 'submitWithUpdatedTags'
         }
       },
       submitWithoutEchonestId: {
