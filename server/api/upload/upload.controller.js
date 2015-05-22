@@ -66,36 +66,31 @@ exports.submitWithUpdatedTags = function (req, res) {
 
     upload.save(function (err, upload) {
       SongProcessor.processUploadWithUpdatedTags(upload, function (err, newSong) {
+        if (err) {
+          if (err.message === 'Song info not found') {
+            // get possible matches for response
+            SongProcessor.getSongMatchPossibilities({ artist: err.tags.artist,
+                                                      title: err.tags.title 
+                                                    }, function (matchErr, matches) {
+              upload.tags =  err.tags;
+              upload.possibleMatches = matches;
+              upload.save(function (err, savedUpload) {
+                return res.send(200, savedUpload);
+              });
+            });
 
-      })
-    })
-    
+          } else if (err.message === 'Song Already Exists') {
+            return res.json(200, { status: 'Song Already Exists',
+                                   song: err.song });
+          }
 
-      //   if (err) {
-      //     if (err.message === 'Song info not found') {
-      //       // get possible matches for response
-      //       SongProcessor.getSongMatchPossibilities({ artist: err.tags.artist,
-      //                                                 title: err.tags.title 
-      //                                               }, function (matchErr, matches) {
-      //         upload.tags =  err.tags;
-      //         upload.possibleMatches = matches;
-      //         upload.save(function (err, savedUpload) {
-      //           return res.send(200, savedUpload);
-      //         });
-      //       });
-
-      //     } else if (err.message === 'Song Already Exists') {
-      //       return res.json(200, { status: 'Song Already Exists',
-      //                              song: err.song });
-      //     }
-
-      //   // song has been added
-      //   } else {
-      //     return res.send(200, { status: 'added',
-      //                             song: newSong });
-      //   }
-      // });
-    // });
+        // song has been added
+        } else {
+          return res.send(200, { status: 'added',
+                                  song: newSong });
+        }
+      });
+    });
   });
 };
 
