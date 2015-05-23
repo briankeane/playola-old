@@ -294,7 +294,7 @@ angular.module('playolaApp')
       // accept a commentary or song from the catalog
       receive: function (event, ui) {
         var audioBlock = ui.item.sortable.model;
-        var index = ui.item.sortable.dropindex;
+        var index = ui.item.sortable.dropindex;   // the '-1' is some strange offset... investigate this later.
         
         // grab the start time
         if (audioBlock._type === 'Song') {
@@ -303,11 +303,12 @@ angular.module('playolaApp')
           var newSpin = { _audioBlock: audioBlock,
                           duration: audioBlock.duration,
                           durationOffset: 0,
-                          playlistPosition: $scope.playlist[index+1].playlistPosition,
+                          playlistPosition: $scope.playlist[index+1].playlistPosition,  // take the pp of the spin it's shifting down
                           _id: 'addedSpin',
                         }
 
-                        
+          // insert
+          $scope.playlist.splice(index, 0, newSpin);
 
           // update playlistPositions
           for (var i=index+1;i<$scope.playlist.length;i++) {
@@ -324,6 +325,7 @@ angular.module('playolaApp')
             if (err) { return false; }
             $scope.playlist = newProgram.playlist;
           });
+
         } else if (audioBlock._type === 'Commentary')  {
 
           // prepare upload
