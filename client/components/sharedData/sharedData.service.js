@@ -37,7 +37,6 @@ angular.module('playolaApp')
       .$promise
       .then(function (data) {
         self.myStation = data;
-        console.log('myStationLoadedFiring');
         $rootScope.$broadcast('myStationLoaded');
       }, function (err) {
         console.log(err);

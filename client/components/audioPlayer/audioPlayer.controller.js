@@ -3,7 +3,6 @@
 angular.module('playolaApp')
   .controller('AudioPlayerCtrl', function ($rootScope, $scope, $location, Auth, SharedData, AudioPlayer, $timeout) {
 
-    $scope.test = 'thisisatest, mf'
     // initialize variables
     $scope.userLoaded = false;
     $scope.initialized = false;
@@ -17,18 +16,6 @@ angular.module('playolaApp')
     $scope.player = AudioPlayer;
     $scope.volume;
     $scope.isCollapsed = false;
-
-
-    // event-driven functions
-    $rootScope.$on('loggedIn', function () {
-      // grab currenStation
-      $scope.currentStation = Auth.getCurrentStation();
-      
-      $timeout(getRotationItems, 2000);
-      
-      // grab the current user
-      $scope.currentUser = Auth.getCurrentUser();
-    });
 
     $rootScope.$on('loggedOut', function () {
       $scope.isCollapsed = true;
@@ -87,9 +74,9 @@ angular.module('playolaApp')
         return false;
       }
 
-      if ($scope.currentStation) {
+      if (SharedData.myStation) {
         // if it's the user's own station, return true
-        if (id === $scope.currentStation._id) {
+        if (id === SharedData.myStation._id) {
           return true;
         }
         
@@ -106,9 +93,9 @@ angular.module('playolaApp')
 
     // text/disabled/inPresets
     $scope.presetButtonInfo = function (stationId) {
-      if ($scope.currentStation) {
+      if (SharedData.myStation) {
 
-        if ($scope.currentStation._id === stationId) {
+        if (SharedData.myStation._id === stationId) {
           return { text: 'Add Station to Presets',
                    disabled: true };
         } else if ($scope.isInPresets(stationId)) {
