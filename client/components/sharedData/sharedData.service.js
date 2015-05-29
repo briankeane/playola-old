@@ -17,13 +17,8 @@ angular.module('playolaApp')
     self.micStatus = {};
     var promises = []
     
-    // initialize... otherwise, do it after login
-    Auth.isLoggedInAsync(function (answer) {
-      self.initialize();
-    });
-    
-    this.initialize = function () {
 
+    this.initialize = function () {
       // create object for tracking if all data loaded
       self.allData = [];
       
@@ -74,6 +69,13 @@ angular.module('playolaApp')
         console.log('all loaded');
       })
     }
+
+    // initialize... otherwise, do it after login
+    Auth.isLoggedInAsync(function (answer) {
+      if (answer) {
+        self.initialize();
+      }
+    });
 
     // get 
     function getRotationBinList () {
