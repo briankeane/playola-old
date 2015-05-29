@@ -7,7 +7,7 @@ angular.module('playolaApp')
       return;
     };
 
-    // initialize variables
+      // initialize variables
     var self = this;
     self.test = 'test';
     self.user;
@@ -16,46 +16,64 @@ angular.module('playolaApp')
     self.rotationItemsArray;
     self.micStatus = {};
     var promises = []
-
-    // create object for tracking if all data loaded
-    self.allData = [];
     
-    $rootScope.$on('myStationLoaded', function () {
-      var rotationItemsPromise = Auth.getRotationItems()
-      rotationItemsPromise
-      .then(function (result) {
-        self.rotationItems = result.rotationItems;
-        self.rotationItemsArray = getRotationItemsAsArray();
-        $rootScope.$broadcast('rotationItemsLoaded');
-      });
-    })
-    
-    // load the station
-    var stationPromise = Auth.getCurrentStation()
-    .$promise
-    .then(function (data) {
-      self.myStation = data;
-      console.log('myStationLoadedFiring');
-      $rootScope.$broadcast('myStationLoaded');
-    }, function (err) {
-      console.log(err);
+    // initialize... otherwise, do it after login
+    Auth.isLoggedInAsync(function (answer) {
+      self.initialize();
     });
-    promises.push(stationPromise);
+    
+    this.initialize = function () {
 
-    // load user
-    var userPromise = Auth.getCurrentUser()
-    .$promise
-    .then(function (data) {
-      self.user = data;
-      $rootScope.$broadcast('userLoaded');
-    })
-    promises.push(userPromise);
+      // create object for tracking if all data loaded
+      self.allData = [];
+      
+      $rootScope.$on('myStationLoaded', function () {
+        var rotationItemsPromise = Auth.getRotationItems()
+        rotationItemsPromise
+        .then(function (result) {
+          self.rotationItems = result.rotationItems;
+          self.rotationItemsArray = getRotationItemsAsArray();
+          $rootScope.$broadcast('rotationItemsLoaded');
+        });
+      })
+      
+      // load the station
+      var stationPromise = Auth.getCurrentStation()
+      .$promise
+      .then(function (data) {
+        self.myStation = data;
+        console.log('myStationLoadedFiring');
+        $rootScope.$broadcast('myStationLoaded');
+      }, function (err) {
+        console.log(err);
+      });
+      promises.push(stationPromise);
 
+      // load user
+      var userPromise = Auth.getCurrentUser()
+      .$promise
+      .then(function (data) {
+        self.user = data;
+        $rootScope.$broadcast('userLoaded');
+      })
+      promises.push(userPromise);
 
-    $q.all(promises)
-    .then(function () {
-      console.log('all loaded');
-    })
+      // load user's presets
+      $rootScope.$on('userLoaded', function () {
+        var presetPromise = Auth.getPresets()
+        //.$promise
+        .then(function (data) {
+          self.presets = data.presets;
+          $rootScope.$broadcast('presetsLoaded');
+        })
+        promises.push(presetPromise);
+      });
+
+      $q.all(promises)
+      .then(function () {
+        console.log('all loaded');
+      })
+    }
 
     // get 
     function getRotationBinList () {

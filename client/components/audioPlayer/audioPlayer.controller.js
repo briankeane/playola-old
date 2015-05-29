@@ -3,12 +3,13 @@
 angular.module('playolaApp')
   .controller('AudioPlayerCtrl', function ($rootScope, $scope, $location, Auth, SharedData, AudioPlayer, $timeout) {
 
+    $scope.test = 'thisisatest, mf'
     // initialize variables
     $scope.userLoaded = false;
     $scope.initialized = false;
     $scope.presets;
     $scope.initialized = true;
-    $scope.presets = [];
+    $scope.presets = SharedData.presets;
     $scope.selectedPresetId = '';
     $scope.timeouts = [];
     $scope.rotationItems = [];
@@ -22,18 +23,6 @@ angular.module('playolaApp')
     $rootScope.$on('loggedIn', function () {
       // grab currenStation
       $scope.currentStation = Auth.getCurrentStation();
-      
-      // wait for loading and grab presets
-      $timeout(function () {
-        Auth.getPresets(function (err, result) {
-          $scope.presets = result.presets;
-
-          // grab the program
-          for (var i=0;i<$scope.presets.length;i++) {
-            refreshStation($scope.presets[i]);
-          }
-        })
-      }, 1000);
       
       $timeout(getRotationItems, 2000);
       
@@ -93,6 +82,11 @@ angular.module('playolaApp')
     
     // check to see if the station is already in the presets
     $scope.isInPresets = function (id) {
+      // if presets are not loaded yet
+      if (!$scope.presets) {
+        return false;
+      }
+
       if ($scope.currentStation) {
         // if it's the user's own station, return true
         if (id === $scope.currentStation._id) {

@@ -115,7 +115,17 @@ angular.module('playolaApp')
                         var uploadInfo = { uploadId: item.uploadItem._id,
                                             tags: $scope.tags }
                         Auth.submitUploadWithUpdatedTags(uploadInfo, function (err, response) {
+                          // IF the song was found
+                          if (response.status === 'Song Added' || 'Song Already Exists') {
+                            item.isNeedInfo = false;
+                            item.status = response.status;
+                            item.songId = response.song._id;
+                            $modalInstance.dismiss('close');
+                          
+                          // ELSE (no  was found)
+                          } else {
 
+                          }
                         })
                       
                       // ELSE tags have not changed

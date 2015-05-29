@@ -53,6 +53,7 @@ angular.module('playolaApp')
       cancelTimeouts();
       self.isPlaying = false;
       self.isLoading = false;
+      self.intialLoad = true;
     });
 
     // *************************************************
