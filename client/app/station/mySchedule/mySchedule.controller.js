@@ -416,8 +416,8 @@ angular.module('playolaApp')
         type: 'element',
         heading: 'The Catalog',
         text: 'You can search for songs to play here.  Type the title or artist in this box.  When the search results appear, you can drag them right into the schedule on the left.',
-        selector: '#name-4',
-        placement: 'left'
+        selector: '#catalogSearchTab tab-heading',
+        placement: 'bottom'
       },
       {
         // open the record tab
@@ -434,28 +434,28 @@ angular.module('playolaApp')
         type: 'element',
         heading: 'Record Commentary',
         text: 'To record commentary, click on the "Record" tab...',
-        selector: '#recordTab',
+        selector: '#recordTab tab-heading',
         placement: 'left'
       },
       {
         type: 'element',
         heading: 'Recording',
         text: "When you're ready to record, press the Record Button and talk in your best DJ Voice.",
-        selector: '#recordTab',
+        selector: '#recordTab tab-heading',
         placement: 'left'
       },
       {
         type: 'element',
         heading: 'Recording',
         text: 'When your recording is finished processing, it will appear here.  Then you can just drag it right into the schedule.',
-        selector: '#recordTab',
+        selector: '#recordTab tab-heading',
         placement: 'left'
       },
       {
         type: 'element',
         heading: 'Upload',
         text: "If we don't have a song you'd like to play, click on the 'Upload' tab.",
-        selector: '#recordTab',
+        selector: '#recordTab tab-heading',
         placement: 'left'
       },
       { 
@@ -473,7 +473,7 @@ angular.module('playolaApp')
         type: 'element',
         heading: "Upload",
         text: "Just drag your songs or song files right into this drop-area... You can even drag them straight from iTunes!",
-        selector: '#uploadTab',
+        selector: '#uploadTab tab-heading',
         placement: 'left'
       },
       {

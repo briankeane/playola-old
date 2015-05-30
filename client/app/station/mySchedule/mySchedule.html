@@ -71,7 +71,7 @@
     <div class="col-sm-8 col-sm-offset-2 weird-bootstrap-fix">
 
     <tabset id="catalogAndRecordPanel" justified="true">
-      <tab>
+      <tab active="activeTab.catalogSearch" id="catalogSearchTab">
         <tab-heading class="tab-pane fade in" ng-class="{ active: activeTab.catalogSearch }" id="one">
           <i class="fa fa-plus"></i>&nbsp; ADD SONGS
         </tab-heading>
@@ -97,8 +97,8 @@
         </dl>
       </tab>
 
-      <tab class="tab-pane fade in color-fix">
-        <tab-heading class="tab-pane fade in color-fix" id="two" ng-class="{ active: activeTab.record }">
+      <tab id="recordTab" class="tab-pane fade in color-fix" active="activeTab.record">
+        <tab-heading class="tab-pane fade in color-fix" id="two">
           <i class="fa fa-microphone"></i>&nbsp; RECORD
         </tab-heading>
 
@@ -109,7 +109,7 @@
         </div>
       </tab>
 
-      <tab id="uploadTab">
+      <tab id="uploadTab" active="activeTab.upload">
         <tab-heading ng-class="{ active: activeTab.upload }">
           <i class="fa fa-upload"></i>&nbsp; UPLOAD
         </tab-heading>
