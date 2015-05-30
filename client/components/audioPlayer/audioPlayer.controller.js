@@ -17,6 +17,8 @@ angular.module('playolaApp')
     $scope.isCollapsed = false;
     $scope.presetButtonInfo = {};
 
+    mapRotationItems();
+
     $rootScope.$on('loggedOut', function () {
       $scope.isCollapsed = true;
     });
@@ -25,6 +27,20 @@ angular.module('playolaApp')
       $scope.isCollapsed = false;
     });
     
+    $scope.$watch('player.nowPlaying', function () {
+      if (!AudioPlayer.nowPlaying || !AudioPlayer.nowPlaying._audioBlock) {
+        $scope.nowPlayingIsInRotation = false;
+      } else if (AudioPlayer.nowPlaying._audioBlock._type === 'Song') {
+        if ($scope.rotationItemAudioBlockIds.indexOf(AudioPlayer.nowPlaying._audioBlock._id) > -1) {
+          $scope.nowPlayingIsInRotation = true;
+        } else {
+          $scope.nowPlayingIsInRotation = false;
+        }
+      } else {
+        $scope.rotationItemAudioBlockIds = false;
+      }
+    });
+
     $scope.addToMyStation = function(songId) {
       Auth.createRotationItem({ weight: 17,
                                   bin: 'active',
@@ -163,15 +179,19 @@ angular.module('playolaApp')
     }
 
 
-    function getRotationItems() {
+    function mapRotationItems() {
       if (SharedData.rotationItems) {
         $scope.rotationItems = SharedData.rotationItems;
         $scope.rotationItemAudioBlockIds = [];
-        for(var i=0;i<$scope.rotationItems.length;i++) {
-          $scope.rotationItemAudioBlockIds.push(rotationItems[i]._song._id);
+        for (var bin in SharedData.rotationItems) {
+          if (SharedData.rotationItems.hasOwnProperty(bin)) {
+            for (var i=0;i<bin.length;i++) {
+              $scope.rotationItemAudioBlockIds.push(SharedData.rotationItems[bin][i]._song._id);
+            }
+          }
         }
       } else {
-        $rootScope.$on('rotationItemsLoaded', getRotationItems);
+        $rootScope.$on('rotationItemsLoaded', mapRotationItems);
       }
     }
 
