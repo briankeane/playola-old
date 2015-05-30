@@ -12,7 +12,7 @@
       <h1><i class="fa fa-volume-up "></i>&nbsp; NOW PLAYING</h1>
       
       <dl class="accordion">
-      <dt class="current">
+      <dt class="current" id="mySchedule-now-playing">
         <span class="artist-name"><i class="fa fa-music fa-sm"></i> {{player.nowPlaying._audioBlock.artist}} / {{player.nowPlaying._audioBlock.title}}</span>
           <progressbar class="artist-spacer" type="dynamic" animate="false" value="songPercentComplete"></progressbar>
           <div class="pad3t"><div class="player-lft-time">{{nowPlayingElapsedString}}</div>
@@ -69,32 +69,17 @@
   <div class="col-sm-5 mb-xs-40">
     <h1><i class="fa fa-headphones "></i>&nbsp; YOUR SONGS</h1>
     <div class="col-sm-8 col-sm-offset-2 weird-bootstrap-fix">
-                
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs tpl-tabs animate">
-      <li class="active">
-        <a href="#one" data-toggle="tab"><i class="fa fa-plus"></i>&nbsp; ADD SONGS</a>
-      </li>
-      <li>
-        <a href="#two" data-toggle="tab"><i class="fa fa-microphone"></i>&nbsp; RECORD</a>
-      </li>
-      <li>
-        <a href="#three" data-toggle="tab"><i class="fa fa-upload"></i>&nbsp; UPLOAD</a>
-      </li>
-    </ul>
-  
-    <!-- Tab panes -->
-    <div class="tab-content tpl-tabs-cont section-text">
-      <div class="tab-pane fade in active" id="one">
+
+    <tabset id="catalogAndRecordPanel" justified="true">
+      <tab>
+        <tab-heading class="tab-pane fade in" ng-class="{ active: activeTab.catalogSearch }" id="one">
+          <i class="fa fa-plus"></i>&nbsp; ADD SONGS
+        </tab-heading>
 
         <dl class="accordion">
           <dt class="current">
-            <!-- <form>
-              <div style="width:50px; margin:15px 8px 0 0; float:left;">SEARCH:</div> <input style="height:35px; float:left; width:80%; margin:5px 0px 0 15px; padding:15px; color:#000; font-size:14px;" type="text" name="firstname">
-            </form>-->
-                    
             <div class="mb-20 mb-md-10">
-              <!-- Name -->
+
               <input type="text" name="search" id="name-4" class="form-control input-lg" maxlength="100" placeholder="Enter Title and/or Artist Here" ng-model="$root.searchText" ng-model-options="{ debounce: 500 }" ng-change="findSongs($root.searchText)">
             </div>
           </dt>
@@ -105,29 +90,37 @@
           <div class="clearfix"></div>
         </dl>
 
-
-        <!-- Toggle -->
         <dl class="accordion" id="catalog-list" ui-sortable="catalogList" ng-model="catalogSearchResults">
           <dt class="music_content" ng-repeat="song in catalogSearchResults" >
             <span class="my-songs-list">{{ song.artist }}/ {{ song.title }}</span>
           </dt>  
         </dl>
-      </div>
+      </tab>
 
+      <tab class="tab-pane fade in color-fix">
+        <tab-heading class="tab-pane fade in color-fix" id="two" ng-class="{ active: activeTab.record }">
+          <i class="fa fa-microphone"></i>&nbsp; RECORD
+        </tab-heading>
 
-      <div class="tab-pane fade color-fix" id="two">
-        <div> <!-- extra container for tab/sortable-ui interaction  -->
-          <div ng-include="'components/audioRecorder/audioRecorder.html'" ></div>
+        <div>
+          <div> <!-- extra container for tab/sortable-ui interaction  -->
+            <div ng-include="'components/audioRecorder/audioRecorder.html'" ></div>
+          </div>
         </div>
-      </div>
+      </tab>
 
-      <div class="tab-pane fade color-fix" id="three">
-                     
-        <div> <!-- extra container for tab/sortable-ui interaction  -->
-          <div ng-include="'components/uploader/uploader.html'"></div>
-        </div>             
-      </div>
-    </div>
+      <tab id="uploadTab">
+        <tab-heading ng-class="{ active: activeTab.upload }">
+          <i class="fa fa-upload"></i>&nbsp; UPLOAD
+        </tab-heading>
+
+        <div> 
+          <div> <!-- extra container for tab/sortable-ui interaction  -->
+            <div ng-include="'components/uploader/uploader.html'"></div>
+          </div>             
+        </div>
+      </tab>
+    </tabset>
             
                         
   <!-- End Toggle -->

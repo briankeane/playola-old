@@ -91,7 +91,7 @@ exports.follow = function (req, res) {
     if (preset) { 
       Preset.getPresets(userId, function (err, presets) {
         if (err) { return res.send(err); }
-        return res.json(200, presets);
+        return res.json(200, { presets: presets });
       });
 
     // otherwise, create the preset and return a new current preset list

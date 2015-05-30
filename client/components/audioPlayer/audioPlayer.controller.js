@@ -6,9 +6,8 @@ angular.module('playolaApp')
     // initialize variables
     $scope.userLoaded = false;
     $scope.initialized = false;
-    $scope.presets;
     $scope.initialized = true;
-    $scope.presets = SharedData.presets;
+    $scope.SharedData = SharedData;
     $scope.selectedPresetId = '';
     $scope.timeouts = [];
     $scope.rotationItems = [];
@@ -26,7 +25,6 @@ angular.module('playolaApp')
     });
     
     $scope.addToMyStation = function(songId) {
-      alert('hi' + songId);
       Auth.createRotationItem({ weight: 17,
                                   bin: 'active',
                                   _song: songId }, function (err, results) {
@@ -70,7 +68,7 @@ angular.module('playolaApp')
     // check to see if the station is already in the presets
     $scope.isInPresets = function (id) {
       // if presets are not loaded yet
-      if (!$scope.presets) {
+      if (!SharedData.presets) {
         return false;
       }
 
@@ -81,9 +79,9 @@ angular.module('playolaApp')
         }
         
         // check the array
-        for (var i=0;i<$scope.presets.length;i++) {
+        for (var i=0;i<SharedData.presets.length;i++) {
           // if it's this station or it's included in
-          if ($scope.presets[i]._id === id) {
+          if (SharedData.presets[i]._id === id) {
             return true;
           }
         }
@@ -121,9 +119,9 @@ angular.module('playolaApp')
         });
 
         // find the selected in the presets array and remove it
-        for (var i=0;i<$scope.presets.length;i++) {
-          if ($scope.presets[i]._id === station._id) {
-            $scope.presets.splice(i,1);
+        for (var i=0;i<SharedData.presets.length;i++) {
+          if (SharedData.presets[i]._id === station._id) {
+            SharedData.presets.splice(i,1);
             break;
           }
         }
@@ -132,10 +130,10 @@ angular.module('playolaApp')
       } else {
 
         Auth.follow(station._id, function (err, result) {
-          for(var i=0;i<$scope.presets.length;i++) {
-            if ($scope.presets[i]._id === result.newPreset._id) {
-              $scope.presets[i] = result.newPreset;
-              refreshStation($scope.presets[i]);
+          for(var i=0;i<SharedData.presets.length;i++) {
+            if (SharedData.presets[i]._id === result.newPreset._id) {
+              SharedData.presets[i] = result.newPreset;
+              refreshStation(SharedData.presets[i]);
               break;
             }
           }
@@ -143,16 +141,16 @@ angular.module('playolaApp')
 
         // temporarily include it until the response comes back
         var inserted = false;
-        for (var i=0;i<$scope.presets;i++) {
-          if ($scope.presets[i]._user.twitterHandle < station._user.twitterHandle) {
+        for (var i=0;i<SharedData.presets;i++) {
+          if (SharedData.presets[i]._user.twitterHandle < station._user.twitterHandle) {
             inserted = true;
-            $scope.presets.splice(i,0,station);
+            SharedData.presets.splice(i,0,station);
             break;
           }
         }
 
         // if it wasn't inserted it should be last
-        $scope.presets.push(station);
+        SharedData.presets.push(station);
       }
     }
 

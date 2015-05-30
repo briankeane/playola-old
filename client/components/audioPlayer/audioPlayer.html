@@ -32,7 +32,7 @@
               
               
             <div class="mb-20 mb-md-10 mar15t">
-              <select  class="input-md form-control preset-buttons" ng-change="test2(preset);" ng-options= " p._id as formatPresetListItem(p) for p in presets" ng-model="selectedPresetId">
+              <select  class="input-md form-control preset-buttons" ng-change="test2(preset);" ng-options= " p._id as formatPresetListItem(p) for p in SharedData.presets" ng-model="selectedPresetId">
                 <option value=''>- Presets -</option>
               </select>
             </div>               

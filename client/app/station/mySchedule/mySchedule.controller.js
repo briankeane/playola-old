@@ -386,7 +386,7 @@ angular.module('playolaApp')
         type:"element",
         heading:"Now Playing",
         text: "This is what you're streaming right now, live to your listeners.",
-        selector: "#nowPlayingList li"
+        selector: "#mySchedule-now-playing"
       },
       {
         type: "element",
@@ -416,7 +416,7 @@ angular.module('playolaApp')
         type: 'element',
         heading: 'The Catalog',
         text: 'You can search for songs to play here.  Type the title or artist in this box.  When the search results appear, you can drag them right into the schedule on the left.',
-        selector: '#searchbox',
+        selector: '#name-4',
         placement: 'left'
       },
       {
@@ -434,28 +434,28 @@ angular.module('playolaApp')
         type: 'element',
         heading: 'Record Commentary',
         text: 'To record commentary, click on the "Record" tab...',
-        selector: '#recordTab a',
+        selector: '#recordTab',
         placement: 'left'
       },
       {
         type: 'element',
         heading: 'Recording',
         text: "When you're ready to record, press the Record Button and talk in your best DJ Voice.",
-        selector: '#record',
+        selector: '#recordTab',
         placement: 'left'
       },
       {
         type: 'element',
         heading: 'Recording',
         text: 'When your recording is finished processing, it will appear here.  Then you can just drag it right into the schedule.',
-        selector: '#recordings',
+        selector: '#recordTab',
         placement: 'left'
       },
       {
         type: 'element',
         heading: 'Upload',
         text: "If we don't have a song you'd like to play, click on the 'Upload' tab.",
-        selector: '#uploadTab a',
+        selector: '#recordTab',
         placement: 'left'
       },
       { 
@@ -463,9 +463,9 @@ angular.module('playolaApp')
         type: 'function',
         fn: function (movingForward) {
           if (movingForward) {
-            $scope.activeTab = {upload:true};
+            $scope.activeTab = { upload: true };
           } else {
-            $scope.activeTab = {record:true};
+            $scope.activeTab = { record: true };
           }
         }
       },
@@ -473,7 +473,7 @@ angular.module('playolaApp')
         type: 'element',
         heading: "Upload",
         text: "Just drag your songs or song files right into this drop-area... You can even drag them straight from iTunes!",
-        selector: '#upload-drop-area',
+        selector: '#uploadTab',
         placement: 'left'
       },
       {
