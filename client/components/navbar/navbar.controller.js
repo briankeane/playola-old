@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('playolaApp')
-  .controller('NavbarCtrl', function ($scope, $rootScope, $location, $window, Auth, $document) {
+  .controller('NavbarCtrl', function (SharedData, $scope, $rootScope, $location, $window, Auth, $document) {
     $scope.menu = [{
       'title': 'Home',
       'link': '/'
@@ -10,7 +10,7 @@ angular.module('playolaApp')
     $scope.isCollapsed = true;
     $scope.isLoggedIn = Auth.isLoggedIn;
     $scope.isAdmin = Auth.isAdmin;
-    $scope.getCurrentUser = Auth.getCurrentUser;
+    $scope.SharedData = SharedData;
 
     $scope.logout = function() {
       Auth.logout();
