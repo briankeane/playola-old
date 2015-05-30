@@ -15,6 +15,7 @@ angular.module('playolaApp')
     $scope.player = AudioPlayer;
     $scope.volume;
     $scope.isCollapsed = false;
+    $scope.presetButtonInfo = {};
 
     $rootScope.$on('loggedOut', function () {
       $scope.isCollapsed = true;
@@ -90,20 +91,22 @@ angular.module('playolaApp')
     }
 
     // text/disabled/inPresets
-    $scope.presetButtonInfo = function (stationId) {
+    $rootScope.$on('stationChanged', setPresetButtonInfo);
+    
+    function setPresetButtonInfo() {
       if (SharedData.myStation) {
 
-        if (SharedData.myStation._id === stationId) {
-          return { text: 'Add Station to Presets',
-                   disabled: true };
-        } else if ($scope.isInPresets(stationId)) {
-          return { text: 'Remove From Presets',
-                   inPresets: true,
-                   disabled: false };
+        if (SharedData.myStation._id === AudioPlayer.stationPlayingId) {
+          $scope.presetButtonInfo =  { text: 'Add Station to Presets',
+                                       enabled: false };
+        } else if ($scope.isInPresets(AudioPlayer.stationPlayingId)) {
+          $scope.presetButtonInfo =  { text: 'Remove From Presets',
+                                        inPresets: true,
+                                        enabled: true };
         } else {
-          return { text: 'Add Station to Presets',
-                 inPresets: false,
-                 disabled: false };
+          $scope.presetButtonInfo =  { text: 'Add Station to Presets',
+                                     inPresets: false,
+                                      enabled: true };
         }
       }
     }
@@ -115,6 +118,8 @@ angular.module('playolaApp')
         Auth.unfollow(station._id, function (err, result) {
           if (err) {
             // later error handling... put it back in?
+          } else {
+            setPresetButtonInfo();
           }
         });
 
@@ -122,6 +127,7 @@ angular.module('playolaApp')
         for (var i=0;i<SharedData.presets.length;i++) {
           if (SharedData.presets[i]._id === station._id) {
             SharedData.presets.splice(i,1);
+            setPresetButtonInfo();
             break;
           }
         }
@@ -134,6 +140,7 @@ angular.module('playolaApp')
             if (SharedData.presets[i]._id === result.newPreset._id) {
               SharedData.presets[i] = result.newPreset;
               refreshStation(SharedData.presets[i]);
+              setPresetButtonInfo();              
               break;
             }
           }
@@ -145,6 +152,7 @@ angular.module('playolaApp')
           if (SharedData.presets[i]._user.twitterHandle < station._user.twitterHandle) {
             inserted = true;
             SharedData.presets.splice(i,0,station);
+            setPresetButtonInfo();
             break;
           }
         }

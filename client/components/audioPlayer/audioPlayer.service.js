@@ -17,7 +17,7 @@ angular.module('playolaApp')
     self.timeouts = [];
     self.isLoading = true;
     self.initialLoad = true;
-    self.stationId;
+    self.stationPlayingId;
     self.isPlaying = false;
     self.compressor;
     self.stationPlaying;
@@ -66,17 +66,17 @@ angular.module('playolaApp')
     this.loadStation = function (stationId) {
       
       // if the station is already playing the one requested, do nothing
-      if (self.isPlaying && (self.stationId === stationId)) {
+      if (self.isPlaying && (self.stationPlayingId === stationId)) {
         return;
       }
 
-      $rootScope.$broadcast('stationChanged');
       self.clearPlayer();
 
       self.isLoading = true;
       self.isPlaying = false;
 
-      self.stationId = stationId;
+      self.stationPlayingId = stationId;
+      $rootScope.$broadcast('stationChanged');
 
       // if it's the initial load, set up listeningSession reporting
       if (self.initialLoad) {
@@ -187,7 +187,7 @@ angular.module('playolaApp')
     }
 
     function refreshProgram() {
-      Auth.getProgram({  id: self.stationId }, function (err, program) {
+      Auth.getProgram({  id: self.stationPlayingId }, function (err, program) {
         $rootScope.$broadcast('programRefreshed', program);
 
         if (err) console.log(err);
@@ -222,7 +222,7 @@ angular.module('playolaApp')
     }
 
     function createListeningSession() {
-      Auth.createListeningSession({ _station: self.stationId,
+      Auth.createListeningSession({ _station: self.stationPlayingId,
                                     _user: self.currentUser.id 
                                   }, function (err, listeningSession) {
         self.listeningSessionId = listeningSession._id;
@@ -244,7 +244,7 @@ angular.module('playolaApp')
 
     function updateListeningSession() {
       Auth.updateListeningSession({ id: self.listeningSessionId,
-                                    _station: self.stationId 
+                                    _station: self.stationPlayingId 
                                   }, function (err, listeningSession) {
         if (listeningSession) {
           self.listeningSessionId = listeningSession._id;
