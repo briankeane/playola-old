@@ -17,16 +17,15 @@ angular.module('playolaApp')
     $scope.isCollapsed = false;
     $scope.presetButtonInfo = {};
 
+    // set up rotationItemAudioBlockIds array for 'AddSongToStaton' button
     mapRotationItems();
 
-    $rootScope.$on('loggedOut', function () {
-      $scope.isCollapsed = true;
-    });
-
+    // make sure player is expanded when station is changed
     $rootScope.$on('stationChanged', function () {
       $scope.isCollapsed = false;
     });
     
+    // adjust models for when nowPlaying changes
     $scope.$watch('player.nowPlaying', function () {
       if (!AudioPlayer.nowPlaying || !AudioPlayer.nowPlaying._audioBlock) {
         $scope.nowPlayingIsInRotation = false;
@@ -37,7 +36,7 @@ angular.module('playolaApp')
           $scope.nowPlayingIsInRotation = false;
         }
       } else {
-        $scope.rotationItemAudioBlockIds = false;
+        $scope.nowPlayingIsInRotation = false;
       }
     });
 
@@ -69,9 +68,7 @@ angular.module('playolaApp')
     // ***************************************************************************************
     // **************************************** Presets **************************************
     // ***************************************************************************************
-
-
-    // format Presets for display in preset option list
+    // formats Presets for display in preset option list
     $scope.formatPresetListItem = function (station) {
       if (station.program) {
         return station._user.twitterHandle + ' | Now Playing: ' +
@@ -82,7 +79,7 @@ angular.module('playolaApp')
       }
     }
     
-    // check to see if the station is already in the presets
+    // checks to see if the station is already in the presets
     $scope.isInPresets = function (id) {
       // if presets are not loaded yet
       if (!SharedData.presets) {
@@ -155,7 +152,7 @@ angular.module('playolaApp')
           for(var i=0;i<SharedData.presets.length;i++) {
             if (SharedData.presets[i]._id === result.newPreset._id) {
               SharedData.presets[i] = result.newPreset;
-              refreshStation(SharedData.presets[i]);
+              refreshStationProgram(SharedData.presets[i]);
               setPresetButtonInfo();              
               break;
             }
@@ -178,14 +175,18 @@ angular.module('playolaApp')
       }
     }
 
-
+    // *******************************************************************
+    // ****************** FUNCTION mapRotationItems **********************
+    // *******************************************************************
+    // * creates an array of rotationItem Ids only for easier searching  *
+    // *******************************************************************
     function mapRotationItems() {
       if (SharedData.rotationItems) {
         $scope.rotationItems = SharedData.rotationItems;
         $scope.rotationItemAudioBlockIds = [];
         for (var bin in SharedData.rotationItems) {
           if (SharedData.rotationItems.hasOwnProperty(bin)) {
-            for (var i=0;i<bin.length;i++) {
+            for (var i=0;i<SharedData.rotationItems[bin].length;i++) {
               $scope.rotationItemAudioBlockIds.push(SharedData.rotationItems[bin][i]._song._id);
             }
           }
@@ -195,19 +196,25 @@ angular.module('playolaApp')
       }
     }
 
-    function refreshStation(station) {
+    // *******************************************************************
+    // ************ FUNCTION refreshStationProgram ***********************
+    // *******************************************************************
+    // * takes a station object, modifies it by replacing its program    *
+    // * with the most current version                                   *
+    // *******************************************************************
+    function refreshStationProgram(station) {
       Auth.getProgram({ id: station._id }, function (err, program) {
         station.program = program;
 
         var newTimeout = $timeout(function () {
-          refreshStation(station);
+          refreshStationProgram(station);
         }, new Date(program.nowPlaying.endTime).getTime() - Date.now() + 2000);   // add 2 secs to make sure nowPlaying has actually changed
 
         $scope.timeouts.push(newTimeout);
       });
     };
 
-    // cancel any pending updates
+    // cancel any pending updates when destroyed
     $scope.$on('destroy', function (event) {
       for (var i=0;i<$scope.timeouts.length;i++) {
         $timeout.cancel($scope.timeouts[i]);
