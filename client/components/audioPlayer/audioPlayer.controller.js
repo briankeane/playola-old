@@ -24,6 +24,20 @@ angular.module('playolaApp')
     $rootScope.$on('stationChanged', function () {
       $scope.isCollapsed = false;
     });
+
+    // set up preset nowPlaying tracking
+    // IF they've been loaded...
+    if (SharedData.presets) {
+      for (var i=0;i<SharedData.presets.length;i++) {
+        refreshStationProgram(SharedData.presets[i]);
+      }
+    } else {   // ELSE wait for them to be loaded, then set up
+      $rootScope.$on('presetsLoaded', function () {
+        for (var i=0;i<SharedData.presets.length;i++) {
+          refreshStationProgram(SharedData.presets[i]);
+        }
+      });
+    }
     
     // adjust models for when nowPlaying changes
     $scope.$watch('player.nowPlaying', function () {
@@ -152,6 +166,8 @@ angular.module('playolaApp')
           for(var i=0;i<SharedData.presets.length;i++) {
             if (SharedData.presets[i]._id === result.newPreset._id) {
               SharedData.presets[i] = result.newPreset;
+
+              // start tracking nowPlaying
               refreshStationProgram(SharedData.presets[i]);
               setPresetButtonInfo();              
               break;
