@@ -616,7 +616,9 @@ console.log(warnings);
   }
 
   this.getProgram = function (attrs, callback) {
-    Station.findById(attrs.stationId, function (err, station) {
+    Station.findById(attrs.stationId)
+    .populate('_user')
+    .exec(function (err, station) {
       if (err) callback(err);
       if (!station) callback(new Error('Station not found'));
 

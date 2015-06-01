@@ -1,7 +1,7 @@
 <div ng-controller="AudioPlayerCtrl" ng-show="player.nowPlaying">
   <!-- Audio Player -->
   <div id="css3-animated-example">
-    <h3 style=" margin:0px; font-size:15px; text-align:center;" ng-class="{open: !isCollapsed }"><a href="#" ng-click="toggleAudioPlayerCollapse()"><i class="fa fa-music "></i>&nbsp; AUDIO PLAYER</a></h3>
+    <h3 style=" margin:0px; font-size:15px; text-align:center;" ng-class="{open: !isCollapsed }"><a href="#" ng-click="toggleAudioPlayerCollapse()"><i class="fa fa-music "></i>&nbsp; AUDIO PLAYER <span ng-show="player.nowPlaying">| @{{player.stationPlaying._user.twitterHandle.toUpperCase()}}</span></a></h3>
           
     <div collapse="isCollapsed" ng-class="{open: !isCollapsed }">
       <div class="content">
