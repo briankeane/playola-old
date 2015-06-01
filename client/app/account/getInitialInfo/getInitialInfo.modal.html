@@ -67,8 +67,8 @@
         <input type="text" name="artist5" placeholder="Some schlub" class="form-control" ng-model="artist5"/> <br>
       </div>
     </div>
-        <button class="btn btn-inverse btn-lg btn-login" type="submit">
-          Take My Info Evil Corporation
+        <button class="btn btn-inverse btn-lg btn-login" ng-disabled="!submitButtonInfo.enabled" type="submit">
+          {{submitButtonInfo.text}}
         </button>
   </form>
 </div>
