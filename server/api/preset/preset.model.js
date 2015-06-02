@@ -12,6 +12,9 @@ var PresetSchema = new Schema({
   _station:     { type: Schema.ObjectId, ref: 'User' }   // followed station
 });
 
+// ***********************************************************
+// ******************** Common Queries ***********************
+// ***********************************************************
 PresetSchema.statics.getFollowers = function (stationId, callback) {
   Preset
   .find({ _station: stationId })

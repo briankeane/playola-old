@@ -74,7 +74,7 @@ rotationItemSchema.statics.findAllForStation = function (stationId, callback) {
   .exec(callback);
 };
 
-rotationItemSchema.statics.updateBySongId = function (attrs, callback) {
+rotationItemSchema.statics.addSongToBin = function (attrs, callback) {
   RotationItem.findOne({ _station: attrs._station,
                           _song: attrs._song }, function (err, rotationItem) {
     // if the song has never been in rotation
@@ -89,36 +89,14 @@ rotationItemSchema.statics.updateBySongId = function (attrs, callback) {
 
     // otherwise if the song has been in rotation before
     } else {
-      // IF both weight and bin are provided... update them
-      if (attrs.weight && attrs.bin) {
-        rotationItem.updateWeightAndBin(attrs.weight, attrs.bin, function (err, updatedRotationItem) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, updatedRotationItem);
-          }
-        });
-
-      // ELSE IF just the weight is provided... update it
-      } else if (attrs.weight) {
-        rotationItem.updateWeight(attrs.weight, function (err, updatedRotationItem) {
-          if (err) {
-            callback(err);
-          } else {
-            callback(null, updatedRotationItem);
-          }
-        });
-
-      // ELSE IF just the bin is provided... update it
-      } else if (attrs.bin) {
-        rotationItem.updateBin(attrs.bin, function (err, updatedRotationItem) {
-          if (err) {
-            callback(err);
-          } else { 
-            callback(null, updatedRotationItem);
-          }
-        });
-      }
+      //update the bin
+      rotationItem.updateBin(attrs.bin, function (err, updatedRotationItem) {
+        if (err) {
+          callback(err);
+        } else { 
+          callback(null, updatedRotationItem);
+        }
+      });
     }
   });
 }
@@ -126,25 +104,7 @@ rotationItemSchema.statics.updateBySongId = function (attrs, callback) {
 
 // ***********************************************************
 // ************************ Methods **************************
-// ***********************************************************
-
-rotationItemSchema.methods.updateWeight = function (weight, callback) {
-  // do nothing if there is no change
-  if (weight === this.weight) {
-    callback(null, this);
-  } else {
-    // store the old values in history array
-    this.history.push({ bin: this.bin,
-                        weight: this.weight,
-                        assignedAt: this.assignedAt });
-
-    // update new values
-    this.weight = weight;
-    this.assignedAt = Date.now();
-    this.save(callback);
-  }
-};
-
+// **********************************************************
 rotationItemSchema.methods.updateBin = function (bin, callback) {
   // do nothing if there is no change
   if (this.bin === bin) {
@@ -152,7 +112,6 @@ rotationItemSchema.methods.updateBin = function (bin, callback) {
   } else {
     // store the old values in history array
     this.history.push({ bin: this.bin,
-                        weight: this.weight,
                         assignedAt: this.assignedAt });
 
     // update new values
@@ -161,25 +120,6 @@ rotationItemSchema.methods.updateBin = function (bin, callback) {
     this.save(callback);
   }
 };
-
-rotationItemSchema.methods.updateWeightAndBin = function (weight, bin, callback) {
-  // do nothing if there is no change
-  if ((this.bin === bin) && (this.weight === weight)) {
-    callback(null, this);
-  } else {
-    // store the old values in history array
-    this.history.push({ bin: this.bin,
-                        weight: this.weight,
-                        assignedAt: this.assignedAt });
-
-    // update new values
-    this.bin = bin;
-    this.weight = weight;
-    this.assignedAt = Date.now();
-    this.save(callback);
-  }
-}
-
 
 // *************************************
 rotationItemSchema.plugin(timestamps);

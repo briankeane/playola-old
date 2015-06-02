@@ -165,7 +165,7 @@ exports.createRotationItem = function (req,res) {
   if (req.body._song._id) {
     req.body._song = req.body._song._id;
   }
-  RotationItem.updateBySongId(req.body, function (err, newRotationItem) {
+  RotationItem.addSongToBin(req.body, function (err, newRotationItem) {
     if (err) { return res.json(500, err); }
     RotationItem.findAllForStation(newRotationItem._station, function (err, updatedRotationItems) {
       if (err) return res(500, err);
