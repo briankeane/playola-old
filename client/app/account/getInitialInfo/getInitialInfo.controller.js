@@ -97,11 +97,9 @@ angular.module('playolaApp')
                         controller: function($scope, $modalInstance) {
                           $scope.firstSong = program.nowPlaying._audioBlock;
 
-                          $scope.test = 'THISISATEST,MF'
-
                           $scope.goToListen = function () {
                             $modalInstance.dismiss('close');
-                            $location.path('/listen/index');
+                            $location.path('/station');
                           };
 
                           $scope.goToSchedule = function () {

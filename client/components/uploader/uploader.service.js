@@ -5,7 +5,7 @@ angular.module('playolaApp')
 
     var self =this;
 
-    this.fileUploader = new FileUploader({ url: 'http://upload.playola.fm/uploads',
+    this.fileUploader = new FileUploader({ url: 'http://localhost:3000/uploads',
                                         // headers: { 'Access-Control-Allow-Origin': '*' },
                                           //withCredentials: true,
                                           autoUpload: true });

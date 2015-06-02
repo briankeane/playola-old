@@ -455,7 +455,7 @@ angular.module('playolaApp')
         type: 'element',
         heading: 'Upload',
         text: "If we don't have a song you'd like to play, click on the 'Upload' tab.",
-        selector: '#recordTab tab-heading',
+        selector: '#uploadTab tab-heading',
         placement: 'left'
       },
       { 
