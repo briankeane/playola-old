@@ -487,11 +487,7 @@ function Scheduler() {
         // update the station
         station.lastAccuratePlaylistPosition = lastAccuratePlaylistPosition;
         toBeUpdated.push(station);
-// console.log(fullPlaylist);
-// console.log('gottenPlaylist:');
-// console.log(gottenPlaylist);
-// console.log('tobeupdatedids');
-// console.log(toBeUpdated);
+
         // update
         Helper.saveAll(toBeUpdated, function (err, savedPlaylist) {
           callback(null, station);

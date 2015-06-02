@@ -261,7 +261,7 @@ console.log(json.response["songs"]);
             if (!err) {
               finalList = finalList.concat(suggestedSongs);
             }
-console.log('suggested songs: ' + finalList.length);
+
             // if there's enough, exit
             if (finalList.length > 150) {
               callback(null, finalList);
