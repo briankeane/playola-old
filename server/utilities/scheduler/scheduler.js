@@ -18,19 +18,6 @@ var Rules = require('../rules/rules');
 function Scheduler() {
   var self = this;
 
-  function createSampleArray(station, callback) {
-    var sampleArray = [];
-    RotationItem.findAllForStation(station.id, function (err, rotationItems) {
-      for (var i=0;i<rotationItems.length;i++) {
-        if (rotationItems[i].bin === 'active') {
-          for(var j=0;j<rotationItems[i].weight; j++) {
-            sampleArray.push(rotationItems[i]._song);
-          }
-        }
-      }
-      callback(null, sampleArray);
-    });
-  }
   // ******************************************************************************
   // ****************************** getFullSchedule *******************************
   // ******************************************************************************
@@ -62,43 +49,6 @@ function Scheduler() {
           // now that we have the schedule... send it through
           callback(null, schedule);
         });
-      });
-    });
-  }
-
-  // ******************************************************************************
-  // ************************ updateStationRestHistory ****************************
-  // ******************************************************************************
-  // * DESCRIPTION: Brings the station's restHistory object up to current time    *
-  // * ARGUMENTS: station
-  // ******************************************************************************
-  this.updateRestHistory = function (station, callback) {
-    var restHistory = station.restHistory;
-
-    // if there is no data yet, start from the beginning
-    if (!restHistory || !restHistory.finalPlaylistPosition) {
-      restHistory = { finalPlaylistPosition: 0,
-                     artists: {},
-                     audioBlocks: {}
-                   }
-    }
-
-    // get the needed schedule
-    LogEntry.getLog({ _station: station.id,
-                      startingPlaylistPosition: restHistory.finalPlaylistPosition 
-                    }, function (err, log) {
-      // update the object
-      log.forEach(function (logEntry) {
-        restHistory.artists[logEntry._audioBlock.artist] = logEntry.airtime;
-        restHistory.audioBlocks[logEntry._audioBlock.id] = logEntry.airtime;
-        restHistory.finalPlaylistPosition = logEntry.playlistPosition;  
-      });
-
-      // save the new Object
-      Station.findByIdAndUpdate(station.id, 
-                              { restHistory: restHistory 
-                              }, function (err, savedStation) {
-        callback(null, savedStation);
       });
     });
   }
@@ -166,17 +116,6 @@ function Scheduler() {
 
     // randomly pick song from what's left
     var song = _.sample(previousPossibleSongs);
-
-
-
-if (song.title === attrs.fullSchedule[attrs.fullSchedule.length-1]._audioBlock.title) { 
-  console.log('SAMESONGDAMMIT');
-  console.log(warnings);
-  console.log(_.map(previousPossibleSongs, function (song) { return song.title; }));
-}
-
-
-
 
     return { song: song,
             warnings: warnings };
@@ -352,12 +291,10 @@ if (song.title === attrs.fullSchedule[attrs.fullSchedule.length-1]._audioBlock.t
               var logEntry = LogEntry.newFromSpin(savedSpins[0]);
               logEntry.save(function (err, savedLogEntry) {
                 savedSpins[0].remove(function (err, removedSpin) {
-console.log(warnings);
                   callback (null, { warnings: warnings, station: savedStation });
                 });
               });
             } else {
-console.log(warnings);
               callback(null, { warnings: warnings, station: savedStation });
             }
           });
