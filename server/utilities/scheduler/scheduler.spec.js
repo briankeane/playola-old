@@ -73,30 +73,8 @@ describe('playlist functions', function (done) {
       });
     });
   });
-
-  // it('updates the restHistory object from scratch', function (done) {
-  //   Scheduler.updateRestHistory(station, function(err, station) {
-  //     LogEntry.getMostRecent(station.id, function (err, logEntry) {
-  //       expect(station.restHistory.artists[logEntry._audioBlock.artist].getTime()).to.equal(logEntry.airtime.getTime());
-  //       expect(station.restHistory.audioBlocks[logEntry._audioBlock.id].getTime()).to.equal(logEntry.airtime.getTime());
-  //       expect(station.restHistory.finalPlaylistPosition).to.equal(1);
-  //       LogEntry.create({ _station: station.id,
-  //                         airtime: new Date(2014,3,20, 12,30),
-  //                         _audioBlock: songs[0].id,
-  //                         playlistPosition: 1000
-  //                       }, function (err, savedLogEntry) {
-  //         Scheduler.updateRestHistory(station, function (err, savedStation) {
-  //           expect(savedStation.restHistory.finalPlaylistPosition).to.equal(1000);
-  //           expect(savedStation.restHistory.audioBlocks[songs[0].id].getTime()).to.equal(new Date(2014,3,20, 12,30).getTime());
-  //           expect(savedStation.restHistory.artists[songs[0].artist].getTime()).to.equal(new Date(2014,3,20, 12,30).getTime());
-  //           done();
-  //         });
-  //       });
-  //     })
-  //   });
-  // });
   
-  xit('generatePlaylist creates a first playlist', function (done) {
+  it('generatePlaylist creates a first playlist', function (done) {
     Spin.getFullPlaylist(station.id, function (err, spins) {
       LogEntry.getFullStationLog(station.id, function (err, logEntries) {
 
@@ -109,7 +87,7 @@ describe('playlist functions', function (done) {
         expect(logEntries[0].durationOffset).to.equal(-1000);
         
         // make sure all spin values stored
-        expect(spins.length).to.equal(36);
+        expect(spins.length).to.equal(54);
         expect(spins[0].playlistPosition).to.equal(2);
         expect(spins[0].airtime.getTime()).to.equal(new Date(2014,3,15, 12,49).getTime());
         expect(spins[0]._audioBlock.title).to.exist;
@@ -126,17 +104,17 @@ describe('playlist functions', function (done) {
     });
   });
   
-  xit('updates the lastAccuratePlaylistPosition', function (done) {
+  it('updates the lastAccuratePlaylistPosition', function (done) {
     Station.findById(station.id, function (err, foundStation) {
-      expect(station.lastAccuratePlaylistPosition).to.equal(37);
-      expect(foundStation.lastAccuratePlaylistPosition).to.equal(37);
+      expect(station.lastAccuratePlaylistPosition).to.equal(55);
+      expect(foundStation.lastAccuratePlaylistPosition).to.equal(55);
       done();
     });
   });
 
   describe('updateAirtimes', function (done) {
     
-    xit('just returns if there is no playlist', function (done) {
+    it('just returns if there is no playlist', function (done) {
       station2 = new Station({ secsOfCommercialPerHour: 30 });
       station2.save(function (err, savedNewStation) {
         Scheduler.updateAirtimes({ station: savedNewStation }, function (err, station2) {
@@ -147,7 +125,7 @@ describe('playlist functions', function (done) {
       });
     });
 
-    xit('updates the airtimes', function (done) {
+    it('updates the airtimes', function (done) {
       Spin.getFullPlaylist(station.id, function (err, fullPlaylist) {
         // screw up some airtimes
         for (var i=10; i<fullPlaylist.length; i++) {
@@ -160,9 +138,9 @@ describe('playlist functions', function (done) {
         var toSave = fullPlaylist.slice(10,100);
         toSave.push(station);
         SpecHelper.saveAll(toSave, function (err, savedObjects) {
+          
           // grab the updated station
-
-          station = savedObjects[26];
+          station = savedObjects[savedObjects.length-1];
 
           Scheduler.updateAirtimes({ station: station }, function (err, returnedStation) {
             Spin.getFullPlaylist(station.id, function (err, fixedPlaylist) {
@@ -178,7 +156,7 @@ describe('playlist functions', function (done) {
       });
     });
 
-    xit('updates the airtimes if commercial leads in', function (done) {
+    it('updates the airtimes if commercial leads in', function (done) {
       Spin.getFullPlaylist(station.id, function (err, fullPlaylist) {
         // screw up some airtimes -- starting with a commercialsFollow=true spin
         for (var i=5; i<fullPlaylist.length; i++) {
@@ -208,7 +186,7 @@ describe('playlist functions', function (done) {
       });
     });
 
-    xit('updates the airtimes if only the log is correct', function (done) {
+    it('updates the airtimes if only the log is correct', function (done) {
       Spin.getFullPlaylist(station.id, function (err, fullPlaylist) {
         // screw up some airtimes -- starting with a commercialsFollow=true spin
         for (var i=0; i<fullPlaylist.length; i++) {
@@ -238,7 +216,7 @@ describe('playlist functions', function (done) {
       });
     });
 
-  xit('updates the airtimes starting from the log, commercialsFollow is true', function (done) {
+  it('updates the airtimes starting from the log, commercialsFollow is true', function (done) {
       Spin.getFullPlaylist(station.id, function (err, fullPlaylist) {
         // screw up some airtimes -- starting with a commercialsFollow=true spin
         for (var i=0; i<fullPlaylist.length; i++) {
@@ -277,7 +255,7 @@ describe('playlist functions', function (done) {
     });
   });
   
-  xit('does not extend the playlist past 24hrs', function (done) {
+  it('does not extend the playlist past 24hrs', function (done) {
     Scheduler.generatePlaylist({ station: station,
                                 playlistEndTime: new Date(2014,3,25, 16,46)
                               }, function (err, updatedStation) {
@@ -290,7 +268,7 @@ describe('playlist functions', function (done) {
     });
   });
 
-  xit('extends the playlist 4 hours', function (done) {
+  it('extends the playlist 4 hours', function (done) {
     Scheduler.generatePlaylist({ station: station,
                                 playlistEndTime: new Date(2014,3,15, 16,46)
                               }, function (err, updatedStation) {
@@ -304,7 +282,7 @@ describe('playlist functions', function (done) {
     });
   });
 
-  xit('extends the playlist if a commercial leads in', function (done) {
+  it('extends the playlist if a commercial leads in', function (done) {
     // remove enough for a commercialsFollow spin to be last
     Spin.find({ _station: station.id, playlistPosition: { $gte: 34 } }).remove().exec(function (err, removedSpins) {
 
@@ -340,6 +318,7 @@ describe('playlist functions', function (done) {
   });
 
   it('brings the station current if a spin with commercialsFollow=true leads in', function (done) {
+    this.timeout(4000);
     tk.freeze(new Date(2014,3,15, 14,30));
     Scheduler.bringCurrent(station, function (err) {
       tk.freeze(new Date(2014,3,15, 15,11));
@@ -375,13 +354,13 @@ describe('playlist functions', function (done) {
     });
   });
 
-  xit ('gets the full schedule -- played and not played', function (done) {
+  it ('gets the full schedule -- played and not played', function (done) {
     tk.freeze(new Date(2014,3,15, 14,32));
     Scheduler.bringCurrent(station, function (err) {
       tk.freeze(new Date(2014,3,15, 15,11));
       Scheduler.bringCurrent(station, function (err) {
         Scheduler.getFullSchedule({ station: station }, function (err, fullSchedule) {
-          expect(fullSchedule.length).to.equal(81);
+          expect(fullSchedule.length).to.equal(99);
           expect(fullSchedule[0].playlistPosition).to.equal(1);
           
           done();
@@ -390,7 +369,7 @@ describe('playlist functions', function (done) {
     });
   });
 
-  xit('brings the station current if a commercialBlock should be nowPlaying', function (done) {
+  it('brings the station current if a commercialBlock should be nowPlaying', function (done) {
     tk.freeze(new Date(2014,3,15, 13,32));
     Scheduler.bringCurrent(station, function (err) {
       LogEntry.getFullStationLog(station.id, function (err, logEntries) {
@@ -406,7 +385,7 @@ describe('playlist functions', function (done) {
     });
   });
 
-  xit('brings the station current if nowPlaying precedes a commercialBlock', function (done) {
+  it('brings the station current if nowPlaying precedes a commercialBlock', function (done) {
     tk.freeze(new Date(2014,3,15, 13,30));
     Scheduler.bringCurrent(station, function (err) {
       LogEntry.getFullStationLog(station.id, function (err, logEntries) {
@@ -427,16 +406,6 @@ describe('playlist functions', function (done) {
         });
       });
     });
-  });
-
-  xit('brings the station current if nowPlaying follows a commercialBlock', function (done) {
-    
-  });
-
-  xit('getProgram gets a program', function (done) {
-  });
-
-  xit('getCommercialBlock tests', function (done) {
   });
 
   after(function (done) {
@@ -494,7 +463,7 @@ describe('moving spin tests', function (done) {
     });
   });
   
-  xit('moves a spin earlier', function (done) {
+  it('moves a spin earlier', function (done) {
     Spin.getFullPlaylist(station.id, function (err, beforePlaylist) {
       var beforePlaylistIds = _.map(beforePlaylist, function (spin) { return spin.id });
       var beforePlaylistPositions = _.map(beforePlaylist, function (spin) { return spin.playlistPosition });
@@ -529,7 +498,7 @@ describe('moving spin tests', function (done) {
     });
   });
 
-  xit('moves a spin later', function (done) {
+  it('moves a spin later', function (done) {
     Spin.getFullPlaylist(station.id, function (err, beforePlaylist) {
       var beforePlaylistIds = _.map(beforePlaylist, function (spin) { return spin.id });
       var beforePlaylistPositions = _.map(beforePlaylist, function (spin) { return spin.playlistPosition });
@@ -566,7 +535,7 @@ describe('moving spin tests', function (done) {
     });
   });
   
-  xit('insertSpin tests', function (done) {
+  it('insertSpin tests', function (done) {
     var songToInsert = new Song({ duration: 1000 });
       songToInsert.save(function (err) {
         Spin.getFullPlaylist(station.id, function (err, beforePlaylist) {
@@ -597,7 +566,7 @@ describe('moving spin tests', function (done) {
     });
   });
 
-  xit('calls bullshit if spin is located in the same position', function (done) {
+  it('calls bullshit if spin is located in the same position', function (done) {
     Spin.getFullPlaylist(station.id, function (err, beforePlaylist) {
       Scheduler.moveSpin({ spinId: beforePlaylist[2].id, newPlaylistPosition: 4 }, function (err, attrs) {
         expect(err.message).to.equal('Spin is already at the requested playlistPosition');
@@ -665,41 +634,41 @@ describe('addScheduleTimeToSpin', function (done) {
     });
   });
 
-  xit ('works for song/song', function (done) {
+  it ('works for song/song', function (done) {
     Scheduler.addScheduleTimeToSpin(station, songSpin1, songSpin2);
     expect(new Date(songSpin1.manualEndTime).getTime()).to.equal(new Date(2014,3,15, 12,10,58).getTime());
     expect(new Date(songSpin2.airtime).getTime()).to.equal(new Date(2014,3,15, 12,10,58).getTime());
     done();
   });
 
-  xit ('works for song/commentary-long', function (done) {
+  it ('works for song/commentary-long', function (done) {
     Scheduler.addScheduleTimeToSpin(station, songSpin1, commentarySpinLong);
     expect(new Date(songSpin1.manualEndTime).getTime()).to.equal(new Date(2014,3,15, 12,10,50).getTime());
     expect(new Date(commentarySpinLong.airtime).getTime()).to.equal(new Date(2014,3,15, 12,10,50).getTime());
     done();
   });
 
-  xit ('works for song/commentary-short', function (done) {
+  it ('works for song/commentary-short', function (done) {
     Scheduler.addScheduleTimeToSpin(station, songSpin1, commentarySpinShort);
     expect(new Date(songSpin1.manualEndTime).getTime()).to.equal(new Date(2014,3,15, 12,10,58).getTime());
     expect(new Date(commentarySpinShort.airtime).getTime()).to.equal(new Date(2014,3,15, 12,10,58).getTime());
     done();
   });
 
-  xit ('works for commentary/commentary', function (done) {
+  it ('works for commentary/commentary', function (done) {
     Scheduler.addScheduleTimeToSpin(station, commentarySpinLong, commentarySpinShort);
     expect(commentarySpinShort.airtime.getTime()).to.equal(new Date(2014,3,15, 12,15,10).getTime());
     done();
   });
 
-  xit ('works for commentary-short/song', function (done) {
+  it ('works for commentary-short/song', function (done) {
     Scheduler.addScheduleTimeToSpin(station, commentarySpinShort, songSpin1);
     expect(new Date(commentarySpinShort.manualEndTime).getTime()).to.equal(new Date(2014,3,15, 12,20,1).getTime());
     expect(new Date(songSpin1.airtime).getTime()).to.equal(new Date(2014,3,15, 12,20,1).getTime());
     done();
   });
 
-  xit ('works for commentary-long/song', function (done) {
+  it ('works for commentary-long/song', function (done) {
     commentarySpinLong.previousSpinOverlap = 8000;
     Scheduler.addScheduleTimeToSpin(station, commentarySpinLong, songSpin1);
     expect(new Date(songSpin1.airtime).getTime()).to.equal(new Date(2014,3,15, 12,15,5).getTime());
@@ -707,13 +676,13 @@ describe('addScheduleTimeToSpin', function (done) {
     done();
   });
 
-  xit ('works for commercialsFollow/song', function (done) {
+  it ('works for commercialsFollow/song', function (done) {
     Scheduler.addScheduleTimeToSpin(station, commercialsFollowSpin, songSpin1);
     expect(songSpin1.airtime.getTime()).to.equal(new Date(2014,3,15, 12,3,28).getTime());
     done();
   });
 
-  xit ('works for saved spin objects', function (done) {
+  it ('works for saved spin objects', function (done) {
     actualSpin1 = new Spin(songSpin1);
     actualSpin2 = new Spin(songSpin2);
     Helper.saveAll([actualSpin1, actualSpin2], function (err, spins) {
@@ -725,7 +694,7 @@ describe('addScheduleTimeToSpin', function (done) {
     });
   });
 
-  xit ('works for unmarked song', function (done) {
+  it ('works for unmarked song', function (done) {
     songSpin1._audioBlock = { _type: 'Song',
                               duration: 60000 }
     Scheduler.addScheduleTimeToSpin(station, songSpin1, songSpin2);
