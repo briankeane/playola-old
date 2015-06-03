@@ -307,11 +307,9 @@ function Handler() {
     echo('tasteprofile/status').get({ ticket: ticket }, function (err, json) {
       if (json.response["ticket_status"] !== 'complete') {
         setTimeout(function () {
-console.log('notcomplete...waiting');
           waitForCompletedTicket(ticket, callback);
         }, 1500);
       } else {
-console.log(json.response);
         callback();
       }
     });

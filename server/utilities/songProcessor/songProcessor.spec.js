@@ -99,8 +99,6 @@ describe('songProcessor', function (done) {
 
         expect(result2.closestMatch.title.toLowerCase()).to.equal('kiss me in the dark');
         expect(result2.closestMatch.artist).to.equal('Randy Rogers Band');
-        expect(result2.closestMatch.genres[0]).to.equal('texas country');
-        expect(result2.closestMatch.genres[1]).to.equal('outlaw country');
         done();
       });
     });
@@ -108,11 +106,11 @@ describe('songProcessor', function (done) {
 
   describe('adds a song to the system', function (done) {
 
-    // beforeEach(function (done) {
-    //   SpecHelper.clearDatabase(function () {
-    //     done();
-    //   });
-    // });
+    beforeEach(function (done) {
+      SpecHelper.clearDatabase(function () {
+        done();
+      });
+    });
 
     before(function (done) {
       this.timeout(20000);
@@ -292,90 +290,6 @@ describe('songProcessor', function (done) {
         });
       });      
     });
-    
-    // addSongToSystem tests
-    it('responds to copy-protected song', function (done) {
-      this.timeout(10000);
-      SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/downtown.m4p', function (err, newSong) {
-        expect(err.message).to.equal('File is Copy-Protected');
-        done();
-      });
-    });
-
-    it('calls bullshit  & stores song for later if id tags are not found', function (done) {
-      this.timeout(10000);
-      SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/noTags.mp3', function (err, newSong) {
-        expect(err.message).to.equal('No Id Info in File');
-
-        // make sure it got stored on server
-        s3.headObject({ Bucket: 'playolaunprocessedsongstest', Key: err.key}, function (newErr, data) {
-          expect(data.ContentLength).to.equal('83217');
-          done();
-        });
-      });
-    });
-
-    it('calls bullshit and stores a song for later if no echonest match found', function (done) {
-      this.timeout(30000);
-      SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/faithTest.mp3', function (err, newSong) {
-        expect(err.message).to.equal('Song info not found');
-        expect(err.tags.artist).to.equal('Sting');
-        expect(err.tags.title).to.equal('Prologue (If I Ever Lose My Faith In You)');
-        expect(err.tags.album).to.equal("Ten Summoner's Tales");
-
-        // make sure it's stored for later
-        s3.headObject({ Bucket: 'playolaunprocessedsongstest', Key: err.key }, function (newErr, data) {
-          expect(data.ContentLength).to.equal('82528');
-          done();
-        });
-      });
-    });
-
-    it ('will not add a song already in system', function (done) {
-      this.timeout(5000);
-      var song = Song.create({ title: 'Lone Star Blues',
-                    artist: 'Delbert McClinton'}, function (err, newSong) {
-        SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/lonestarTest2.m4a', function (err, newSong) {
-          expect(err.message).to.equal('Song Already Exists');
-          expect(err.song.title).to.equal('Lone Star Blues');
-          expect(err.song.artist).to.equal('Delbert McClinton');
-          done();
-        });
-      });
-    });
-
-    it('adds a song to the system (db, echonest, AWS', function (done) {
-      this.timeout(40000);
-      SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/lonestarTest.m4a', function (err, newSong) {
-        if (err) console.log(err);
-        Song.findOne({ artist: 'Delbert McClinton',
-                    title: 'Lone Star Blues' }, function (err, song) {
-          expect(song.title).to.equal('Lone Star Blues');
-          expect(song.artist).to.equal('Delbert McClinton');
-          expect(song.duration).to.equal(5000);
-          expect(song.echonestId).to.equal('SOASHCW12B35058614');
-          expect(song.key).to.equal('-pl-01-DelbertMcClinton-LoneStarBlues.mp3')
-          expect(song.albumArtworkUrl).to.equal('http://is5.mzstatic.com/image/pf/us/r30/Music/v4/2b/fc/a3/2bfca30d-727c-e235-75d9-dbc7ead5b0d8/607396604234.600x600-75.jpg')
-          expect(song.trackViewUrl).to.equal('https://itunes.apple.com/us/album/lone-star-blues/id508912066?i=508912363&uo=4');
-          
-          // make sure song was stored properly
-          Storage.getStoredSongMetadata(song.key, function (err, data) {
-            expect(data.title).to.equal(song.title);
-            expect(data.artist).to.equal(song.artist);
-            expect(data.duration).to.equal(song.duration);
-            expect(data.echonestId).to.equal(song.echonestId);
-          
-            // make sure it was stored on echonest
-            SongPool.getAllSongs()
-            .on('finish', function (err, allSongs) {
-              expect(allSongs[0].echonestId).to.equal(song.echonestId);
-              done();
-            });
-          });
-        })
-      });
-    });
-
 
     it('processes a resubmitted upload with new tags', function (done) {
       this.timeout(40000);
@@ -398,7 +312,7 @@ describe('songProcessor', function (done) {
                 expect(newSong.title).to.equal('If I Ever Lose My Faith In You');
                 expect(newSong.artist).to.equal('Sting');
                 expect(newSong.album).to.equal("Ten Summoner's Tales");
-                expect(newSong.echonestId).to.equal('SOPUMUC14373D95FA3');
+                expect(newSong.echonestId).to.equal('SOIWTGS137608A4D58');
                 expect(newSong.albumArtworkUrl).to.equal('http://is1.mzstatic.com/image/pf/us/r30/Features/11/af/6e/dj.dertmkus.600x600-75.jpg');
                 expect(newSong.trackViewUrl).to.equal('https://itunes.apple.com/us/album/if-i-ever-lose-my-faith-in-you/id110871?i=110861&uo=4');
                 // make sure it was stored properly
@@ -429,11 +343,6 @@ describe('songProcessor', function (done) {
                           tags: { artist: 'Sting', title: 'Prologue (If I Ever Lose My', album: "Ten Summoner's Tales" } 
                         }, function (err, newUpload) {
         SongProcessor.processUploadWithUpdatedTags(newUpload, function (err, newProcessedSong) {
-          console.log('err');
-          console.log(err);
-          console.log('newProcessedSong');
-          console.log(newProcessedSong);
-
           expect(err.message).to.equal('More Info Needed');
           expect(err.upload.possibleMatches[0]).to.not.equal(undefined);
           done();
@@ -456,11 +365,14 @@ describe('songProcessor', function (done) {
                           status: 'More Info Needed',
                           tags: { artist: 'Sting', title: 'If I Ever Lose My Faith In You', album: "Ten Summoner's Tales" } 
                         }, function (err, newUpload) {
-            Song.create({ artist: 'Sting', title: 'If I Ever Lose My Faith In You', echonestId: 'SOQAWAF144F4EAF0F0'
+            Song.create({ artist: 'Sting', title: 'If I Ever Lose My Faith In You', echonestId: 'SOIWTGS137608A4D58'
                         }, function (err, newSong) {
               SongProcessor.processUploadWithUpdatedTags(newUpload, function (err, newProcessedSong) {
-      console.log(newProcessedSong);
                 expect(err.message).to.equal('Song Already Exists');
+console.log('newSong:');
+console.log(newSong);
+console.log('err.song');
+console.log(err.song);
                 expect(err.song._id.equals(newSong._id)).to.equal(true);
                 done();
               });
@@ -469,12 +381,6 @@ describe('songProcessor', function (done) {
         });
       });
     });
-
-    it('returns close matches if a match not found', function (done) {
-
-    });
-
-
 
     it('allows resubmission with chosen echonestId', function (done) {
       this.timeout(20000);
@@ -492,7 +398,7 @@ describe('songProcessor', function (done) {
                                                 title: 'If I Ever Lose My Faith In You',
                                                 album: "Ten Summoner's Tales",
                                                 duration: 500,
-                                                filename: 'test.txt'
+                                                key: 'test.txt'
                                               }, function (err, newSong) {
 
             if (err) console.log(err);
