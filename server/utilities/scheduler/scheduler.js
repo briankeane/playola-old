@@ -418,8 +418,6 @@ function Scheduler() {
     Spin.getFullPlaylist(station.id, function (err, gottenPlaylist) {
       var fullPlaylist = gottenPlaylist;
 
-  console.log('made it here');
-  console.log('fullPlaylist.length: ' + fullPlaylist.length);
       // exit if there's no playlist
       if (!fullPlaylist.length) {
         callback(null, station);

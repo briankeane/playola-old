@@ -170,7 +170,7 @@ describe('playlist functions', function (done) {
         toSave.push(station);
         SpecHelper.saveAll(toSave, function (err, savedObjects) {
           // grab the updated station
-          station = savedObjects[26];
+          station = savedObjects[savedObjects.length-1];
 
           Scheduler.updateAirtimes({ station: station }, function (err, returnedStation) {
             Spin.getFullPlaylist(station.id, function (err, fixedPlaylist) {
@@ -200,7 +200,7 @@ describe('playlist functions', function (done) {
         toSave.push(station);
         SpecHelper.saveAll(toSave, function (err, savedObjects) {
           // grab the updated station
-          station = savedObjects[26];
+          station = savedObjects[savedObjects.length-1];
 
           Scheduler.updateAirtimes({ station: station }, function (err, returnedStation) {
             Spin.getFullPlaylist(station.id, function (err, fixedPlaylist) {
@@ -233,14 +233,15 @@ describe('playlist functions', function (done) {
           
           // group all objects to be saved and save them
           var toSave = fullPlaylist.slice(10,100);
-          toSave.push(station);
           toSave.push(logEntry);
+          toSave.push(station);
           SpecHelper.saveAll(toSave, function (err, savedObjects) {
             // grab the updated station
-            station = savedObjects[26];
+            station = savedObjects[savedObjects.length-1];
 
             Scheduler.updateAirtimes({ station: station }, function (err, returnedStation) {
               Spin.getFullPlaylist(station.id, function (err, fixedPlaylist) {
+          console.log('fixedPlaylist.length: ' + fixedPlaylist.length);
                 expect(fixedPlaylist[22].airtime.getTime()).to.equal(new Date(2014,3,15, 14,16).getTime());
                 expect(fixedPlaylist[8].commercialsFollow).to.equal(true);
                 expect(fixedPlaylist[34].airtime.getTime()).to.equal(new Date(2014,3,15, 14,55).getTime());
@@ -362,7 +363,6 @@ describe('playlist functions', function (done) {
         Scheduler.getFullSchedule({ station: station }, function (err, fullSchedule) {
           expect(fullSchedule.length).to.equal(99);
           expect(fullSchedule[0].playlistPosition).to.equal(1);
-          
           done();
         });
       });
