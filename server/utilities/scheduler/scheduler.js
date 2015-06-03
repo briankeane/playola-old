@@ -404,7 +404,6 @@ function Scheduler() {
 
 
   this.updateAirtimes = function (attrs, callback) {
-
     var station = attrs.station;
     var previousSpin;
     var toBeUpdated = [];
