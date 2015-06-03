@@ -17,7 +17,7 @@ var testFilesArray = [];
 
 describe('songProcessor', function (done) {
   
-  xit('gets id3 tags from an mp3 file', function (done) {
+  it('gets id3 tags from an mp3 file', function (done) {
     this.timeout(5000);
     SongProcessor.getTags(process.cwd() + '/server/data/testFiles/look.mp3', function (err, tags) {
       expect(tags.title).to.equal('Look At That Girl');
@@ -31,7 +31,7 @@ describe('songProcessor', function (done) {
     });
   });
 
-  xit('gets id4 tags from an encrypted m4a file', function (done) {
+  it('gets id4 tags from an encrypted m4a file', function (done) {
     this.timeout(5000);
     SongProcessor.getTags(process.cwd() + '/server/data/testFiles/downtown.m4p', function (err, tags) {
       expect(tags.title).to.equal('Girl Downtown');
@@ -42,7 +42,7 @@ describe('songProcessor', function (done) {
     });
   });
 
-  xit('gets id4 tags from a non-encrypted m4a file', function (done) {
+  it('gets id4 tags from a non-encrypted m4a file', function (done) {
     this.timeout(5000);
     SongProcessor.getTags(process.cwd() + '/server/data/testFiles/lonestar.m4a', function (err, tags) {
       if (err) { console.log(err);}
@@ -53,7 +53,7 @@ describe('songProcessor', function (done) {
     });
   });
 
-  xit('gets itunes info', function (done) {
+  it('gets itunes info', function (done) {
     this.timeout(10000);
     SongProcessor.getItunesInfo({ artist: 'Miranda Lambert',
                                   title: 'Little Red Wagon'
@@ -65,7 +65,7 @@ describe('songProcessor', function (done) {
     });
   });
 
-  xit('getsSongMatchPossibilities', function (done) {
+  it('getsSongMatchPossibilities', function (done) {
     this.timeout(30000);
     SongProcessor.getSongMatchPossibilities({ artist: 'The Beatles',
                                               title: 'Eleanor Rigby' 
@@ -84,7 +84,7 @@ describe('songProcessor', function (done) {
     }); 
   });
 
-  xit('gets the echonest info', function (done) {
+  it('gets the echonest info', function (done) {
     this.timeout(60000);
     SongProcessor.getSongMatchPossibilities({ title: 'Stepladder', artist: 'Rachel Loy'
                                             }, function (err, result) {
@@ -227,7 +227,7 @@ describe('songProcessor', function (done) {
       }
     });
 
-    xit ('writes id3 tags', function (done) {
+    it ('writes id3 tags', function (done) {
       this.timeout(5000);
       var filepath = process.cwd() + '/server/data/unprocessedAudio/faithTest2.mp3'
       SongProcessor.writeTags({ filepath: filepath,
@@ -260,7 +260,7 @@ describe('songProcessor', function (done) {
       })  
     });
 
-    xit('writes id4 tags', function (done) {
+    it('writes id4 tags', function (done) {
       this.timeout(5000);
       var filepath = process.cwd() + '/server/data/unprocessedAudio/lonestarTest3.m4a'
       SongProcessor.writeTags({ filepath: filepath,
@@ -294,7 +294,7 @@ describe('songProcessor', function (done) {
     });
     
     // addSongToSystem tests
-    xit('responds to copy-protected song', function (done) {
+    it('responds to copy-protected song', function (done) {
       this.timeout(10000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/downtown.m4p', function (err, newSong) {
         expect(err.message).to.equal('File is Copy-Protected');
@@ -302,7 +302,7 @@ describe('songProcessor', function (done) {
       });
     });
 
-    xit('calls bullshit  & stores song for later if id tags are not found', function (done) {
+    it('calls bullshit  & stores song for later if id tags are not found', function (done) {
       this.timeout(10000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/noTags.mp3', function (err, newSong) {
         expect(err.message).to.equal('No Id Info in File');
@@ -315,7 +315,7 @@ describe('songProcessor', function (done) {
       });
     });
 
-    xit('calls bullshit and stores a song for later if no echonest match found', function (done) {
+    it('calls bullshit and stores a song for later if no echonest match found', function (done) {
       this.timeout(30000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/faithTest.mp3', function (err, newSong) {
         expect(err.message).to.equal('Song info not found');
@@ -331,7 +331,7 @@ describe('songProcessor', function (done) {
       });
     });
 
-    xit ('will not add a song already in system', function (done) {
+    it ('will not add a song already in system', function (done) {
       this.timeout(5000);
       var song = Song.create({ title: 'Lone Star Blues',
                     artist: 'Delbert McClinton'}, function (err, newSong) {
@@ -344,7 +344,7 @@ describe('songProcessor', function (done) {
       });
     });
 
-    xit('adds a song to the system (db, echonest, AWS', function (done) {
+    it('adds a song to the system (db, echonest, AWS', function (done) {
       this.timeout(40000);
       SongProcessor.addSongToSystem(process.cwd() + '/server/data/unprocessedAudio/lonestarTest.m4a', function (err, newSong) {
         if (err) console.log(err);
@@ -377,7 +377,7 @@ describe('songProcessor', function (done) {
     });
 
 
-    xit('processes a resubmitted upload with new tags', function (done) {
+    it('processes a resubmitted upload with new tags', function (done) {
       this.timeout(40000);
       Song.remove({}, function () {
 
@@ -441,7 +441,7 @@ describe('songProcessor', function (done) {
       });
     });
 
-    xit('does not add a resubmitted song that already exists', function (done) {
+    it('does not add a resubmitted song that already exists', function (done) {
       this.timeout(30000);
       var uploader = s3HighLevel.uploadFile({ localFile: process.cwd() + '/server/data/testFiles/test.txt',
                                               s3Params: {
@@ -470,13 +470,13 @@ describe('songProcessor', function (done) {
       });
     });
 
-    xit('returns close matches if a match not found', function (done) {
+    it('returns close matches if a match not found', function (done) {
 
     });
 
 
 
-    xit('allows resubmission with chosen echonestId', function (done) {
+    it('allows resubmission with chosen echonestId', function (done) {
       this.timeout(20000);
       var uploader = s3HighLevel.uploadFile({ localFile: process.cwd() + '/server/data/testFiles/test.txt',
                                     s3Params: {

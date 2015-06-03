@@ -10,9 +10,6 @@ function Handler() {
   var self = this;
   var echo = echojs({ key: config.ECHONEST_KEY });
 
-  this.addSong = function (song) {
-    return this.addSongs([song]);
-  };
 
   this.getAllSongs = function() {
     var echo = echojs({ key: config.ECHONEST_KEY });
@@ -102,14 +99,20 @@ function Handler() {
     return emitter;
   }
 
+  // for flexibility
+  this.addSong = function (song) {
+    return this.addSongs([song]);
+  };
+
   this.addSongs = function (songsToAdd) {
     var emitter = new events.EventEmitter();
 
+    // grab all the songs (to check for duplicates)
     self.getAllSongs()
     .on('finish', function (err, allSongs) {
       if (err) throw err; //emitter.emit('finish', err);
 
-      // remove songs without echonestId
+      // remove songs without an echonestId
       var count=0;
       var total = songsToAdd.length;
       for(var i=songsToAdd.length-1;i>=0;i--) {
@@ -119,7 +122,7 @@ function Handler() {
         }
       }
       
-      // check for duplicates
+      // create an array that only includes the duplicates
       var duplicateSongs = allSongs.filter(function (song) {
         var included = false;
         for (var i=0; i<songsToAdd.length; i++) {
@@ -162,7 +165,6 @@ function Handler() {
       // make the call
       echo('tasteprofile/update').post({ id: config.ECHONEST_TASTE_PROFILE_ID, data: data }, function (err, json) {
         if (err) { 
-console.log(err);
           emitter.emit('finish', err); 
           return;
         }
@@ -176,19 +178,20 @@ console.log(err);
   }
 
   this.deleteSong = function (itemId, callback) {
-    // build string
     var emitter = new events.EventEmitter();
 
+    // build string
     var data = '[{ "action": "delete", "item": {' + 
                                   '"item_id": "' + itemId + '"' + 
                                   '}' +
                '}]'
 
+    // make the call
     echo('tasteprofile/update').post({ id: config.ECHONEST_TASTE_PROFILE_ID, data: data }, function (err, json) {
-
       emitter.emit('finish', err, json);
      });
-     return emitter;
+
+    return emitter;
   }
 
   this.getSongSuggestions = function (artists, callback) {
@@ -206,7 +209,6 @@ console.log(err);
     function makeEchonestRequest() {
       echo('playlist/static').get({ artist: artists, type: 'artist-radio', results: 100, limit: true,
                                   bucket: 'id:' + config.ECHONEST_TASTE_PROFILE_ID } ,function (err, json) {
-console.log(json.response["songs"]);
         if (err) { 
           console.log(err);
           setTimeout(makeEchonestRequest, 1000);
@@ -219,7 +221,7 @@ console.log(json.response["songs"]);
         var finalList = [];
         var count = 0;
 
-        // pre-grab songs from artists
+        // pre-grab songs from the artists provided
         var grabSongFunctions = [];
         for (var i=0;i<artists.length;i++) {
           grabSongFunctions.push((function () {
