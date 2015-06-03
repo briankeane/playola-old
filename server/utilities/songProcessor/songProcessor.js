@@ -26,7 +26,6 @@ function SongProcessor() {
       tag.channels = audioProperties.channels;
 
       callback(null, tag);
-
     });
   };
 
@@ -42,6 +41,7 @@ function SongProcessor() {
       tag.artist = attrs.artist || tag.artist;
       tag.title = attrs.title || tag.title;
       tag.album = attrs.album || tag.album;
+      
       tag.saveSync();                       // INSERTED TO DEAL WITH TAGLIB KNOWN BUG. WORKAROUND OR FIX NEEDED
       tag.save(function (err) {
         if (err) callback(err);
@@ -108,7 +108,12 @@ function SongProcessor() {
 
       // ELSE no match found in echonest db
       } else {
-
+        // update the upload object to include in the error
+        upload.possibleMatches = matches;
+        
+        var error = new Error('More Info Needed');
+        error.upload = upload;
+        callback(error);
       }
     });
   };

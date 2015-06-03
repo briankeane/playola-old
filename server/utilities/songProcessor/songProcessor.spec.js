@@ -421,8 +421,27 @@ describe('songProcessor', function (done) {
         });
       });
     });
+    
+    it('calls bullshit if the resubmitted tags do not find a match', function (done) {
+      this.timeout(30000);
+      Upload.create({ key: 'test.txt',
+                          status: 'More Info Needed',
+                          tags: { artist: 'Sting', title: 'Prologue (If I Ever Lose My', album: "Ten Summoner's Tales" } 
+                        }, function (err, newUpload) {
+        SongProcessor.processUploadWithUpdatedTags(newUpload, function (err, newProcessedSong) {
+          console.log('err');
+          console.log(err);
+          console.log('newProcessedSong');
+          console.log(newProcessedSong);
 
-    it('does not add a resubmitted song that already exists', function (done) {
+          expect(err.message).to.equal('More Info Needed');
+          expect(err.upload.possibleMatches[0]).to.not.equal(undefined);
+          done();
+        });
+      });
+    });
+
+    xit('does not add a resubmitted song that already exists', function (done) {
       this.timeout(30000);
       var uploader = s3HighLevel.uploadFile({ localFile: process.cwd() + '/server/data/testFiles/test.txt',
                                               s3Params: {
