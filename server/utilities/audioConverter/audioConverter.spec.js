@@ -93,10 +93,6 @@ describe('AudioConverter', function (done) {
     });
   });
 
-  xit('converts an aac file', function (done) {
-
-  });
-
   after(function (done) {
     for (var i=0;i<testFilesArray.length;i++) {
       try {

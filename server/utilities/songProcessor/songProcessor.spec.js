@@ -369,10 +369,6 @@ describe('songProcessor', function (done) {
                         }, function (err, newSong) {
               SongProcessor.processUploadWithUpdatedTags(newUpload, function (err, newProcessedSong) {
                 expect(err.message).to.equal('Song Already Exists');
-console.log('newSong:');
-console.log(newSong);
-console.log('err.song');
-console.log(err.song);
                 expect(err.song._id.equals(newSong._id)).to.equal(true);
                 done();
               });

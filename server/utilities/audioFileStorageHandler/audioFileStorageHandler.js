@@ -52,6 +52,7 @@ function Handler() {
       Key: key
     };
 
+    // make the call
     s3.headObject(params, function (err, data) {
       if (err) {
         callback(err, null);
@@ -139,6 +140,12 @@ function Handler() {
     });
   };
 
+  // ******************************************************************************
+  // ****************************** finalizeUpload ********************************
+  // ******************************************************************************
+  // * DESCRIPTION: moves an 'unprocessed' song to the regular songs folder and   *
+  // *              writes all its metadata.
+  // ******************************************************************************
   this.finalizeUpload = function (attrs, callback) {
     // build key
     var listGetter = s3HighLevel.listObjects({ s3Params: { Bucket: config["s3Buckets"].SONGS_BUCKET } });
