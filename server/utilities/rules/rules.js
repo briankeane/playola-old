@@ -47,9 +47,7 @@ function rules() {
     var songChoices = attrs.songlist;
     var windowStart = new Date(attrs.airtime.getTime() - minutesOfRest*60*1000);
     var recentSpins = _.filter(attrs.schedule, function (spin) {
-// console.log('windowStart: ' + windowStart);
-// console.log('attrs.airtime: ' + attrs.airtime);
-// console.log('spin.airtime: ' + spin.airtime);
+
       return ((spin.airtime >= windowStart) && (spin.airtime <= (new Date(attrs.airtime.getTime() + 10000))));
     });
 
