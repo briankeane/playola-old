@@ -422,11 +422,15 @@ function Scheduler() {
                           playlistPosition: finalLogEntry.playlistPosition,
                           _station: station,
                           commercialsFollow: finalLogEntry.commercialsFollow }
-      
-        var lastAccurateAirtime;
-
+        
+        var playlistPositionTracker = finalLogEntry.playlistPosition;
         for(var i=0;i<gottenPlaylist.length;i++) {
           self.addScheduleTimeToSpin(station, previousSpin, gottenPlaylist[i]);
+          
+          // store and increment playlistPosition
+          gottenPlaylist[i].playlistPosition = playlistPositionTracker;
+          playlistPositionTracker++;
+
           toBeUpdated.push(gottenPlaylist[i]);
 
           // check for ending flags and exit if met

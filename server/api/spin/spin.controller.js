@@ -60,7 +60,7 @@ exports.destroy = function(req, res) {
 exports.move = function(req,res) {
   Scheduler.moveSpin(req.body, function (err, results) {
     if (err) return res.send (500, err);
-    Scheduler.getProgram({ stationId: results.station._id }, function (err, program) {
+    Scheduler.getProgram({ stationId: req._station }, function (err, program) {
       return res.json(200, program);
     });
   });
