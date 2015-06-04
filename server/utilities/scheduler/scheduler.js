@@ -512,7 +512,7 @@ function Scheduler() {
         self.bringCurrent(station, function () {
           self.generatePlaylist({ station: station,
                                       playlistEndTime: new Date(Date.now() + 60*60*3*1000) }, function (err, result) {
-            station = result.station;
+
             Spin.getPartialPlaylist({ _station: station.id,
                                       endTime: new Date(Date.now() + 60*60*3*1000) }, function (err, playlist) {
 
@@ -604,7 +604,7 @@ function Scheduler() {
     .exec(function (err, spin) {
 
       var station = spin._station;
-      
+
       if (err) {
         callback(new Error('Spin not found'));
         return;
@@ -737,7 +737,7 @@ function Scheduler() {
 
       Helper.saveAll(modelsToSave, function (err, savedModels) {
         if (err) return err;
-        callback(null, { test: true });
+        callback(null, { updateSpins: savedModels });
       });
     });
   };
