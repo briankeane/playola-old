@@ -107,14 +107,6 @@ describe('playlist functions', function (done) {
   it('gets a program if a commercial is scheduled', function (done) {
     
     done();
-  })
-  
-  it('updates the lastAccuratePlaylistPosition', function (done) {
-    Station.findById(station.id, function (err, foundStation) {
-      expect(station.lastAccuratePlaylistPosition).to.equal(55);
-      expect(foundStation.lastAccuratePlaylistPosition).to.equal(55);
-      done();
-    });
   });
 
   describe('updateAirtimes', function (done) {

@@ -52,13 +52,11 @@ describe('a station', function () {
     user2.save(function (err, savedUser) {
       Station.findByIdAndUpdate(station.id, { $set: { _user: user2.id, 
                                                     secsOfCommercialPerHour: 10,
-                                                    lastAccuratePlaylistPosition: 1,
                                                     timezone: 'UK Central Time' } },
                                   function (err, updatedStation) {
         expect(updatedStation.secsOfCommercialPerHour).to.equal(10)
         expect(updatedStation._user.equals(user2.id)).to.equal(true);
         expect(updatedStation.timezone).to.equal('UK Central Time');
-        expect(updatedStation.lastAccuratePlaylistPosition).to.equal(1);
         done();
       });
       

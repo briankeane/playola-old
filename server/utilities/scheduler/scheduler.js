@@ -281,22 +281,17 @@ function Scheduler() {
         var spinsToSave = _.map(fullSchedule.slice(firstNewPlaylistIndex), function(spin) { return new Spin(spin); });
 
         Helper.saveAll(spinsToSave, function (err, savedSpins) {
-          // update and save the station
-          station.lastAccuratePlaylistPosition = previousSpin.playlistPosition;
-          station.save(function (err, savedStation) {
-
-            // if the station is new, start it
-            if (newStationFlag) {
-              var logEntry = LogEntry.newFromSpin(savedSpins[0]);
-              logEntry.save(function (err, savedLogEntry) {
-                savedSpins[0].remove(function (err, removedSpin) {
-                  callback (null, { warnings: warnings, station: savedStation });
-                });
+          // if the station is new, start it
+          if (newStationFlag) {
+            var logEntry = LogEntry.newFromSpin(savedSpins[0]);
+            logEntry.save(function (err, savedLogEntry) {
+              savedSpins[0].remove(function (err, removedSpin) {
+                callback (null, { warnings: warnings });
               });
-            } else {
-              callback(null, { warnings: warnings, station: savedStation });
-            }
-          });
+            });
+          } else {
+            callback(null, { warnings: warnings });
+          }
         });
       });
     });
@@ -407,12 +402,6 @@ function Scheduler() {
     var previousSpin;
     var toBeUpdated = [];
 
-    // exit if playlist is already accurate
-    if ((attrs.playlistPosition) && (attrs.playlistPosition < station.lastAccuratePlaylistPosition)) {
-      callback(null, station);
-      return;
-    }
-
     Spin.getFullPlaylist(station.id, function (err, gottenPlaylist) {
       var fullPlaylist = gottenPlaylist;
 
@@ -427,42 +416,15 @@ function Scheduler() {
         
         // if the last log entry is the last Accurate Airtime, use it
         var finalLogEntry = gottenLogEntry[0];
-        if (station.lastAccuratePlaylistPosition <= finalLogEntry.playlistPosition) {
-          previousSpin = { _audioBlock: finalLogEntry._audioBlock,
-                            airtime: finalLogEntry.airtime,
-                            playlistPosition: finalLogEntry.playlistPosition,
-                            _station: station,
-                            commercialsFollow: finalLogEntry.commercialsFollow }
-        
-        // ELSE use the corresponding spin
-        } else {
 
-          // seek the last accurate spin
-          var index;
-          for(index=0;index<gottenPlaylist.length;index++) {
-            if (gottenPlaylist[index].playlistPosition === station.lastAccuratePlaylistPosition) {
-              break;
-            }
-          }
-          
-          // if it's last, exit (entire playlist is up to date)
-          if (index === gottenPlaylist.length){ 
-            callback(null, station);
-            return;
-          }
-
-          // set last accurate entry to previousSpin
-          previousSpin = gottenPlaylist[index];
-
-          // make sure it gets saved (since it's a spin)
-          toBeUpdated.push(previousSpin);
-
-          // set up gottenPlaylist to update
-          gottenPlaylist = gottenPlaylist.slice(index + 1);
-        }
-
+        previousSpin = { _audioBlock: finalLogEntry._audioBlock,
+                          airtime: finalLogEntry.airtime,
+                          playlistPosition: finalLogEntry.playlistPosition,
+                          _station: station,
+                          commercialsFollow: finalLogEntry.commercialsFollow }
+      
         var lastAccurateAirtime;
-        var lastAccuratePlaylistPosition;
+
         for(var i=0;i<gottenPlaylist.length;i++) {
           self.addScheduleTimeToSpin(station, previousSpin, gottenPlaylist[i]);
           toBeUpdated.push(gottenPlaylist[i]);
@@ -475,15 +437,9 @@ function Scheduler() {
             break;
           }
 
-          // advance the previousSpin and station info
-          lastAccuratePlaylistPosition = gottenPlaylist[i].playlistPosition;
-          lastAccurateAirtime = gottenPlaylist[i].airtime;
+          // advance the previousSpin
           previousSpin = gottenPlaylist[i];
         }
-
-        // update the station
-        station.lastAccuratePlaylistPosition = lastAccuratePlaylistPosition;
-        toBeUpdated.push(station);
 
         // update
         Helper.saveAll(toBeUpdated, function (err, savedPlaylist) {
@@ -513,11 +469,9 @@ function Scheduler() {
       // update airtimes through current time
       self.updateAirtimes({ station: station,
                             endTime: new Date() }, function (err, updatedStation) {
-        station = updatedStation;
 
         // make sure the playlist lasts until now
         self.generatePlaylist({ station: station, endTime: Date.now() }, function (err, result) {
-          station = result.station;
 
           // get the playlist
           Spin.getPartialPlaylist({ _station: station.id, 
@@ -645,7 +599,12 @@ function Scheduler() {
 
   // moves a spin
   this.moveSpin = function(attrs, callback) {
-    Spin.findById(attrs.spinId, function (err, spin) {
+    Spin.findById(attrs.spinId)
+    .populate('_station')
+    .exec(function (err, spin) {
+
+      var station = spin._station;
+      
       if (err) {
         callback(new Error('Spin not found'));
         return;
@@ -711,13 +670,9 @@ function Scheduler() {
         }
         
         Helper.saveAll(spinsToSave, function (err, updatedSpins) {  
-          Station.findByIdAndUpdate(spin._station, { lastAccuratePlaylistPosition: minPlaylistPosition - 1 
-                                                          }, function (err, updatedStation) {
-            if (err) callback(err);
-            self.updateAirtimes({ station: updatedStation, playlistPosition: maxPlaylistPosition + 1 }, function (err, updatedStation) {
-              callback(null, { station: updatedStation,
-                              updatedSpins: updatedSpins });
-            });
+          if (err) callback(err);
+          self.updateAirtimes({ station: station, playlistPosition: maxPlaylistPosition + 1 }, function (err, updatedStation) {
+            callback(null, { updatedSpins: updatedSpins });
           });
         });
       });
@@ -740,9 +695,6 @@ function Scheduler() {
       Station.findById(spin._station, function (err, station) {
         if (err) return (err);
         
-        station.lastAccuratePlaylistPosition = spin.playlistPosition - 5;
-        modelsToSave.push(station);
-
         Helper.saveAll(modelsToSave, function (err, savedSpins) {
           if (err) return (err);
 
@@ -783,12 +735,9 @@ function Scheduler() {
                               airtime: partialPlaylist[0].airtime });
       modelsToSave.push(newSpin);
 
-      Station.findByIdAndUpdate(spinInfo._station, { lastAccuratePlaylistPosition: newSpin.playlistPosition - 1
-                                                   }, function (err, updatedStation) {
-        Helper.saveAll(modelsToSave, function (err, savedModels) {
-          if (err) return err;
-          callback(null, updatedStation);
-        });
+      Helper.saveAll(modelsToSave, function (err, savedModels) {
+        if (err) return err;
+        callback(null, { test: true });
       });
     });
   };
