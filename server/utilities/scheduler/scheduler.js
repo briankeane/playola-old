@@ -62,7 +62,6 @@ function Scheduler() {
   // *            attrs.fullSchedule -- an array of all relevant scheduled songs  *
   // *            attrs.rotationItems -- an array of the choices                  *
   // ******************************************************************************
-
   this.chooseSong = function (attrs) {
     var warnings = [];
     
@@ -388,11 +387,11 @@ function Scheduler() {
       }
     }
 
-    // set previousSpin.manualEndTime
+    // set previousSpin._endTime
     if (previousSpin.commercialsFollow) {
-      previousSpin.manualEndTime = new Date(previousSpinAirtimeInMS + previousSpinMarkups.eom);
+      previousSpin._endTime = new Date(previousSpinAirtimeInMS + previousSpinMarkups.eom);
     } else {
-      previousSpin.manualEndTime = spinToSchedule.airtime;
+      previousSpin._endTime = spinToSchedule.airtime;
     }
 
     // add commercials to spinToSchedule if needed
@@ -553,7 +552,7 @@ function Scheduler() {
       if (err) callback(err);
       if (!station) callback(new Error('Station not found'));
 
-      // make sure schedule is accurate 2 hours from now
+      // make sure schedule is accurate 3 hours from now
       self.updateAirtimes({ station: station,
                                     endTime: new Date(Date.now() + 60*60*3*1000) }, function (err, station) {
         self.bringCurrent(station, function () {
@@ -734,13 +733,14 @@ function Scheduler() {
       var modelsToSave = [];
       var playlistPositionTracker = spin.playlistPosition + 1;
       for(var i=0; i<beforePlaylist.length;i++) {
-        beforePlaylist[i].playlistPosition = beforePlaylist[i].playlistPosition - 1;
+        beforePlaylist[i].playlistPosition = playlistPositionTracker;
         modelsToSave.push(beforePlaylist[i]);
+        playlistPositionTracker++;
       }
       Station.findById(spin._station, function (err, station) {
         if (err) return (err);
         
-        station.lastAccuratePlaylistPosition = spin.playlistPosition - 1;
+        station.lastAccuratePlaylistPosition = spin.playlistPosition - 5;
         modelsToSave.push(station);
 
         Helper.saveAll(modelsToSave, function (err, savedSpins) {

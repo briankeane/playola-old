@@ -13,7 +13,7 @@ var spinSchema = new Schema({
   airtime:                { type: Date                                },
   durationOffset:         { type: Number, default: 0                  },
   manualDuration:         { type: Number                              },
-  manualEndTime:          { type: Date                                },
+  _endTime:          { type: Date                                },
   previousSpinOverlap:    { type: Number                              }
 }, {
   toObject: { getters: true },
@@ -22,7 +22,7 @@ var spinSchema = new Schema({
 
 spinSchema.virtual('endTime').get(function () {
   if (this.manalEndTime) {
-    return this.manualEndTime;
+    return this._endTime;
   } else {
 
     // if it's missing the audioBlock, duration, or airtime, return null

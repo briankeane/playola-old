@@ -115,14 +115,14 @@ describe('radio rules', function (done) {
                           airtime: new Date(2014,3,14, 12,22),
                           durationOffset: 0,
                           commercialsFollow: false,
-                          manualEndTime: new Date(2014,3,14 ,12,18) });
+                          _endTime: new Date(2014,3,14 ,12,18) });
     fullSchedule.unshift({ playlistPosition:100,
                            _audioBlock: songToRemove2,
                            _station: station,
                            airtime: new Date(2014,3,14, 13,10),
                            durationOffset: 0,
                            commercialsFollow: false,
-                           manualEndTime: new Date(2014,3,14,13,14) });
+                           _endTime: new Date(2014,3,14,13,14) });
     // add the removable song to the list
     lightRotationItems.unshift({ _song: songToRemove1,
                                 _station: station.id,
@@ -149,14 +149,14 @@ describe('radio rules', function (done) {
                            airtime: new Date(2014,3,15, 11,48),
                            durationOffset: 0,
                            commercialsFollow: false,
-                           manualEndTime: new Date(2014,3,15,11,52) });
+                           _endTime: new Date(2014,3,15,11,52) });
     fullSchedule.push( { playlistPosition:100,
                            _audioBlock: songToRemove2,
                            _station: station,
                            airtime: new Date(2014,3,15, 12,18),
                            durationOffset: 0,
                            commercialsFollow: false,
-                           manualEndTime: new Date(2014,3,15, 12,22) });
+                           _endTime: new Date(2014,3,15, 12,22) });
     lightRotationItems.unshift({ _song: songToRemove1,
                                 _station: station.id,
                                 bin: 'light' });
@@ -181,14 +181,14 @@ describe('radio rules', function (done) {
                            airtime: new Date(2014,3,15, 11,48),
                            durationOffset: 0,
                            commercialsFollow: false,
-                           manualEndTime: new Date(2014,3,15,11,52) });
+                           _endTime: new Date(2014,3,15,11,52) });
     fullSchedule.push( { playlistPosition:100,
                            _audioBlock: songToRemove2,
                            _station: station,
                            airtime: new Date(2014,3,14, 12,18),
                            durationOffset: 0,
                            commercialsFollow: false,
-                           manualEndTime: new Date(2014,3,14, 12,22) });
+                           _endTime: new Date(2014,3,14, 12,22) });
     lightRotationItems.unshift({ _song: songToRemove1,
                                 _station: station.id,
                                 bin: 'light' });

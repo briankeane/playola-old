@@ -18,6 +18,7 @@ angular.module('playolaApp')
     var progressUpdater;
     var lastUpdateIndex = 0;
     var wasMuted;
+    var latestRemovedSpinId;
 
     // create the commentary uploader
     $scope.FileUploader = FileUploader;
@@ -356,11 +357,15 @@ angular.module('playolaApp')
     $scope.removeSpin = function (spin, index) {
       $scope.playlist.splice(index,1);
       $scope.refreshProgramWithoutServer();
+      
+      // store id to avoid updating if not the most recent call
+      latestRemovedSpinId = spin.id;
 
       Auth.removeSpin(spin, function (err, newProgram) {
-        if (err) return false;
-        $scope.playlist = newProgram.playlist;
-      })
+        if (latestRemovedSpinId === spin.id) {
+          $scope.playlist = newProgram.playlist;
+        }
+      });
     }
 
     // if there's not a  currentStation yet, wait for it

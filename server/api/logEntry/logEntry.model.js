@@ -16,7 +16,7 @@ var logEntrySchema = new Schema({
   listenersAtFinish:  { type: Number },
   durationOffset:     { type: Number, default: 0 },
   commercialsFollow:  { type: Boolean },
-  manualEndTime:      { type: Date    }
+  _endTime:      { type: Date    }
 }, {
   toObject: { getters: true },
   toJSON:   { getters: true }
@@ -26,8 +26,8 @@ var logEntrySchema = new Schema({
 // * endTime -- calculates the end of the log entry      *
 // *******************************************************
 logEntrySchema.virtual('endTime').get(function () {
-  if (this.manualEndTime) {
-    return this.manualEndTime;
+  if (this._endTime) {
+    return this._endTime;
   } else {
     // if it's missing the audioBlock, duration, or airtime, return null
     if (!((this.airtime) && (this._audioBlock) && (this._audioBlock.duration))) {
@@ -152,7 +152,7 @@ logEntrySchema.statics.newFromSpin = function (spin) {
                         airtime: spin.airtime,
                         commercialsFollow: spin.commercialsFollow,
                         durationOffset: spin.durationOffset || 0,
-                        manualEndTime: spin.manualEndTime });
+                        _endTime: spin._endTime });
 }
 
 

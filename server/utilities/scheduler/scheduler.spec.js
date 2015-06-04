@@ -103,6 +103,11 @@ describe('playlist functions', function (done) {
       });
     });
   });
+
+  it('gets a program if a commercial is scheduled', function (done) {
+    
+    done();
+  })
   
   it('updates the lastAccuratePlaylistPosition', function (done) {
     Station.findById(station.id, function (err, foundStation) {
@@ -636,21 +641,21 @@ describe('addScheduleTimeToSpin', function (done) {
 
   it ('works for song/song', function (done) {
     Scheduler.addScheduleTimeToSpin(station, songSpin1, songSpin2);
-    expect(new Date(songSpin1.manualEndTime).getTime()).to.equal(new Date(2014,3,15, 12,10,58).getTime());
+    expect(new Date(songSpin1._endTime).getTime()).to.equal(new Date(2014,3,15, 12,10,58).getTime());
     expect(new Date(songSpin2.airtime).getTime()).to.equal(new Date(2014,3,15, 12,10,58).getTime());
     done();
   });
 
   it ('works for song/commentary-long', function (done) {
     Scheduler.addScheduleTimeToSpin(station, songSpin1, commentarySpinLong);
-    expect(new Date(songSpin1.manualEndTime).getTime()).to.equal(new Date(2014,3,15, 12,10,50).getTime());
+    expect(new Date(songSpin1._endTime).getTime()).to.equal(new Date(2014,3,15, 12,10,50).getTime());
     expect(new Date(commentarySpinLong.airtime).getTime()).to.equal(new Date(2014,3,15, 12,10,50).getTime());
     done();
   });
 
   it ('works for song/commentary-short', function (done) {
     Scheduler.addScheduleTimeToSpin(station, songSpin1, commentarySpinShort);
-    expect(new Date(songSpin1.manualEndTime).getTime()).to.equal(new Date(2014,3,15, 12,10,58).getTime());
+    expect(new Date(songSpin1._endTime).getTime()).to.equal(new Date(2014,3,15, 12,10,58).getTime());
     expect(new Date(commentarySpinShort.airtime).getTime()).to.equal(new Date(2014,3,15, 12,10,58).getTime());
     done();
   });
@@ -663,7 +668,7 @@ describe('addScheduleTimeToSpin', function (done) {
 
   it ('works for commentary-short/song', function (done) {
     Scheduler.addScheduleTimeToSpin(station, commentarySpinShort, songSpin1);
-    expect(new Date(commentarySpinShort.manualEndTime).getTime()).to.equal(new Date(2014,3,15, 12,20,1).getTime());
+    expect(new Date(commentarySpinShort._endTime).getTime()).to.equal(new Date(2014,3,15, 12,20,1).getTime());
     expect(new Date(songSpin1.airtime).getTime()).to.equal(new Date(2014,3,15, 12,20,1).getTime());
     done();
   });
@@ -672,7 +677,7 @@ describe('addScheduleTimeToSpin', function (done) {
     commentarySpinLong.previousSpinOverlap = 8000;
     Scheduler.addScheduleTimeToSpin(station, commentarySpinLong, songSpin1);
     expect(new Date(songSpin1.airtime).getTime()).to.equal(new Date(2014,3,15, 12,15,5).getTime());
-    expect(new Date(commentarySpinLong.manualEndTime).getTime()).to.equal(new Date(2014,3,15, 12,15,5).getTime());
+    expect(new Date(commentarySpinLong._endTime).getTime()).to.equal(new Date(2014,3,15, 12,15,5).getTime());
     done();
   });
 
