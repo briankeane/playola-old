@@ -291,7 +291,7 @@ angular.module('playolaApp')
         Auth.moveSpin({ spinId: spin.id, newPlaylistPosition: newPlaylistPosition }, function (err, newProgram) {
           if (err) { return false; }
 
-          if (lastEditedSpinId === spin.id) {
+          if (latestEditedSpinId === spin.id) {
             $scope.playlist = newProgram.playlist;
           }
         });
