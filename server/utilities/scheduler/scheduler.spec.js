@@ -44,20 +44,17 @@ describe('playlist functions', function (done) {
             for(var i=0;i<50;i++) {
               rotationItems.push(new RotationItem({ _song: songs[i].id,
                                                     _station: station.id,
-                                                    bin: 'light',
-                                                    weight: 45 }));
+                                                    bin: 'light' }));
             }
             for(var i=50;i<80;i++) {
               rotationItems.push(new RotationItem({ _song: songs[i].id,
                                                     _station: station.id,
-                                                    bin: 'medium',
-                                                    weight: 25 }));
+                                                    bin: 'medium' }));
             }
             for(var i=80;i<100;i++) {
               rotationItems.push(new RotationItem({ _song: songs[i].id,
                                                     _station: station.id,
-                                                    bin: 'heavy',
-                                                    weight: 10 }));
+                                                    bin: 'heavy' }));
             }
 
             SpecHelper.saveAll(rotationItems, function (err, savedRotationItems) {
@@ -304,6 +301,10 @@ describe('playlist functions', function (done) {
     Scheduler.bringCurrent(station, function (err) {
       Spin.getFullPlaylist(station.id, function (err, currentPlaylist) {
         LogEntry.getFullStationLog(station.id, function (err, logEntries) {
+var logEntryMap = _.map(logEntries, function(entry) { return { pp: entry.playlistPosition, airtime: entry.airtime } });
+console.log(logEntryMap)
+console.log(logEntryMap);
+console.log('currentPlaylist[0]: ' + currentPlaylist[0]);
           expect(currentPlaylist[0].airtime.getTime()).to.equal(new Date(2014,3,15, 14,07).getTime());
           expect(currentPlaylist[0].playlistPosition).to.equal(25);
           expect(logEntries[0].airtime.getTime()).to.equal(new Date(2014,3,15,14,04).getTime());
@@ -699,5 +700,3 @@ describe('addScheduleTimeToSpin', function (done) {
     done();
   });
 });
-
-

@@ -396,7 +396,6 @@ function Scheduler() {
   };
 
 
-
   this.updateAirtimes = function (attrs, callback) {
     var station = attrs.station;
     var previousSpin;
@@ -423,7 +422,7 @@ function Scheduler() {
                           _station: station,
                           commercialsFollow: finalLogEntry.commercialsFollow }
         
-        var playlistPositionTracker = finalLogEntry.playlistPosition;
+        var playlistPositionTracker = finalLogEntry.playlistPosition + 1;
         for(var i=0;i<gottenPlaylist.length;i++) {
           self.addScheduleTimeToSpin(station, previousSpin, gottenPlaylist[i]);
           
