@@ -18,7 +18,7 @@ angular.module('playolaApp')
     var progressUpdater;
     var lastUpdateIndex = 0;
     var wasMuted;
-    var latestRemovedSpinId;
+    var latestEditedSpinId;
 
     // create the commentary uploader
     $scope.FileUploader = FileUploader;
@@ -286,9 +286,14 @@ angular.module('playolaApp')
 
         $scope.refreshProgramWithoutServer();
 
+        latestEditedSpinId = spin.id;
+
         Auth.moveSpin({ spinId: spin.id, newPlaylistPosition: newPlaylistPosition }, function (err, newProgram) {
           if (err) { return false; }
-          $scope.playlist = newProgram.playlist;
+
+          if (lastEditedSpinId === spin.id) {
+            $scope.playlist = newProgram.playlist;
+          }
         });
       },
 
@@ -359,10 +364,10 @@ angular.module('playolaApp')
       $scope.refreshProgramWithoutServer();
       
       // store id to avoid updating if not the most recent call
-      latestRemovedSpinId = spin.id;
+      latestEditedSpinId = spin.id;
 
       Auth.removeSpin(spin, function (err, newProgram) {
-        if (latestRemovedSpinId === spin.id) {
+        if (latestEditedSpinId === spin.id) {
           $scope.playlist = newProgram.playlist;
         }
       });

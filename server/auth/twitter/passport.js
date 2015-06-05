@@ -11,7 +11,7 @@ exports.setup = function (User, config) {
 
   function(token, tokenSecret, profile, done) {
     User.findOne({
-      'twitter.id_str': profile.id
+      twitterHandle: profile.username
     }, function(err, user) {
       if (err) {
         return done(err);
@@ -58,11 +58,16 @@ exports.setup = function (User, config) {
       getSetOfFriends(-1);
 
       function getSetOfFriends(cursor) {
-        var url = 'https://api.twitter.com/1.1/friends/list.json?count=200&user_id=' + profile.id +
+        var url = 'https://api.twitter.com/1.1/friends/list.json?count=199&user_id=' + profile.id +
                                                                     '&cursor=' + cursor;
 
 
         request.get({url:url, oauth:oauth, json:true}, function (err, r, result) {
+
+          // if there's an error don't update or grab friends.
+          if(err) {
+            callback(err);
+          }
 
           friends = friends.concat(result.users);
           
