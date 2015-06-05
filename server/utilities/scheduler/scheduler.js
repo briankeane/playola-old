@@ -401,6 +401,9 @@ function Scheduler() {
     var previousSpin;
     var toBeUpdated = [];
 
+if (!station) { 
+  console.log('notStation.id!');
+}
     Spin.getFullPlaylist(station.id, function (err, gottenPlaylist) {
       var fullPlaylist = gottenPlaylist;
 
@@ -675,7 +678,7 @@ function Scheduler() {
         Helper.saveAll(spinsToSave, function (err, updatedSpins) {  
           if (err) callback(err);
           self.updateAirtimes({ station: station, playlistPosition: maxPlaylistPosition + 1 }, function (err, updatedStation) {
-            callback(null, { updatedSpins: updatedSpins });
+            callback(null, { updatedSpins: updatedSpins, station: station });
           });
         });
       });
