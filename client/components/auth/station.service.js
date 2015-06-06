@@ -45,6 +45,12 @@ angular.module('playolaApp')
           controller: 'updateRotationBin'
         }
       },
+      addSongToBin: {
+        method: 'POST',
+        params: {
+          controller: 'addSongToBin'
+        }
+      },
       createRotationItem: {
         method: 'POST',
         params: {

@@ -73,12 +73,6 @@ angular.module('playolaApp')
     $scope.rotationItemsListOptions = {
       connectWith: '#catalog-list',
       receive: function (event, ui) {
-
-        // cancel the sort... manually reset the array
-        // var holderArray = $scope.catalogSearchResults.slice();
-        // ui.item.sortable.cancel();
-        // $scope.catalogSearchResults = holderArray;
-
         var song = ui.item.sortable.model;
         var index = ui.item.sortable.dropindex;
 
@@ -118,7 +112,9 @@ angular.module('playolaApp')
         }
 
         // Add song
-        Auth.createRotationItem(newRotationItem, function (err, results) {
+        Auth.addSongToBin({ bin: newRotationItem.bin,
+                            songId: song.id
+                          }, function (err, results) {
           if (err) { 
             // remove inserted object
             for (var i=0;i<$scope.rotationItems.length;i++) {
@@ -229,7 +225,15 @@ function compareSong(a,b) {
     return 1;
   } else if (a._song.artist.toLowerCase() < b._song.artist.toLowerCase()) {
     return -1;
+  // ELSE (artists are equal so use title)
   } else {
+    if (a._song.title.toLowerCase() > b._song.title.toLowerCase()) {
+      return 1;
+    } else if (a._song.title.toLowerCase() < b._song.title.toLowerCase()) {
+      return -1;
+    } else {
+      return 0;
+    }
     return 0;
   }
 }

@@ -263,6 +263,16 @@ angular.module('playolaApp')
         }).$promise;
       },
 
+      addSongToBin: function (rotationItemObject, callback) {
+        var cb = callback || angular.noop;
+
+        return Station.addSongToBin({ id: currentStation._id }, rotationItemObject, function (result) {
+          return cb(null, result);
+        }, function (err) {
+          return cb(err);
+        }).promise;
+      },
+
       removeRotationItem: function (rotationItemId, callback) {
         var cb = callback || angular.noop;
 

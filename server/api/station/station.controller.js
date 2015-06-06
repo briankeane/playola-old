@@ -177,6 +177,27 @@ exports.createRotationItem = function (req,res) {
   });
 };
 
+exports.addSongToBin = function (req, res) {
+  // validations
+  if (!req.body.songId) { return res.json(400, { message: 'missing songId'} ) }
+  if (!req.params.id) { return res.json(400, { message: 'missing :id (station)' } ) }
+  if (!req.body.bin) { return res.json(400, { message: 'missing bin' } ) }
+
+  RotationItem.addSongToBin({ _song: req.body.songId,
+                              _station: req.params.id,
+                              bin: req.body.bin
+                            }, function (err, newRotationItem) {
+    if (err) { return res.json(500, err); }
+    RotationItem.findAllForStation(newRotationItem._station, function (err, updatedRotationItems) {
+      if (err) return res(500, err);
+
+      var rotationItemsObject = createRotationItemsObject(updatedRotationItems);
+
+      return res.json({ newRotationItem: newRotationItem, rotationItems: rotationItemsObject });
+    });
+  });
+};
+
 exports.updateRotationBin = function (req,res,next) {
   RotationItem.findById(req.body.rotationItemId, function (err, rotationItem) {
     if (err) return next(err);

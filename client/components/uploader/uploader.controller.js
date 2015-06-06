@@ -1,10 +1,18 @@
 angular.module('playolaApp')
   .controller('uploaderCtrl', function ($scope, Auth, Uploader, $modal) {
-    $scope.uploader = Uploader.fileUploader
+    $scope.uploader = Uploader.fileUploader;
+
+    // load bins
+    if (!SharedData.bins) {
+      $rootScope.$on('rotationItemsLoaded', function () {
+        $scope.bins = SharedData.bins;
+      });
+    } else {
+      $scope.bins = SharedData.bins;
+    }
 
     $scope.addToMyStation = function (songId) {
-      Auth.createRotationItem({ weight: 17,
-                                bin: 'active',
+      Auth.createRotationItem({ bin: 'medium',
                                 _song: songId }, function (err, results) {
         if (!err){
           for (var i=0;i<$scope.uploader.queue.length;i++) {

@@ -14,6 +14,7 @@ router.get('/:id/getProgram', auth.isAuthenticated(), controller.getProgram)
 router.put('/:id/removeRotationItem', auth.isAuthenticated(), controller.removeRotationItem)
 router.put('/:id/updateRotationBin', auth.isAuthenticated(), controller.updateRotationBin)
 router.post('/:id/createRotationItem', auth.isAuthenticated(), controller.createRotationItem)
+router.post('/:id/addSongToBin', auth.isAuthenticated(), controller.addSongToBin)
 router.get('/:id', controller.show);
 router.post('/', controller.create);
 router.put('/:id', controller.update);
