@@ -37,7 +37,11 @@ var markerGetGenerator = function(field) {
     } else if (typeof(this[fieldName]) !== 'undefined') {
       return this[fieldName];
     } else {
-      return this._song[field];
+      if (this._song) {
+        return this._song[field];
+      } else {
+        return null;
+      }
     }
   }
 }

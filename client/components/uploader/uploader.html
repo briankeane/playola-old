@@ -32,14 +32,9 @@
               <td class="text-center">
                 <span ng-show="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
                 
-                <button ng-show="item.status === 'Success'" type="button" class="btn btn-xs" ng-click="addToMyStation(item.songId);">
-                  <span class="glyphicon glyphicon-plus"></span>
-                  Add to Station
-                </button>
-
-                <select class="rotationSelect" ng-model="item.bin" ng-click="saveOldBin(rotationItem)" ng-change="updateRotationItemBin(rotationItem)"
+                <select ng-show="item.status === 'Success'" class="rotationSelect" ng-model="item.bin" ng-change="addToMyStation({ bin: item.bin, songId: item.songId })"
                   ng-options="bin as bin for bin in bins">
-                  <option>Add To Station</option>
+                  <option value="">Add To Station</option>
                 </select>
 
                 <span ng-show="item.isError">

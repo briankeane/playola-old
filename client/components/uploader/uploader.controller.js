@@ -1,5 +1,5 @@
 angular.module('playolaApp')
-  .controller('uploaderCtrl', function ($scope, Auth, Uploader, $modal) {
+  .controller('uploaderCtrl', function ($rootScope, $scope, Auth, Uploader, $modal, SharedData) {
     $scope.uploader = Uploader.fileUploader;
 
     // load bins
@@ -11,14 +11,12 @@ angular.module('playolaApp')
       $scope.bins = SharedData.bins;
     }
 
-    $scope.addToMyStation = function (songId) {
-      Auth.createRotationItem({ bin: 'medium',
-                                _song: songId }, function (err, results) {
+    $scope.addToMyStation = function (attrs) {
+      Auth.addSongToBin(attrs, function (err, results) {
         if (!err){
           for (var i=0;i<$scope.uploader.queue.length;i++) {
             if ($scope.uploader.queue[i].songId === songId) {
               $scope.uploader.queue[i].addedToStation = true;
-
             }
           }
         }
