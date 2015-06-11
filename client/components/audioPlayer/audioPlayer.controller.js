@@ -55,8 +55,7 @@ angular.module('playolaApp')
     });
 
     $scope.addToMyStation = function(songId) {
-      Auth.createRotationItem({ weight: 17,
-                                  bin: 'active',
+      Auth.addSongToBin({ bin: 'medium',
                                   _song: songId }, function (err, results) {
         SharedData.myRotationItems = results.rotationItems;
         console.log(results);
