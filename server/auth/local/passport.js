@@ -8,12 +8,12 @@ exports.setup = function (User, config) {
     },
     function(email, password, done) {
       User.findOne({
-        email: email.toLowerCase()
+        twitterHandle:  { $regex: new RegExp("^" + twitterHandle.toLowerCase(), "i") }
       }, function(err, user) {
         if (err) return done(err);
 
         if (!user) {
-          return done(null, false, { message: 'This email is not registered.' });
+          return done(null, false, { message: 'This twitter is not registered.' });
         }
         if (!user.authenticate(password)) {
           return done(null, false, { message: 'This password is not correct.' });
