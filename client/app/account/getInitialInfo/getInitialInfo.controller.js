@@ -60,7 +60,6 @@ angular.module('playolaApp')
 
               // remove notFound error
               form["zipcode"].$setValidity('notFound', true);
-              
 
               if(form.$valid) {
 

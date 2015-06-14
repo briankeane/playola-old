@@ -55,6 +55,37 @@
           Please tell us your gender.
         </p>
       </div>
+
+      <div class="form-group" ng-class="{ 'has-success': form.zipcode.$valid && submitted,
+                                          'has-error': form.zipcode.$invalid && submitted }">
+        <label>Password</label>
+
+        <input type="password" name="password" class="form-control" ng-model="user.password"
+               required
+               ng-minlength="5"
+               password-error/>
+        <p class="help-block" ng-show="form.password.$error.required && submitted">
+          Please Choose a Password
+        </p>
+        <p class="help-block" ng-show="form.password.$error.notFound && submitted">
+          Password fields don't match.
+        </p>
+      </div>
+
+      <div class="form-group" ng-class="{ 'has-success': form.password.$valid && submitted,
+                                          'has-error': form.password.$invalid && submitted }">
+        <label>Confirm Password</label>
+
+        <input type="password" name="passwordConfirm" class="form-control" ng-model="user.passwordConfirm"
+               required
+               ng-minlength="5"
+               passwordConfirm-error/>
+        <p class="help-block" ng-show="(form.passwordConfirm !== form.password) && submitted">
+          Password fields don't match.
+        </p>
+      </div>
+
+
     </div>
     <div class="col-sm-12 col-md-6">
       <div class="form-group">
