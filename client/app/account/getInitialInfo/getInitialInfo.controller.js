@@ -67,7 +67,8 @@ angular.module('playolaApp')
                 
                 Auth.updateUser({
                   birthYear: $scope.user.birthYear,
-                  gender: $scope.user.gender
+                  gender: $scope.user.gender,
+                  password: $scope.user.password
                 })
                 .then( function() {
                   Auth.setZipcode($scope.user.zipcode, function(err, zipcode) {
