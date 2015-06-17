@@ -187,11 +187,20 @@ exports.destroy = function(req, res) {
  */
 exports.changePassword = function(req, res, next) {
   var userId = req.user._id;
-  var oldPass = String(req.body.oldPassword);
+  if (req.body.oldPassword) {
+    var oldPass = String(req.body.oldPassword);
+  } else {
+    var oldPass = ""
+  }
   var newPass = String(req.body.newPassword);
 
   User.findById(userId, function (err, user) {
-    if(user.authenticate(oldPass)) {
+    // if they have no old password, or if the old password was correct...
+  console.log(oldPass.length);
+  console.log(user.password);
+  console.log(user.hashedPassword);
+
+    if(user.authenticate(oldPass) || (!oldPass.length && (!user.password)))  {
       user.password = newPass;
       user.save(function(err) {
         if (err) return validationError(res, err);
