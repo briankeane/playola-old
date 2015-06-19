@@ -23,5 +23,7 @@ sudo apt-get update
 
 sudo apt-get install -y mongodb-org
 
+sudo apt-get install -y ntp
+
 git config --global user.email "lonesomewhistle@gmail.com"
 git config --global user.name "Brian Keane"
