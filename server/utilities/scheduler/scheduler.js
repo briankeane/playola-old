@@ -558,42 +558,40 @@ if (!station) {
   }
 
   this.getCommercialBlockLink = function (attrs, callback) {
-    User.findById(attrs._user, function (err, user) {
-      if (err) return (err);
-      
-      // find CommercialBlockNumber 
-      var commercialBlockNumber = Math.floor(new Date(attrs.airtime).getTime()/1800000.0);
+    var user = attrs.user
 
-      // IF there's no lastCommercial, set it as a blank object
-      if (!user.lastCommercial) {
-        user.lastCommercial = { audioFileId: 0 };
-      }
+    // find CommercialBlockNumber 
+    var commercialBlockNumber = Math.floor(new Date(attrs.airtime).getTime()/1800000.0);
 
+    // IF there's no lastCommercial, set it as a blank object
+    if (!user.lastCommercial) {
+      user.lastCommercial = { audioFileId: 0 };
+    }
+
+    
+    // IF it's already been adjusted for this block
+    if (user.lastCommercial && user.lastCommercial.commercialBlockNumber && (user.lastCommercial.commercialBlockNumber === commercialBlockNumber)) {
+      callback(null, user.lastCommercial.audioFileUrl);
+      return;
+    } else {
+      var newLastCommercial = {};
+      newLastCommercial.commercialBlockNumber = commercialBlockNumber;
       
-      // IF it's already been adjusted for this block
-      if (user.lastCommercial && user.lastCommercial.commercialBlockNumber && (user.lastCommercial.commercialBlockNumber === commercialBlockNumber)) {
-        callback(null, user.lastCommercial.audioFileUrl);
-        return;
+      if (user.lastCommercial.audioFileId === 27) {
+        newLastCommercial.audioFileId = 1;
+        newLastCommercial.audioFileUrl = 'http://commercialblocks.playola.fm/0001_commercial_block.mp3';
       } else {
-        var newLastCommercial = {};
-        newLastCommercial.commercialBlockNumber = commercialBlockNumber;
-        
-        if (user.lastCommercial.audioFileId === 27) {
-          newLastCommercial.audioFileId = 1;
-          newLastCommercial.audioFileUrl = 'http://commercialblocks.playola.fm/0001_commercial_block.mp3';
-        } else {
-          newLastCommercial.audioFileId = user.lastCommercial.audioFileId + 1;
-        }
-
-        // build link
-        newLastCommercial.audioFileUrl = "http://commercialblocks.playola.fm/" + pad(newLastCommercial.audioFileId, 4) + "_commercial_block.mp3";
-
-        User.findByIdAndUpdate(user.id, { lastCommercial: newLastCommercial }, function (err, newUser) {
-          if (err) callback(err);
-          callback(null, newLastCommercial.audioFileUrl);
-        });
+        newLastCommercial.audioFileId = user.lastCommercial.audioFileId + 1;
       }
-    })
+
+      // build link
+      newLastCommercial.audioFileUrl = "http://commercialblocks.playola.fm/" + pad(newLastCommercial.audioFileId, 4) + "_commercial_block.mp3";
+
+      User.findByIdAndUpdate(user.id, { lastCommercial: newLastCommercial }, function (err, newUser) {
+        if (err) callback(err);
+        callback(null, newLastCommercial.audioFileUrl);
+      });
+    }
     
     // taken from StackOverflow: http://stackoverflow.com/questions/10073699/pad-a-number-with-leading-zeros-in-javascript
     function pad(n, width, z) {
@@ -601,6 +599,7 @@ if (!station) {
       n = n + '';
       return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
     }
+    
   };
 
   // moves a spin

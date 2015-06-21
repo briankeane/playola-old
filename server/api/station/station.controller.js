@@ -223,13 +223,13 @@ exports.getProgram = function (req,res,next) {
     // if a CommercialBlock is about to be broadcast, grab the proper CommercialBlock for the requesting user
     if ((programObject.nowPlaying._audioBlock._type === 'CommercialBlock') || (programObject.playlist.length && (programObject.playlist[0]._audioBlock._type === 'CommercialBlock'))) {
       // if no user is provided, just return the program with the empty commercial blocks
-      if (!req.query._user) {
+      if (!req.user) {
         return res.json(200, programObject);
 
       } else {
         // Replace nowPlaying if necessary
         if (programObject.nowPlaying._audioBlock._type === 'CommercialBlock') {
-          Scheduler.getCommercialBlockLink({ _user: req.query._user,
+          Scheduler.getCommercialBlockLink({ user: req.user,
                                               airtime: programObject.nowPlaying.airtime
                                             }, function (err, link) {
             programObject.nowPlaying._audioBlock.audioFileUrl = link;
@@ -240,7 +240,7 @@ exports.getProgram = function (req,res,next) {
 
         // ELSE replace playlist[0] if it's the commercial block
         } else {
-          Scheduler.getCommercialBlockLink({ _user: req.query._user,
+          Scheduler.getCommercialBlockLink({ user: req.user,
                                               airtime: programObject.playlist[0].airtime,
                                             }, function (err, link) {
             programObject.playlist[0]._audioBlock.audioFileUrl = link;
