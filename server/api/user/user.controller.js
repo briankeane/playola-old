@@ -236,6 +236,11 @@ exports.presets = function (req, res) {
   });
 }
 
+exports.getMyPresets = function (req,res) {
+  req.params.id = user.id
+  return self.presets(req.res)
+}
+
 
 exports.me = function(req, res, next) {
   var userId = req.user._id;
