@@ -220,6 +220,9 @@ exports.getProgram = function (req,res,next) {
   Scheduler.getProgram({ stationId: req.params.id }, function (err, programObject) {
     if (err) return next(err);
 
+    programObject._station = programObject._station.toObject();
+    programObject._station = reformatUser(programObject._station)
+
     // if a CommercialBlock is about to be broadcast, grab the proper CommercialBlock for the requesting user
     if ((programObject.nowPlaying._audioBlock._type === 'CommercialBlock') || (programObject.playlist.length && (programObject.playlist[0]._audioBlock._type === 'CommercialBlock'))) {
       // if no user is provided, just return the program with the empty commercial blocks
@@ -254,6 +257,7 @@ exports.getProgram = function (req,res,next) {
       return res.json(200, programObject);
     }
   });
+  
 };
 
 function createRotationItemsObject(rotationItems) {
@@ -276,4 +280,13 @@ function createRotationItemsObject(rotationItems) {
 
 function handleError(res, err) {
   return res.send(500, err);
+}
+
+function reformatUser(object) {
+  if (object._user) {
+    object.user = object._user;
+    object._user = object.user.id;
+  }
+  return object
+  
 }

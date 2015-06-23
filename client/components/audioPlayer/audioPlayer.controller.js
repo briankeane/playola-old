@@ -29,12 +29,12 @@ angular.module('playolaApp')
     // IF they've been loaded...
     if (SharedData.presets) {
       for (var i=0;i<SharedData.presets.length;i++) {
-        refreshStationProgram(SharedData.presets[i]);
+        refreshStationProgram(SharedData.presets[i].station);
       }
     } else {   // ELSE wait for them to be loaded, then set up
       $rootScope.$on('presetsLoaded', function () {
         for (var i=0;i<SharedData.presets.length;i++) {
-          refreshStationProgram(SharedData.presets[i]);
+          refreshStationProgram(SharedData.presets[i].station);
         }
       });
     }

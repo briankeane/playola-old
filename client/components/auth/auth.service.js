@@ -144,20 +144,20 @@ angular.module('playolaApp')
         }).$promise;
       },
 
-      follow: function (stationId, callback) {
+      follow: function (followeeId, callback) {
         var cb = callback || angular.noop;
 
-        return User.follow({ id: currentUser._id }, { stationId: stationId }, function (result) {
+        return User.follow({ id: currentUser._id }, { followeeId: followeeId  }, function (result) {
           return cb(null, result);
         }, function (err) {
           return cb(err);
         }).$promise;
       },
 
-      unfollow: function (stationId, callback) {
+      unfollow: function (followeeId, callback) {
         var cb = callback || angular.noop;
 
-        return User.unfollow({ id: currentUser._id }, { stationId: stationId }, function (presets) {
+        return User.unfollow({ id: currentUser._id }, { followeeId: followeeId }, function (presets) {
           return cb(null, presets);
         }, function (err) {
           return cb(err);

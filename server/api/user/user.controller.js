@@ -237,7 +237,7 @@ exports.presets = function (req, res) {
 }
 
 exports.getMyPresets = function (req,res) {
-  req.params.id = user.id
+  req.params.id = user.id;
   return self.presets(req.res)
 }
 

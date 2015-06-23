@@ -27,7 +27,7 @@
               <a href="#" style="float:left; margin-right:20px;" class="btn btn-mod btn-border btn-small btn-round"
                 ng-click="addToMyStation(player.nowPlaying._audioBlock._id)"
                 ng-disabled="checkForRotation(player.nowPlaying._audioBlock)">Add song to my station</a>
-              <a href="#" style="float:left;" class="btn btn-mod btn-border btn-small btn-round" ng-click="togglePreset(player.stationPlaying);" ng-disabled="!presetButtonInfo.enabled">{{presetButtonInfo.text}}</a>
+              <a href="#" style="float:left;" class="btn btn-mod btn-border btn-small btn-round" ng-click="togglePreset(player.userPlaying);" ng-disabled="!presetButtonInfo.enabled">{{presetButtonInfo.text}}</a>
             </div><br>
               
               

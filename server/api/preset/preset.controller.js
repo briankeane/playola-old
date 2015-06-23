@@ -23,8 +23,8 @@ exports.show = function(req, res) {
 // Creates a new preset in the DB.
 exports.create = function(req, res) {
   // check to see if it already exists
-  Preset.findOne({ follower: req.body.follower,
-                   followee: req.body.followee 
+  Preset.findOne({ _follower: req.user._id,
+                   _followee: req.body.followeeId 
               }, function (err, foundPreset) {
    if (err) { return handleError(res, err); }
    if (foundPreset) {
