@@ -22,6 +22,7 @@ angular.module('playolaApp')
     self.compressor;
     self.stationPlaying;
     self.requests = [];
+    self.userPlaying;
 
     // set up audio context and audio nodes
     if (!self.context) {
@@ -90,6 +91,7 @@ angular.module('playolaApp')
         self.nowPlaying = program.nowPlaying;
         self.playlist = [program.playlist[0]];
         self.stationPlaying = program._station;
+        self.userPlaying = program._station.user;
 
         loadAudio([self.nowPlaying], function (err) {
           if (err) console.log(err);

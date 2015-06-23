@@ -78,26 +78,26 @@ exports.twitterFriends = function(req, res, next) {
 };
 
 exports.follow = function (req, res) {
-  var userId = req.params.id;
-  var stationId = req.body.stationId;
+  var followerId = req.params.followerId;
+  var followeeId = req.body.followeeId;
 
   // check for already following
-  Preset.findOne({ _user: userId,
-                _station: stationId 
+  Preset.findOne({ _follower: followerId,
+                   _followee: followeeId 
               }, function (err, preset) {
     if (err) { return res.send(err); }
     
     // IF already following, just get the list of presets and send it with 200
     if (preset) { 
-      Preset.getPresets(userId, function (err, presets) {
+      Preset.getPresets(followerId, function (err, presets) {
         if (err) { return res.send(err); }
         return res.json(200, { presets: presets });
       });
 
     // otherwise, create the preset and return a new current preset list
     } else {
-      Preset.create({ _user: userId,
-                      _station: stationId
+      Preset.create({ _follower: followerId,
+                      _followee: followeeId
                     }, function (err, newPresetItem) {
         if (err) { return res.send(err); }
         Preset.getPresets(userId, function (err, presets) {
@@ -115,6 +115,10 @@ exports.follow = function (req, res) {
       });
     } // endIF
   });
+}
+
+exports.meFollow = function (req, res) {
+  req.params.followerId = req.user.id;
 }
 
 exports.unfollow = function (req, res) {
